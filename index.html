@@ -1177,7 +1177,7 @@ dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur
               </div>
               <div class="field" style="margin-top:8px;">
                 <label for="ai-model-name">Nombre de Modelo (Opcional)</label>
-                <input class="input" id="ai-model-name" placeholder="Ej.: meta-llama/llama-3.3-70b-instruct:free ó meta/llama-3.3-70b-instruct">
+                <input class="input" id="ai-model-name" placeholder="Ej.: deepseek/deepseek-r1:free ó qwen/qwen-2.5-coder-32b-instruct:free">
               </div>
               <div class="button-row" style="margin-top:10px;">
                 <button class="btn btn-primary" onclick="saveAIProviderConfig()">Guardar Proveedor y API Key</button>
@@ -1824,10 +1824,37 @@ async function callUniversalAIProvider(prompt){
     headers['Authorization'] = `Bearer ${apiKey}`;
     headers['HTTP-Referer'] = 'https://reto-control.app';
     headers['X-Title'] = 'Reto Control';
-    body = {
-      model: model || 'meta-llama/llama-3.3-70b-instruct:free',
-      messages: [{ role: 'user', content: prompt }]
-    };
+    
+    const freeModels = [
+      model,
+      'deepseek/deepseek-r1:free',
+      'qwen/qwen-2.5-coder-32b-instruct:free',
+      'google/gemini-2.0-flash-exp:free',
+      'meta-llama/llama-3.1-8b-instruct:free',
+      'mistralai/mistral-7b-instruct:free'
+    ].filter(Boolean);
+
+    let lastErr = null;
+    for(const m of freeModels){
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({
+            model: m,
+            messages: [{ role: 'user', content: prompt }]
+          })
+        });
+        const d = await res.json();
+        if(!res.ok) throw new Error(d?.error?.message || d?.error || `HTTP ${res.status} en ${m}`);
+        const content = d.choices?.[0]?.message?.content || '';
+        if(content) return content;
+      } catch(e){
+        console.warn(`OpenRouter falló con modelo ${m}:`, e.message);
+        lastErr = e;
+      }
+    }
+    throw new Error(lastErr?.message || 'OpenRouter no devolvió contenido.');
   } else if(provider === 'nvidia'){
     endpoint = 'https://integrate.api.nvidia.com/v1/chat/completions';
     headers['Authorization'] = `Bearer ${apiKey}`;
