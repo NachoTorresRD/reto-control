@@ -353,6 +353,25 @@ button { cursor: pointer; }
   font-size: 9px; font-weight: 700; letter-spacing: 0.1em;
   color: var(--muted); text-transform: uppercase; text-align: center;
   margin-bottom: 8px;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.live-dot-pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 7px;
+  font-size: 8px; font-weight: 800; color: #4ade80;
+  background: rgba(74,222,128,0.12);
+  border: 1px solid rgba(74,222,128,0.3);
+  border-radius: 10px; text-transform: uppercase; letter-spacing: 0.05em;
+}
+.live-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: #4ade80;
+  box-shadow: 0 0 8px #4ade80;
+  animation: livePulse 1.2s infinite ease-in-out;
+}
+@keyframes livePulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.7); }
 }
 .smoke-clock-grid {
   display: grid; grid-template-columns: repeat(4, 1fr);
@@ -1065,7 +1084,7 @@ dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur
 
           <!-- 4-Color Clock Section -->
           <div class="smoke-clock-wrapper">
-            <div class="smoke-clock-title">TIEMPO SIN FUMAR</div>
+            <div class="smoke-clock-title">TIEMPO SIN FUMAR <span class="live-dot-pill"><span class="live-dot"></span> EN VIVO</span></div>
             <div class="smoke-clock-grid">
               <div class="sc-unit"><span class="sc-val val-blue" id="su-days">0</span><span class="sc-lbl">días</span></div>
               <div class="sc-unit"><span class="sc-val val-purple" id="su-hours">00</span><span class="sc-lbl">horas</span></div>
@@ -1532,14 +1551,15 @@ function renderSmoke(){
   // Legacy hidden element for JS compat
   const smokeTimeEl=document.getElementById('smoke-time'); if(smokeTimeEl) smokeTimeEl.textContent=`${days} día${days===1?'':'s'} · ${hours} h · ${minutes} min`;
 
-  // Formatted currency & stats
-  const formatDOP = (val) => new Intl.NumberFormat('es-DO',{style:'currency',currency:'DOP',maximumFractionDigits:0}).format(val);
+  // Formatted currency & stats (live cent-by-cent precision)
+  const formatDOPLive = (val) => new Intl.NumberFormat('es-DO',{style:'currency',currency:'DOP',minimumFractionDigits:2,maximumFractionDigits:2}).format(val);
+  const formatDOPFlat = (val) => new Intl.NumberFormat('es-DO',{style:'currency',currency:'DOP',maximumFractionDigits:0}).format(val);
   
   const moneyEl = document.getElementById('smoke-money');
-  if(moneyEl) moneyEl.textContent = formatDOP(savedExact);
+  if(moneyEl) moneyEl.textContent = formatDOPLive(savedExact);
 
   const moneySubEl = document.getElementById('smoke-money-sub');
-  if(moneySubEl) moneySubEl.textContent = `${formatDOP(monthlyProjection)}/mes est.`;
+  if(moneySubEl) moneySubEl.textContent = `${formatDOPFlat(monthlyProjection)}/mes est.`;
 
   const avoidedEl = document.getElementById('smoke-avoided');
   if(avoidedEl) avoidedEl.textContent = new Intl.NumberFormat('es-DO').format(avoided);
@@ -1862,7 +1882,9 @@ function rotateTopbar(){
 function init(){
   populateProjectSelects(); renderToday(); renderSell(); renderPublish(); renderProjects();
   const initial=location.hash.replace('#',''); showView(TITLES[initial]?initial:'today');
-  setInterval(renderSmoke,1000);
+  renderSmoke();
+  rotateTopbar();
+  setInterval(renderSmoke, 200); // 5 veces por segundo para fluidez en tiempo real
   setInterval(rotateTopbar, 4000); // Rotación cada 4 segundos
 }
 init();
