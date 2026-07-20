@@ -1,0 +1,1842 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Panel diario para dejar de fumar, proteger la energía y convertirla en acciones de contenido, ventas y producto.">
+<meta name="robots" content="noindex,nofollow">
+<title>NT Hoy — Disciplina y avance diario</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
+
+/* ═══════════════════════════════════════
+   NT-SKILL SUPREME · BALANCED PROFILE
+   Archetype: mobile-app + dashboard
+   /polish-ui --style balanced
+═══════════════════════════════════════ */
+:root {
+  /* Core palette */
+  --bg: #060a12;
+  --surface: #0c1422;
+  --surface-2: #101b2e;
+  --surface-3: #152036;
+  --border: hsl(215 30% 22%);
+  --border-subtle: hsl(215 30% 16%);
+
+  /* Accent colors */
+  --cyan: #22d3ee;
+  --cyan-dim: rgba(34,211,238,.10);
+  --cyan-glow: rgba(34,211,238,.18);
+  --violet: #8b5cf6;
+  --violet-dim: rgba(139,92,246,.10);
+  --green: #34d399;
+  --green-dim: rgba(52,211,153,.10);
+  --green-glow: rgba(52,211,153,.18);
+  --amber: #fbbf24;
+  --amber-dim: rgba(251,191,36,.10);
+  --red: #fb7185;
+  --red-dim: rgba(251,113,133,.10);
+
+  /* Typography */
+  --text: #f1f5f9;
+  --text-2: #cbd5e1;
+  --muted: #64748b;
+  --muted-2: #94a3b8;
+
+  /* Shadows & radii */
+  --shadow-sm: 0 4px 16px rgba(0,0,0,.3);
+  --shadow-md: 0 8px 32px rgba(0,0,0,.4);
+  --shadow-lg: 0 20px 60px rgba(0,0,0,.5);
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-xl: 22px;
+  --radius-pill: 999px;
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+[hidden] { display: none !important; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  background-image:
+    radial-gradient(ellipse 60% 40% at 85% 0%, rgba(139,92,246,.07) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 10% 80%, rgba(34,211,238,.04) 0%, transparent 50%);
+  -webkit-font-smoothing: antialiased;
+}
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; border-radius: 4px; }
+
+/* ── Layout Shell ── */
+.app { min-height: 100vh; display: grid; grid-template-columns: 240px minmax(0,1fr); }
+
+/* ── Sidebar ── */
+.sidebar {
+  position: sticky; top: 0; height: 100vh;
+  display: flex; flex-direction: column;
+  padding: 24px 14px;
+  border-right: 1px solid var(--border-subtle);
+  background: rgba(8,13,22,.96);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+.brand { padding: 0 8px 20px; border-bottom: 1px solid var(--border-subtle); }
+.brand-kicker {
+  color: var(--violet); font-size: 9px; font-weight: 800;
+  letter-spacing: .16em; text-transform: uppercase;
+}
+.brand h1 {
+  margin-top: 8px;
+  font: 700 20px 'Space Grotesk', sans-serif;
+  letter-spacing: -.04em;
+}
+.brand h1 span { color: var(--cyan); }
+.brand p { margin-top: 5px; color: var(--muted); font-size: 11px; line-height: 1.5; }
+
+.day-progress { margin: 18px 8px 8px; }
+.day-progress-top {
+  display: flex; justify-content: space-between;
+  color: var(--muted); font-size: 10px; font-weight: 600;
+}
+.progress-track {
+  height: 4px; margin-top: 8px;
+  overflow: hidden; border-radius: var(--radius-pill);
+  background: var(--border-subtle);
+}
+.progress-fill {
+  height: 100%; width: 0; border-radius: inherit;
+  background: linear-gradient(90deg, var(--violet), var(--cyan));
+  transition: width .4s cubic-bezier(.34,1.56,.64,1);
+}
+
+.side-nav { display: grid; gap: 4px; margin-top: 20px; }
+.nav-button {
+  width: 100%; min-height: 46px;
+  display: flex; align-items: center; gap: 11px;
+  padding: 0 12px;
+  color: var(--muted); background: transparent;
+  border: 1px solid transparent; border-radius: var(--radius-sm);
+  text-align: left; font-weight: 600; font-size: 13px;
+  transition: color .15s, background .15s, border-color .15s;
+}
+.nav-button .nav-index {
+  width: 22px; color: var(--border);
+  font: 700 9px 'Space Grotesk', sans-serif;
+  letter-spacing: .05em;
+}
+.nav-button:hover { color: var(--text-2); background: rgba(255,255,255,.03); }
+.nav-button.active {
+  color: var(--text); background: var(--cyan-dim);
+  border-color: var(--cyan-glow);
+}
+.nav-button.active .nav-index { color: var(--cyan); }
+
+.side-rule {
+  margin: auto 8px 0;
+  padding: 12px 14px;
+  color: var(--muted); font-size: 10px; line-height: 1.6;
+  background: rgba(255,255,255,.02);
+  border: 1px solid var(--border-subtle); border-radius: var(--radius-md);
+}
+.side-rule strong { display: block; color: var(--text-2); margin-bottom: 4px; font-size: 10.5px; }
+
+.topbar {
+  position: sticky; top: 0; z-index: 30;
+  min-height: 48px;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 20px;
+  border-bottom: 1px solid var(--border-subtle);
+  background: rgba(6,10,18,.97);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+.topbar-phrase {
+  font: 500 12px 'Inter', sans-serif;
+  color: var(--muted);
+  letter-spacing: .04em;
+  text-align: center;
+  animation: tip-fade .5s ease;
+}
+.topbar-brand { display: none; }
+.view-title { display: none; }
+.view-title { font-size: 13px; font-weight: 700; color: var(--text-2); }
+.date-pill {
+  padding: 6px 12px;
+  color: var(--amber); font-size: 10px; font-weight: 700;
+  background: var(--amber-dim);
+  border: 1px solid rgba(251,191,36,.2);
+  border-radius: var(--radius-pill);
+}
+
+/* ── Views ── */
+.view { display: none; width: 100%; max-width: 1080px; padding: 28px 32px 100px; }
+.view.active { display: block; animation: fadeUp .25s ease; }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Section headers ── */
+.section-head { margin-bottom: 14px; }
+.eyebrow {
+  color: var(--cyan); font-size: 9px; font-weight: 800;
+  letter-spacing: .15em; text-transform: uppercase;
+}
+.section-head h2 {
+  margin-top: 5px;
+  font: 700 clamp(20px,3vw,32px) 'Space Grotesk', sans-serif;
+  letter-spacing: -.04em; line-height: 1.15;
+}
+.section-head p { max-width: 680px; margin-top: 6px; color: var(--muted-2); font-size: 12px; line-height: 1.6; }
+
+
+/* ── Cards ── */
+.card {
+  background: rgba(16, 27, 46, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.card-title { font-size: 11px; font-weight: 700; color: var(--text-2); letter-spacing: .02em; text-transform: uppercase; }
+
+/* ── Buttons (Pro App Finishing) ── */
+.btn {
+  min-height: 42px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 0 16px;
+  border-radius: var(--radius-md); border: 1px solid transparent;
+  font-weight: 700; font-size: 13px;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all .2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.btn-primary {
+  color: #041018; 
+  background: linear-gradient(135deg, #38bdf8 0%, #22d3ee 100%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 16px rgba(34, 211, 238, 0.25);
+}
+.btn-primary:hover { box-shadow: 0 6px 22px rgba(34, 211, 238, 0.4); transform: translateY(-1px); }
+
+.btn-secondary { 
+  color: #e2e8f0; 
+  background: rgba(30, 41, 59, 0.6); 
+  border: 1px solid rgba(255, 255, 255, 0.12); 
+}
+.btn-secondary:hover { border-color: rgba(255, 255, 255, 0.25); background: rgba(51, 65, 85, 0.7); color: #ffffff; }
+
+.btn-danger { color: #fecdd3; background: linear-gradient(135deg, rgba(244,63,94,0.2), rgba(225,29,72,0.3)); border: 1px solid rgba(244,63,94,0.3); }
+
+.btn-success { 
+  color: #022c22; 
+  background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 4px 16px rgba(52, 211, 153, 0.28);
+}
+.btn-success:hover { box-shadow: 0 6px 24px rgba(52, 211, 153, 0.42); transform: translateY(-1.5px); }
+
+.btn-warning { 
+  color: #1c1000; 
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 16px rgba(251, 191, 36, 0.28);
+}
+.btn-warning:hover { box-shadow: 0 6px 24px rgba(251, 191, 36, 0.42); transform: translateY(-1.5px); }
+
+.btn-small { min-height: 34px; padding: 0 12px; font-size: 11px; border-radius: var(--radius-sm); }
+
+/* ── Form fields ── */
+.field label {
+  display: block; margin-bottom: 5px;
+  color: var(--muted); font-size: 8.5px; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase;
+}
+.field input, .field select, .field textarea, .input {
+  width: 100%; min-height: 38px; padding: 8px 11px;
+  color: var(--text); background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.08); border-radius: var(--radius-sm);
+  outline: none; font-size: 12.5px; transition: border-color .15s, box-shadow .15s;
+}
+.field textarea { min-height: 70px; resize: vertical; }
+.field input:focus, .field select:focus, .field textarea:focus, .input:focus {
+  border-color: rgba(34, 211, 238, 0.5);
+  box-shadow: 0 0 0 2px rgba(34,211,238,.12);
+}
+
+/* ══════════════════════════════════════
+   TODAY VIEW — discipline card (smoke)
+══════════════════════════════════════ */
+.discipline-card {
+  margin-bottom: 12px; padding: 15px 16px;
+  background: linear-gradient(135deg,
+    rgba(52,211,153,.06) 0%,
+    rgba(12,20,34,.95) 40%,
+    rgba(139,92,246,.04) 100%);
+  border: 1px solid rgba(52,211,153,.18);
+  border-radius: var(--radius-lg);
+}
+.discipline-head {
+  display: flex; align-items: flex-start;
+  justify-content: space-between; gap: 16px;
+}
+.discipline-head h3 {
+  margin-top: 6px;
+  font: 700 clamp(18px,2.5vw,26px) 'Space Grotesk', sans-serif;
+  letter-spacing: -.035em; line-height: 1.2;
+}
+.discipline-head p { display: none; } /* hidden — tips show via .discipline-tip */
+.discipline-tip {
+  max-width: 520px; margin-top: 7px;
+  padding-left: 10px;
+  border-left: 2px solid rgba(139,92,246,.45);
+  color: var(--muted-2); font-size: 11px; line-height: 1.55;
+  font-style: italic;
+  animation: tip-fade .4s ease;
+}
+
+.smoke-pill {
+  flex: 0 0 auto; padding: 6px 12px;
+  color: var(--green); font-size: 9.5px; font-weight: 800;
+  background: var(--green-dim);
+  border: 1px solid rgba(52,211,153,.25);
+  border-radius: var(--radius-pill);
+}
+
+/* Empty state */
+.smoke-empty {
+  display: flex; align-items: center; justify-content: space-between; gap: 14px;
+  margin-top: 16px; padding: 14px 16px;
+  background: rgba(6,10,18,.6);
+  border: 1px dashed rgba(52,211,153,.28);
+  border-radius: var(--radius-md);
+}
+.smoke-empty p { color: var(--muted-2); font-size: 11px; line-height: 1.5; }
+
+
+
+/* ── Reto Control 4-Color Clock ── */
+.smoke-clock-wrapper {
+  margin-top: 14px; padding: 12px 14px;
+  background: rgba(6, 10, 18, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-md);
+}
+.smoke-clock-title {
+  font-size: 9px; font-weight: 700; letter-spacing: 0.1em;
+  color: var(--muted); text-transform: uppercase; text-align: center;
+  margin-bottom: 8px;
+}
+.smoke-clock-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 8px; text-align: center;
+}
+.sc-unit { display: flex; flex-direction: column; align-items: center; }
+.sc-val {
+  font: 700 24px/1 'Space Grotesk', sans-serif;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
+}
+.val-blue { color: #38bdf8; }
+.val-purple { color: #c084fc; }
+.val-green { color: #4ade80; }
+.val-yellow { color: #facc15; }
+.sc-lbl { font-size: 9px; font-weight: 600; color: var(--muted); margin-top: 3px; }
+
+.smoke-progress-section { margin-top: 10px; }
+.spb-track {
+  height: 4px; background: rgba(255,255,255,0.08);
+  border-radius: var(--radius-pill); overflow: hidden;
+}
+.spb-track span {
+  display: block; height: 100%; width: 0;
+  background: linear-gradient(90deg, #38bdf8, #c084fc, #4ade80);
+  border-radius: inherit; transition: width 0.4s ease;
+}
+.spb-labels {
+  display: flex; justify-content: space-between;
+  margin-top: 5px; font-size: 9.5px; font-weight: 600; color: var(--muted-2);
+}
+.spb-pct { color: #c084fc; font-weight: 700; }
+
+/* ── 2x2 Metric Cards Grid ── */
+.rc-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr);
+  gap: 8px; margin-top: 10px;
+}
+.rc-card {
+  padding: 10px 12px;
+  background: rgba(16, 27, 46, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: var(--radius-md);
+  display: flex; flex-direction: column; justify-content: space-between;
+}
+.rc-card-top { display: flex; align-items: center; gap: 6px; }
+.rc-icon {
+  width: 20px; height: 20px; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 800;
+}
+.icon-green { background: rgba(52,211,153,.15); color: #4ade80; }
+.icon-blue { background: rgba(56,189,248,.15); color: #38bdf8; }
+.icon-purple { background: rgba(192,132,252,.15); color: #c084fc; }
+.icon-yellow { background: rgba(250,204,21,.15); color: #facc15; }
+
+.rc-title { font-size: 8.5px; font-weight: 800; color: var(--muted); letter-spacing: 0.08em; }
+.rc-val {
+  font: 700 15px/1.2 'Space Grotesk', sans-serif;
+  font-variant-numeric: tabular-nums; color: var(--text);
+  margin-top: 4px;
+}
+.val-project { color: #facc15; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rc-sub { font-size: 8.5px; color: var(--muted); margin-top: 2px; }
+.rc-bar { height: 3px; border-radius: 2px; margin-top: 6px; }
+.green-bar { background: #4ade80; width: 40%; }
+.rc-milestones { display: flex; gap: 4px; margin-top: 6px; font-size: 7.5px; color: var(--muted); }
+
+/* ── Interactive Health Banner ── */
+.rc-health-banner {
+  display: flex; align-items: center; gap: 10px;
+  margin-top: 10px; padding: 10px 12px;
+  background: rgba(52, 211, 153, 0.07);
+  border: 1px solid rgba(52, 211, 153, 0.2);
+  border-radius: var(--radius-md); cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.rc-health-banner:hover { background: rgba(52, 211, 153, 0.12); border-color: rgba(52, 211, 153, 0.35); }
+.hb-icon {
+  width: 30px; height: 30px; border-radius: 8px;
+  background: rgba(52, 211, 153, 0.18); color: #4ade80;
+  display: flex; align-items: center; justify-content: center; font-size: 15px;
+}
+.hb-body strong { display: block; font-size: 11.5px; color: var(--text); }
+.hb-body span { font-size: 9px; color: var(--muted-2); }
+
+/* ── Reto Control Actions ── */
+.rc-actions { display: grid; gap: 8px; margin-top: 14px; }
+.btn-block { width: 100%; min-height: 42px; font-size: 13px; font-weight: 700; justify-content: center; }
+.btn-ic { margin-right: 6px; font-size: 14px; }
+.rc-sub-actions { display: flex; gap: 8px; }
+.wide { flex: 1; }
+
+.smoke-bridge {
+  margin-top: 12px; padding: 10px 12px;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-sm);
+  color: #cbd5e1; font-size: 11px; line-height: 1.5; font-weight: 500;
+}
+.smoke-bridge.ready {
+  color: #4ade80; background: rgba(52, 211, 153, 0.08);
+  border-color: rgba(52, 211, 153, 0.25); font-weight: 600;
+}
+.smoke-log { margin-top: 10px; color: var(--muted-2); font-size: 10px; }
+.smoke-log summary { width: max-content; cursor: pointer; font-weight: 700; color: var(--cyan); }
+.smoke-log-list { display: grid; gap: 6px; margin-top: 8px; }
+.smoke-log-item {
+  display: flex; justify-content: space-between; gap: 12px;
+  padding: 8px 11px;
+  background: rgba(6,10,18,0.5); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px;
+  font-size: 11px;
+}
+.smoke-log-item span:last-child { text-align: right; color: var(--muted); font-size: 10px; }
+
+/* ── Health Modal Dialog Styling ── */
+.health-dialog { max-width: 480px; }
+.health-sec-title { font-size: 9px; font-weight: 800; letter-spacing: 0.1em; color: var(--cyan); text-transform: uppercase; margin-bottom: 8px; }
+.hm-metrics { display: grid; gap: 8px; }
+.hm-metric { padding: 9px 11px; background: rgba(6,10,18,0.5); border: 1px solid rgba(255,255,255,0.06); border-radius: var(--radius-sm); }
+.hm-mtop { display: flex; align-items: flex-start; gap: 8px; }
+.hm-mic { width: 24px; height: 24px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; }
+.hm-mtop div { flex: 1; }
+.hm-mtop strong { display: block; font-size: 11px; color: var(--text); }
+.hm-mtop p { font-size: 9px; color: var(--muted-2); margin-top: 1px; }
+.hm-val { font: 700 13px 'Space Grotesk', sans-serif; flex-shrink: 0; }
+.text-blue { color: #38bdf8; }
+.text-yellow { color: #facc15; }
+.text-purple { color: #c084fc; }
+.text-green { color: #4ade80; }
+
+.hm-track { height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; margin-top: 7px; overflow: hidden; }
+.hm-fill { height: 100%; border-radius: inherit; }
+.fill-blue { background: #38bdf8; }
+.fill-yellow { background: #facc15; }
+.fill-purple { background: #c084fc; }
+.fill-green { background: #4ade80; }
+
+.hm-goal-box { margin-top: 12px; padding: 10px 12px; background: rgba(52,211,153,0.06); border: 1px solid rgba(52,211,153,0.18); border-radius: var(--radius-sm); }
+.hm-goal-top { display: flex; justify-content: space-between; align-items: center; }
+.hm-badge { padding: 2px 7px; background: rgba(52,211,153,0.15); color: #4ade80; border-radius: 10px; font-size: 8.5px; font-weight: 700; }
+.hm-goal-box h4 { font-size: 12px; margin-top: 4px; color: var(--text); }
+.hm-goal-box p { font-size: 9.5px; color: var(--muted-2); margin-top: 2px; }
+
+.hm-timeline { display: grid; gap: 6px; }
+.hm-tl-item { display: flex; gap: 10px; padding: 7px 9px; background: rgba(6,10,18,0.3); border-radius: 6px; font-size: 9.5px; opacity: 0.55; }
+.hm-tl-item.done { opacity: 1; background: rgba(52,211,153,0.04); }
+.hm-check { color: #4ade80; font-weight: 800; font-size: 11px; }
+.hm-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); margin-top: 4px; flex-shrink: 0; }
+.hm-tl-item strong { display: block; color: var(--text); font-size: 10px; }
+.hm-tl-item p { color: var(--muted-2); margin-top: 1px; }
+
+.hm-tip-box { display: flex; align-items: center; gap: 10px; margin-top: 12px; padding: 9px 11px; background: rgba(139,92,246,0.08); border: 1px solid rgba(139,92,246,0.2); border-radius: var(--radius-sm); }
+.hm-tip-icon { font-size: 16px; }
+.hm-tip-box strong { font-size: 10.5px; color: var(--text); display: block; }
+.hm-tip-box p { font-size: 9px; color: var(--muted-2); }
+
+/* ── Rotating tip ── */
+.smoke-tip {
+  display: flex; align-items: flex-start; gap: 8px;
+  margin-top: 10px; padding: 9px 12px;
+  background: rgba(139,92,246,.07);
+  border: 1px solid rgba(139,92,246,.18);
+  border-radius: var(--radius-md);
+  min-height: 38px;
+}
+.tip-dot {
+  flex: 0 0 6px; width: 6px; height: 6px; margin-top: 4px;
+  background: var(--violet); border-radius: 50%;
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%,100% { opacity: 1; transform: scale(1); }
+  50% { opacity: .5; transform: scale(.7); }
+}
+.smoke-tip p {
+  font-size: 11px; line-height: 1.5; color: var(--muted-2);
+  animation: tip-fade .4s ease;
+}
+@keyframes tip-fade {
+  from { opacity: 0; transform: translateY(3px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ══════════════════════════════════════
+   TODAY HERO — focus project card
+══════════════════════════════════════ */
+.today-hero {
+  position: relative; overflow: hidden; padding: 16px 18px;
+  background: linear-gradient(135deg,
+    rgba(139,92,246,.12) 0%,
+    rgba(34,211,238,.04) 55%,
+    var(--surface) 100%);
+  border: 1px solid rgba(139,92,246,.2);
+  border-radius: var(--radius-lg);
+}
+.today-hero::before {
+  content: '';
+  position: absolute; right: -60px; top: -80px;
+  width: 180px; height: 180px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(139,92,246,.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-row {
+  position: relative; z-index: 1;
+  display: grid; grid-template-columns: minmax(0,1fr) minmax(180px,240px);
+  gap: 14px; align-items: end;
+}
+.today-hero h3 {
+  max-width: 560px;
+  font: 700 clamp(20px,3vw,30px) 'Space Grotesk', sans-serif;
+  letter-spacing: -.035em; line-height: 1.1;
+}
+.today-hero p { max-width: 580px; margin-top: 5px; color: var(--muted-2); font-size: 11.5px; line-height: 1.55; }
+.focus-control { display: grid; gap: 4px; }
+.focus-control select { min-height: 38px; }
+.goal-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; margin-top: 10px; }
+
+.ai-bar {
+  position: relative; z-index: 1;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+  margin-top: 10px; padding-top: 10px;
+  border-top: 1px solid rgba(255,255,255,.07);
+}
+.ai-status { margin-right: auto; color: var(--muted); font-size: 9.5px; line-height: 1.45; }
+.ai-status strong { color: var(--violet); }
+.ai-setup { width: 100%; padding-top: 10px; }
+.ai-setup summary { width: max-content; color: var(--muted); cursor: pointer; font-size: 9px; font-weight: 700; }
+.ai-fields { display: grid; grid-template-columns: 1fr auto; gap: 8px; margin-top: 9px; }
+.ai-help { margin-top: 6px; color: var(--muted); font-size: 8px; line-height: 1.45; }
+
+/* ── Next action banner ── */
+.next-action {
+  display: flex; align-items: center; justify-content: space-between; gap: 14px;
+  margin: 16px 0; padding: 14px 16px;
+  background: var(--cyan-dim);
+  border: 1px solid var(--cyan-glow);
+  border-radius: var(--radius-md);
+}
+.next-action small { display: block; color: var(--cyan); font-size: 9px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+.next-action strong { display: block; margin-top: 3px; font-size: 12px; line-height: 1.45; }
+
+/* ── Move cards ── */
+.moves { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
+.move-card {
+  position: relative; min-height: 200px;
+  display: flex; flex-direction: column;
+  padding: 18px;
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  transition: border-color .2s, box-shadow .2s;
+}
+.move-card.done {
+  border-color: rgba(52,211,153,.3);
+  background: linear-gradient(145deg, rgba(52,211,153,.07), var(--surface));
+}
+.move-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.move-type {
+  color: var(--move-color, var(--cyan));
+  font-size: 9px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase;
+}
+.move-card h3 { margin: 7px 0; font-size: 14.5px; line-height: 1.3; }
+.move-card p { color: var(--muted-2); font-size: 11px; line-height: 1.6; }
+.account-chip {
+  display: inline-flex; width: max-content; margin-top: 10px;
+  padding: 4px 9px;
+  color: var(--move-color, var(--cyan));
+  background: rgba(255,255,255,.03);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-pill);
+  font-size: 9px; font-weight: 800;
+}
+.move-actions { display: flex; gap: 8px; margin-top: auto; padding-top: 14px; }
+.check-button {
+  flex: 0 0 36px; width: 36px; height: 36px;
+  display: grid; place-items: center;
+  color: var(--muted); background: rgba(6,10,18,.6);
+  border: 1px solid var(--border-subtle); border-radius: var(--radius-sm);
+  transition: color .15s, background .15s, border-color .15s;
+}
+.move-card.done .check-button { color: #031a10; background: var(--green); border-color: var(--green); }
+.move-actions .btn { flex: 1; min-height: 36px; }
+
+/* ── Day notes ── */
+.day-note { margin-top: 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.compact-note {
+  padding: 13px 15px;
+  color: var(--muted-2); font-size: 11px; line-height: 1.6;
+  background: rgba(255,255,255,.02);
+  border: 1px solid var(--border-subtle); border-radius: var(--radius-md);
+}
+.compact-note strong { color: var(--text); }
+
+/* ════════════════════════════════════
+   SELL VIEW
+════════════════════════════════════ */
+.action-strip { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 9px; margin-bottom: 14px; }
+.action-step {
+  display: flex; align-items: center; gap: 11px;
+  padding: 13px; background: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  transition: border-color .2s, background .2s;
+}
+.action-step.done { border-color: rgba(52,211,153,.3); background: rgba(52,211,153,.05); }
+.action-check {
+  width: 26px; height: 26px; flex: 0 0 auto;
+  display: grid; place-items: center;
+  border: 1px solid var(--border); border-radius: 7px;
+  color: var(--green); font-size: 12px;
+}
+.action-step strong { display: block; font-size: 11px; }
+.action-step span { display: block; margin-top: 2px; color: var(--muted); font-size: 9px; }
+
+.radar-card {
+  margin-bottom: 14px;
+  display: grid; grid-template-columns: 1fr auto;
+  gap: 18px; align-items: center;
+  background: linear-gradient(135deg, rgba(139,92,246,.12), rgba(34,211,238,.04), var(--surface));
+  border-color: rgba(139,92,246,.25);
+}
+.radar-card h3 { margin-top: 6px; font: 700 20px 'Space Grotesk', sans-serif; }
+.radar-card p { max-width: 640px; margin-top: 6px; color: var(--muted-2); font-size: 11px; line-height: 1.6; }
+.radar-route { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.radar-route span {
+  padding: 5px 9px; color: var(--muted);
+  background: rgba(6,10,18,.6);
+  border: 1px solid var(--border-subtle);
+  border-radius: 7px; font-size: 9px;
+}
+
+.sales-layout { display: grid; grid-template-columns: minmax(0,.9fr) minmax(0,1.1fr); gap: 14px; }
+.script-box {
+  margin-top: 14px; padding: 15px;
+  color: var(--muted-2);
+  background: rgba(6,10,18,.6);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  font-size: 12px; line-height: 1.7; white-space: pre-line;
+}
+.button-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.crm-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 14px; }
+.sync { color: var(--muted); font-size: 9px; }
+.crm-form { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.crm-form .wide { grid-column: 1/-1; }
+.crm-tools { display: grid; grid-template-columns: 1fr 150px; gap: 8px; margin: 14px 0 8px; }
+.crm-list { display: grid; gap: 8px; max-height: 430px; overflow: auto; }
+.crm-item {
+  display: grid; grid-template-columns: 1fr auto; gap: 9px;
+  padding: 12px; background: rgba(6,10,18,.5);
+  border: 1px solid var(--border-subtle); border-radius: var(--radius-md);
+}
+.crm-item strong { display: block; font-size: 11px; }
+.crm-item p { margin-top: 4px; color: var(--muted-2); font-size: 9px; line-height: 1.45; }
+.status {
+  display: inline-flex; margin-top: 6px; padding: 3px 8px;
+  color: var(--cyan); background: var(--cyan-dim);
+  border-radius: var(--radius-pill);
+  font-size: 8px; font-weight: 800; text-transform: uppercase;
+}
+.empty { padding: 24px; color: var(--muted); text-align: center; font-size: 11px; }
+
+/* ════════════════════════════════════
+   PUBLISH VIEW
+════════════════════════════════════ */
+.publish-layout { display: grid; grid-template-columns: minmax(0,1.25fr) minmax(240px,.75fr); gap: 14px; }
+.content-card {
+  background: linear-gradient(145deg, rgba(139,92,246,.1), var(--surface));
+  border-color: rgba(139,92,246,.22);
+}
+.format-row { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-bottom: 14px; }
+.content-script { display: grid; gap: 10px; margin-top: 14px; }
+.content-part {
+  padding: 13px; background: rgba(6,10,18,.6);
+  border: 1px solid var(--border-subtle); border-radius: var(--radius-md);
+}
+.content-part small { color: var(--violet); font-size: 9px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.content-part p { margin-top: 6px; color: var(--text); font-size: 12px; line-height: 1.65; }
+.proof-steps { display: grid; gap: 8px; margin-top: 13px; }
+.proof-step {
+  display: grid; grid-template-columns: 28px 1fr;
+  gap: 10px; padding: 12px;
+  border: 1px solid var(--border-subtle); border-radius: var(--radius-md);
+}
+.proof-step b {
+  width: 28px; height: 28px;
+  display: grid; place-items: center;
+  color: var(--cyan); background: var(--cyan-dim);
+  border-radius: 8px; font-size: 10px;
+}
+.proof-step strong { display: block; font-size: 11px; }
+.proof-step span { display: block; margin-top: 3px; color: var(--muted-2); font-size: 9px; line-height: 1.45; }
+.idea-bank { display: grid; gap: 7px; margin-top: 13px; }
+.idea-chip {
+  padding: 10px 12px; color: var(--muted-2);
+  background: rgba(6,10,18,.5);
+  border: 1px solid var(--border-subtle); border-radius: var(--radius-md);
+  font-size: 10px; line-height: 1.5;
+  transition: border-color .15s, color .15s;
+}
+.idea-chip:hover { border-color: rgba(139,92,246,.4); color: var(--text); }
+.channel-purpose {
+  margin-bottom: 14px; padding: 12px 14px;
+  color: var(--muted-2);
+  background: var(--cyan-dim);
+  border: 1px solid var(--cyan-glow);
+  border-radius: var(--radius-md);
+  font-size: 11px; line-height: 1.55;
+}
+.channel-purpose strong { color: var(--cyan); }
+.week-strip {
+  display: grid; grid-template-columns: repeat(7,minmax(108px,1fr));
+  gap: 7px; margin-bottom: 14px; overflow-x: auto; padding-bottom: 4px;
+}
+.week-day {
+  min-width: 108px; padding: 11px;
+  background: var(--surface); border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+.week-day.today { border-color: var(--cyan); box-shadow: 0 0 0 1px var(--cyan-glow) inset; }
+.week-day.done { background: rgba(52,211,153,.05); border-color: rgba(52,211,153,.25); }
+.week-day b { display: block; color: var(--cyan); font-size: 9px; text-transform: uppercase; letter-spacing: .05em; }
+.week-day strong { display: block; margin-top: 5px; font-size: 10px; }
+.week-day span { display: block; margin-top: 3px; color: var(--muted); font-size: 8px; line-height: 1.4; }
+.account-links { display: grid; gap: 7px; margin-top: 14px; }
+.account-link {
+  display: flex; justify-content: space-between; gap: 10px;
+  padding: 10px 12px;
+  color: var(--muted-2);
+  background: rgba(6,10,18,.5);
+  border: 1px solid var(--border-subtle); border-radius: var(--radius-sm);
+  font-size: 9px; text-decoration: none;
+  transition: border-color .15s, background .15s;
+}
+.account-link:hover { border-color: var(--border); background: var(--surface-2); }
+.account-link strong { color: var(--text); }
+
+/* ════════════════════════════════════
+   PROJECTS VIEW
+════════════════════════════════════ */
+.project-summary { display: grid; grid-template-columns: repeat(3,1fr); gap: 9px; margin-bottom: 14px; }
+.summary-box {
+  padding: 14px; text-align: center;
+  background: var(--surface);
+  border: 1px solid var(--border-subtle); border-radius: var(--radius-md);
+}
+.summary-box strong { display: block; font: 700 24px 'Space Grotesk', sans-serif; color: var(--cyan); }
+.summary-box span { color: var(--muted); font-size: 9px; }
+.project-list { display: grid; gap: 8px; }
+.project-row {
+  display: grid; grid-template-columns: minmax(150px,.7fr) 130px minmax(200px,1.3fr) auto;
+  gap: 10px; align-items: center;
+  padding: 13px; background: var(--surface);
+  border: 1px solid var(--border-subtle); border-radius: var(--radius-md);
+  transition: border-color .2s;
+}
+.project-row.focus { border-color: rgba(34,211,238,.3); background: linear-gradient(90deg, rgba(34,211,238,.03), var(--surface)); }
+.project-name strong { display: block; font-size: 12px; }
+.project-name span { display: block; margin-top: 3px; color: var(--muted); font-size: 9px; }
+.project-row select, .project-row input { min-height: 38px; }
+.project-actions { display: flex; gap: 6px; }
+.add-project {
+  display: grid; grid-template-columns: 1fr 1fr 1.5fr auto;
+  gap: 9px; margin-top: 14px; padding: 14px;
+  border: 1px dashed var(--border-subtle); border-radius: var(--radius-md);
+}
+.focus-rule {
+  margin-bottom: 14px; padding: 13px 15px;
+  color: var(--muted-2);
+  background: var(--cyan-dim);
+  border: 1px solid var(--cyan-glow);
+  border-radius: var(--radius-md);
+  font-size: 11px; line-height: 1.55;
+}
+.focus-rule strong { color: var(--cyan); }
+
+/* ════════════════════════════════════
+   DIALOGS
+════════════════════════════════════ */
+dialog.nt-dialog {
+  width: min(520px, calc(100% - 28px));
+  max-height: calc(100vh - 32px);
+  margin: auto; overflow: auto;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+}
+dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur(6px); }
+.dialog-body { padding: 22px; }
+.dialog-head {
+  display: flex; justify-content: space-between;
+  gap: 14px; align-items: flex-start;
+  margin-bottom: 18px;
+}
+.dialog-head h3 { font: 700 20px 'Space Grotesk', sans-serif; letter-spacing: -.03em; }
+.dialog-head p { margin-top: 5px; color: var(--muted-2); font-size: 10px; line-height: 1.55; }
+.dialog-close {
+  width: 36px; height: 36px; flex: 0 0 auto;
+  color: var(--muted); background: var(--surface-2);
+  border: 1px solid var(--border-subtle); border-radius: var(--radius-sm);
+}
+.dialog-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.dialog-grid .wide { grid-column: 1/-1; }
+.resist-plan { display: grid; gap: 8px; margin: 12px 0; }
+.resist-step {
+  display: grid; grid-template-columns: 28px 1fr;
+  gap: 9px; align-items: center;
+  padding: 11px; background: var(--surface-2);
+  border: 1px solid var(--border-subtle); border-radius: var(--radius-md);
+}
+.resist-step b {
+  width: 28px; height: 28px;
+  display: grid; place-items: center;
+  color: var(--cyan); background: var(--cyan-dim);
+  border-radius: 8px;
+}
+.resist-step strong { display: block; font-size: 10.5px; }
+.resist-step span { display: block; margin-top: 2px; color: var(--muted-2); font-size: 8px; line-height: 1.45; }
+.range-row { display: flex; align-items: center; gap: 12px; }
+.range-row input { flex: 1; accent-color: var(--violet); }
+.range-row output { min-width: 42px; color: var(--violet); font-weight: 800; font-variant-numeric: tabular-nums; }
+.medical-note {
+  margin-top: 12px; padding: 10px;
+  color: var(--muted-2);
+  background: var(--amber-dim);
+  border: 1px solid rgba(251,191,36,.15);
+  border-radius: var(--radius-sm);
+  font-size: 8px; line-height: 1.55;
+}
+
+/* ════════════════════════════════════
+   TOAST
+════════════════════════════════════ */
+.toast {
+  position: fixed; z-index: 100;
+  right: 20px; bottom: 20px;
+  max-width: 300px; padding: 12px 16px;
+  color: var(--text);
+  background: var(--surface-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  font-size: 11px; font-weight: 500;
+  opacity: 0; transform: translateY(8px);
+  pointer-events: none;
+  transition: opacity .2s ease, transform .2s ease;
+}
+.toast.show { opacity: 1; transform: translateY(0); }
+
+/* ════════════════════════════════════
+   BOTTOM NAV — mobile only
+════════════════════════════════════ */
+.bottom-nav { display: none; }
+
+/* ════════════════════════════════════
+   MICRO INTERACTIONS (pointer:fine)
+════════════════════════════════════ */
+@media (hover: hover) and (pointer: fine) {
+  .btn, .nav-button, .move-card, .project-row {
+    transition: transform .18s ease, border-color .18s ease, background .18s ease, box-shadow .18s ease;
+  }
+  .move-card:hover {
+    border-color: var(--border);
+    box-shadow: 0 8px 30px rgba(0,0,0,.3);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+/* ════════════════════════════════════
+   RESPONSIVE — TABLET 800px
+════════════════════════════════════ */
+@media (max-width: 800px) {
+  .app { display: block; }
+  .sidebar { display: none; }
+  .main { padding-bottom: 86px; }
+  .topbar { min-height: 48px; padding: 0 16px; }
+  .topbar-brand { display: block; }
+  .view-title { display: none; }
+  .view { padding: 16px 16px 32px; }
+  .section-head { margin-bottom: 14px; }
+  .hero-row, .sales-layout, .publish-layout, .radar-card { grid-template-columns: 1fr; }
+  .today-hero { padding: 18px; }
+  .discipline-card { padding: 16px; }
+  .goal-row { grid-template-columns: 1fr; }
+  .ai-fields { grid-template-columns: 1fr; }
+  .moves, .action-strip { grid-template-columns: 1fr; }
+  .move-card { min-height: 0; }
+  .day-note { grid-template-columns: 1fr; }
+  .project-row { grid-template-columns: 1fr 120px; }
+  .project-row .project-next { grid-column: 1/-1; }
+  .project-actions { grid-column: 1/-1; }
+  .add-project { grid-template-columns: 1fr; }
+
+  /* ─── Mobile Bottom Nav (iOS / Linear Minimalist) ─── */
+  .bottom-nav {
+    position: fixed; z-index: 60;
+    left: 0; right: 0; bottom: 0;
+    display: grid; grid-template-columns: repeat(4,1fr);
+    padding: 4px max(8px,env(safe-area-inset-right)) calc(6px + env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(6, 10, 18, 0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+  .bottom-button {
+    position: relative;
+    min-height: 48px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 2px;
+    color: var(--muted);
+    background: transparent; border: 0;
+    border-radius: var(--radius-sm);
+    font-size: 9px; font-weight: 600;
+    letter-spacing: .01em;
+    transition: color .15s;
+  }
+  .bottom-button svg { width: 18px; height: 18px; stroke-width: 1.8; transition: transform .15s ease; }
+  .bottom-button.active { color: var(--cyan); }
+  .bottom-button.active svg { transform: translateY(-1px); }
+  .bottom-button.active::before {
+    content: '';
+    position: absolute;
+    top: 2px; left: 50%; transform: translateX(-50%);
+    width: 16px; height: 2px; border-radius: 1px;
+    background: var(--cyan);
+    box-shadow: 0 0 6px var(--cyan);
+  }
+  .bottom-button { position: relative; }
+  .toast { left: 16px; right: 16px; bottom: 92px; max-width: none; }
+
+  /* Smoke clock on mobile: simpler row */
+  .smoke-clock { grid-template-columns: 1fr; gap: 10px; }
+  .smoke-goal { text-align: left; }
+}
+
+/* ════════════════════════════════════
+   RESPONSIVE — MOBILE 480px
+════════════════════════════════════ */
+@media (max-width: 480px) {
+  .crm-form, .crm-tools, .format-row, .project-summary { grid-template-columns: 1fr; }
+  .discipline-head, .smoke-empty { align-items: flex-start; flex-direction: column; }
+  .smoke-stats { grid-template-columns: 1fr 1fr; }
+  .smoke-stat:first-child { grid-column: 1/-1; }
+  .health-row { grid-template-columns: 34px 1fr; }
+  .health-source { grid-column: 2; }
+  .dialog-grid { grid-template-columns: 1fr; }
+  .dialog-grid .wide, .crm-form .wide { grid-column: auto; }
+  .project-summary { grid-template-columns: repeat(3,1fr); }
+  .project-row { grid-template-columns: 1fr; }
+  .project-row .project-next, .project-actions { grid-column: auto; }
+  .button-row .btn { flex: 1; }
+  .smoke-clock-nums { flex-wrap: wrap; }
+  .smoke-unit { padding: 0 8px; }
+  .smoke-unit-val { font-size: clamp(26px,8vw,38px); }
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-kicker">Tu sistema de ejecución</div>
+      <h1>NT <span>HOY</span></h1>
+      <p>Abre. Decide. Ejecuta. Cierra.</p>
+    </div>
+    <div class="day-progress">
+      <div class="day-progress-top"><span>Avance de hoy</span><span id="side-progress-label">0 / 4</span></div>
+      <div class="progress-track"><div class="progress-fill" id="side-progress"></div></div>
+    </div>
+    <nav class="side-nav" aria-label="Navegación principal">
+      <button class="nav-button active" data-view="today"><span class="nav-index">01</span>Hoy</button>
+      <button class="nav-button" data-view="sell"><span class="nav-index">02</span>Vender</button>
+      <button class="nav-button" data-view="publish"><span class="nav-index">03</span>Publicar</button>
+      <button class="nav-button" data-view="projects"><span class="nav-index">04</span>Proyectos</button>
+    </nav>
+    <div class="side-rule"><strong>Regla diaria</strong>Empieza fácil. Una sola cuenta principal de contenido. Lo que no terminaste ayer no se acumula: hoy comienza limpio.</div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <span id="date-pill" hidden></span>
+      <p class="topbar-phrase" id="topbar-phrase" aria-live="polite">Abre. Decide. Ejecuta. Cierra.</p>
+    </header>
+
+    <section class="view active" id="view-today">
+      <div class="section-head"><div class="eyebrow">Solo lo importante</div><h2>¿Qué harás hoy?</h2></div>
+      <section class="discipline-card" aria-labelledby="discipline-title">
+        <div class="smoke-empty" id="smoke-empty">
+          <p>Configura tu fecha de inicio y consumo habitual. Los cálculos se guardan solo en este dispositivo.</p>
+          <button class="btn btn-success" onclick="openSmokeSetup()">Configurar control</button>
+        </div>
+
+        <div id="smoke-dashboard" hidden>
+          <!-- 4-Color Clock Section -->
+          <div class="smoke-clock-wrapper">
+            <div class="smoke-clock-title">TIEMPO SIN FUMAR</div>
+            <div class="smoke-clock-grid">
+              <div class="sc-unit"><span class="sc-val val-blue" id="su-days">0</span><span class="sc-lbl">días</span></div>
+              <div class="sc-unit"><span class="sc-val val-purple" id="su-hours">00</span><span class="sc-lbl">horas</span></div>
+              <div class="sc-unit"><span class="sc-val val-green" id="su-mins">00</span><span class="sc-lbl">min</span></div>
+              <div class="sc-unit"><span class="sc-val val-yellow" id="su-secs">00</span><span class="sc-lbl">seg</span></div>
+            </div>
+            <div class="smoke-progress-section">
+              <div class="spb-track"><span id="smoke-progress"></span></div>
+              <div class="spb-labels">
+                <span id="smoke-goal-text">Meta: 30 días sin fumar</span>
+                <span id="smoke-goal" class="spb-pct">0%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- hidden element kept for JS compatibility -->
+          <span id="smoke-time" hidden>0 días · 0 h · 0 min</span>
+          <span id="smoke-health-next" hidden></span>
+
+          <!-- 2x2 Metric Cards Grid (Reto Control Style) -->
+          <div class="rc-grid">
+            <div class="rc-card">
+              <div class="rc-card-top"><span class="rc-icon icon-green">$</span><span class="rc-title">AHORRADO</span></div>
+              <div class="rc-val" id="smoke-money">RD$0</div>
+              <div class="rc-sub" id="smoke-money-sub">RD$0 /mes est.</div>
+            </div>
+            <div class="rc-card">
+              <div class="rc-card-top"><span class="rc-icon icon-blue">🚬</span><span class="rc-title">EVITADOS</span></div>
+              <div class="rc-val" id="smoke-avoided">0</div>
+              <div class="rc-sub" id="smoke-avoided-sub">0 paquetes lib.</div>
+            </div>
+            <div class="rc-card">
+              <div class="rc-card-top"><span class="rc-icon icon-purple">⚡</span><span class="rc-title">RACHA</span></div>
+              <div class="rc-val" id="smoke-streak">0 días</div>
+              <div class="rc-sub" id="smoke-check-label">confirma hoy</div>
+            </div>
+            <div class="rc-card">
+              <div class="rc-card-top"><span class="rc-icon icon-yellow">🎯</span><span class="rc-title">PROYECTO</span></div>
+              <div class="rc-val val-project" id="smoke-project-name">WHABOT Pro</div>
+              <div class="rc-sub">foco activo</div>
+            </div>
+          </div>
+
+          <!-- Interactive Health Banner -->
+          <div class="rc-health-banner" onclick="openDialog('health-modal')" role="button" tabindex="0">
+            <div class="hb-icon">♡</div>
+            <div class="hb-body">
+              <strong>Tu salud se está recuperando</strong>
+              <span>Oxígeno, pulmones, corazón y objetivo físico del día ›</span>
+            </div>
+          </div>
+
+          <!-- Reto Control Action Buttons -->
+          <div class="rc-actions">
+            <button class="btn btn-warning btn-block" onclick="openCravingDialog()">
+              <span class="btn-ic">⚠️</span> Tengo ansiedad
+            </button>
+            <button class="btn btn-success btn-block" id="smoke-confirm" onclick="confirmSmokeFree()">
+              <span class="btn-ic">✓</span> Sigo sin fumar → comenzar guía
+            </button>
+            <div class="rc-sub-actions">
+              <button class="btn btn-secondary btn-small wide" onclick="openLapseDialog()">🔄 Tuve recaída / +Cigarrillo</button>
+              <button class="btn btn-secondary btn-small" onclick="openSmokeSetup()">⚙ Ajustes</button>
+            </div>
+          </div>
+
+          <details class="smoke-log"><summary>Ver registro</summary><div class="smoke-log-list" id="smoke-log-list"></div></details>
+        </div>
+      </section>
+      <div class="card today-hero">
+        <div class="hero-row">
+          <div><div class="eyebrow">Foco activo</div><h3 id="focus-heading">WHABOT Pro</h3><p id="focus-description"></p></div>
+          <div class="field focus-control"><label for="today-project">Sistema que vas a mover</label><select id="today-project" onchange="changeFocus(this.value)"></select></div>
+        </div>
+        <div class="goal-row"><div class="field"><label for="today-goal">Resultado que quieres dejar listo hoy</label><input id="today-goal" maxlength="140" placeholder="Ej.: agendar una demo y publicar un caso" oninput="saveTodayGoal(this.value)"></div><button class="btn btn-primary" onclick="focusFirstPending()">Empezar siguiente acción</button></div>
+        <div class="ai-bar"><div class="ai-status" id="ai-status"><strong>Plan base activo.</strong> La IA puede variar los consejos sin cambiar tus cuentas asignadas.</div><button class="btn btn-secondary btn-small" id="ai-generate" onclick="generateAIPlan(this)">Mejorar con IA</button><button class="btn btn-secondary btn-small" onclick="restoreBasePlan()">Restaurar base</button><details class="ai-setup" id="ai-setup"><summary>Configurar Gemini</summary><div class="ai-fields"><input class="input" id="gemini-key" type="password" autocomplete="off" placeholder="Clave de Gemini API"><button class="btn btn-secondary" onclick="saveAIKey()">Usar durante esta sesión</button></div><div class="ai-help">La clave se guarda únicamente en sessionStorage mientras esta pestaña esté abierta. No se escribe dentro del archivo ni en el almacenamiento permanente. <a href="https://aistudio.google.com/apikey" target="_blank" rel="noreferrer" style="color:var(--cyan)">Crear o ver clave →</a></div></details></div>
+      </div>
+      <div class="next-action" id="next-action"><div><small>Siguiente acción</small><strong id="next-action-text"></strong></div><button class="btn btn-secondary btn-small" onclick="focusFirstPending()">Abrir</button></div>
+      <div class="moves" id="daily-moves"></div>
+      <div class="day-note"><div class="compact-note"><strong>Modo mínimo:</strong> si hoy tienes poca energía, completa la historia y los 5 contactos. El día todavía produjo señal.</div><div class="compact-note" id="pause-note"><strong>Protege el foco:</strong> los proyectos pausados no reciben mejoras hoy.</div></div>
+    </section>
+
+    <section class="view" id="view-sell">
+      <div class="section-head"><div class="eyebrow">Motor comercial</div><h2>Vende algo hoy</h2><p>No necesitas una campaña completa. Necesitas conversaciones, seguimiento y un próximo paso.</p></div>
+      <div class="card radar-card"><div><div class="eyebrow">Tu motor de prospección</div><h3>Usa NT RADAR antes de buscar manualmente</h3><p>Encuentra negocios con brecha digital, audita los candidatos y utiliza el mensaje de venta de la IA. El objetivo de hoy es guardar 5 oportunidades útiles, no coleccionar cientos de registros.</p><div class="radar-route"><span>1 · Buscar nicho + ciudad</span><span>2 · Elegir 5</span><span>3 · Auditar con IA</span><span>4 · Enviar mensaje</span><span>5 · Registrar respuesta</span></div></div><a class="btn btn-primary" href="https://www.ntradar.com/" target="_blank" rel="noreferrer">Abrir NT RADAR</a></div>
+      <div class="action-strip" id="sales-actions"></div>
+      <div class="sales-layout">
+        <div class="card">
+          <div class="field"><label for="sell-project">Oferta comercial que moverás</label><select id="sell-project" onchange="changeSellProject(this.value)"></select></div>
+          <div class="script-box" id="sales-script"></div>
+          <div class="button-row"><button class="btn btn-primary" onclick="copySalesScript(this)">Copiar mensaje</button><button class="btn btn-secondary" onclick="document.getElementById('crm-panel').scrollIntoView({behavior:'smooth'})">Registrar prospecto</button></div>
+        </div>
+        <div class="card" id="crm-panel">
+          <div class="crm-head"><div class="card-title">CRM mínimo</div><span class="sync" id="sync-status">Guardado local</span></div>
+          <div class="crm-form">
+            <div class="field"><label for="crm-name">Negocio o persona</label><input id="crm-name" placeholder="Nombre"></div>
+            <div class="field"><label for="crm-contact">Contacto</label><input id="crm-contact" placeholder="WhatsApp, email o usuario"></div>
+            <div class="field"><label for="crm-stage">Estado</label><select id="crm-stage"><option value="nuevo">Nuevo</option><option value="contactado">Contactado</option><option value="respondio">Respondió</option><option value="demo">Demo</option><option value="propuesta">Propuesta</option><option value="piloto">Piloto</option><option value="cerrado">Pago</option><option value="perdido">Perdido</option></select></div>
+            <div class="field"><label for="crm-next">Próximo paso</label><input id="crm-next" placeholder="Escribir mañana, enviar demo..."></div>
+            <button class="btn btn-primary wide" onclick="addProspect()">Guardar prospecto</button>
+          </div>
+          <div class="crm-tools"><input class="input" id="crm-search" placeholder="Buscar prospecto" oninput="renderCRM()"><select class="input" id="crm-filter" onchange="renderCRM()"><option value="">Todos</option><option value="pendiente">Pendientes</option><option value="cerrado">Pagos</option></select></div>
+          <div class="crm-list" id="crm-list"></div>
+          <div class="button-row"><button class="btn btn-secondary btn-small" onclick="exportCRM()">Exportar CSV</button></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="view-publish">
+      <div class="section-head"><div class="eyebrow">Contenido del día</div><h2>Publica una prueba, no relleno</h2><p>Una sola cuenta principal por día. Cada canal conserva su tema; reposta únicamente cuando la misma pieza tenga sentido para ambas audiencias.</p></div>
+      <div class="week-strip" id="content-week"></div>
+      <div class="publish-layout">
+        <div class="card content-card">
+          <div class="channel-purpose" id="channel-purpose"></div>
+          <div class="format-row"><div class="field"><label for="publish-account">Cuenta asignada hoy</label><select id="publish-account" onchange="changePublishAccount(this.value)"></select></div><div class="field"><label for="publish-format">Formato</label><select id="publish-format"><option>Reel corto</option><option>Carrusel</option><option>Historia</option><option>Post técnico</option></select></div></div>
+          <div class="content-script"><div class="content-part"><small>Gancho</small><p id="content-hook"></p></div><div class="content-part"><small>Desarrollo</small><p id="content-body"></p></div><div class="content-part"><small>CTA</small><p id="content-cta"></p></div></div>
+          <div class="button-row"><button class="btn btn-primary" onclick="copyContent(this)">Copiar contenido</button><button class="btn btn-secondary" onclick="nextIdea()">Otra idea</button><button class="btn btn-secondary" onclick="openAssignedInstagram()">Abrir Instagram</button><button class="btn btn-secondary" onclick="markPublished()">Marcar publicado</button></div>
+        </div>
+        <div>
+          <div class="card"><div class="card-title">Fórmula rápida</div><div class="proof-steps"><div class="proof-step"><b>1</b><div><strong>Muestra</strong><span>Una pantalla, conversación, resultado o error real.</span></div></div><div class="proof-step"><b>2</b><div><strong>Explica</strong><span>Qué problema resolviste y qué aprendiste.</span></div></div><div class="proof-step"><b>3</b><div><strong>Invita</strong><span>Una sola acción: probar, comentar, pedir demo o visitar.</span></div></div></div></div>
+          <div class="idea-bank" id="idea-bank"></div>
+          <div class="account-links" id="account-links"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="view-projects">
+      <div class="section-head"><div class="eyebrow">Control de foco</div><h2>Decide qué avanza y qué espera</h2><p>Un proyecto en foco, hasta dos de soporte y el resto en pausa. Añade aquí los sistemas que todavía no aparecen.</p></div>
+      <div class="project-summary"><div class="summary-box"><strong id="focus-count">1</strong><span>en foco</span></div><div class="summary-box"><strong id="support-count">0</strong><span>en soporte</span></div><div class="summary-box"><strong id="pause-count">0</strong><span>en pausa</span></div></div>
+      <div class="focus-rule"><strong>Límite automático:</strong> solo permitimos 1 proyecto en foco y 2 en soporte. Si todo es prioridad, nada recibe suficiente energía.</div>
+      <div class="project-list" id="project-list"></div>
+      <div class="add-project"><input class="input" id="new-project-name" placeholder="Nuevo proyecto"><input class="input" id="new-project-kind" placeholder="SaaS, servicio, herramienta..."><input class="input" id="new-project-next" placeholder="Próxima acción concreta"><button class="btn btn-primary" onclick="addProject()">Añadir</button></div>
+    </section>
+  </main>
+</div>
+
+<nav class="bottom-nav" aria-label="Navegación móvil">
+  <button class="bottom-button active" data-view="today">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+    </svg>
+    Hoy
+  </button>
+  <button class="bottom-button" data-view="sell">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+    </svg>
+    Vender
+  </button>
+  <button class="bottom-button" data-view="publish">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
+    </svg>
+    Publicar
+  </button>
+  <button class="bottom-button" data-view="projects">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+    </svg>
+    Proyectos
+  </button>
+</nav>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<dialog class="nt-dialog" id="smoke-setup-dialog" aria-labelledby="smoke-setup-title">
+  <form class="dialog-body" onsubmit="saveSmokeSetup(event)">
+    <div class="dialog-head"><div><h3 id="smoke-setup-title">Configura tu control</h3><p>Usaremos estos datos únicamente para calcular tu tiempo, dinero y cigarrillos evitados en este navegador.</p></div><button class="dialog-close" type="button" onclick="closeDialog('smoke-setup-dialog')" aria-label="Cerrar">×</button></div>
+    <div class="dialog-grid">
+      <div class="field wide"><label for="quit-at">Último cigarrillo</label><input id="quit-at" type="datetime-local" required></div>
+      <div class="field"><label for="cigs-day">Cigarrillos por día</label><input id="cigs-day" type="number" min="1" max="100" step="1" value="10" required></div>
+      <div class="field"><label for="pack-size">Cigarrillos por paquete</label><input id="pack-size" type="number" min="1" max="100" step="1" value="20" required></div>
+      <div class="field"><label for="pack-price">Precio del paquete (RD$)</label><input id="pack-price" type="number" min="0" max="100000" step="1" value="300" required></div>
+      <div class="field"><label for="quit-goal">Meta inicial en días</label><input id="quit-goal" type="number" min="1" max="3650" step="1" value="30" required></div>
+    </div>
+    <div class="button-row"><button class="btn btn-success" type="submit">Guardar y empezar</button><button class="btn btn-secondary" type="button" onclick="closeDialog('smoke-setup-dialog')">Cancelar</button></div>
+    <div class="medical-note">Este panel acompaña tu decisión, pero no sustituye apoyo médico. El CDC indica que combinar orientación profesional y tratamientos aprobados ofrece mejores probabilidades de dejar de fumar.</div>
+  </form>
+</dialog>
+
+<dialog class="nt-dialog" id="craving-dialog" aria-labelledby="craving-title">
+  <form class="dialog-body" onsubmit="resistCraving(event)">
+    <div class="dialog-head"><div><h3 id="craving-title">Pasa estos minutos sin decidir fumar</h3><p>No tienes que resolver el día completo ahora. Solo atraviesa este impulso y vuelve a una acción pequeña.</p></div><button class="dialog-close" type="button" onclick="closeDialog('craving-dialog')" aria-label="Cerrar">×</button></div>
+    <div class="field"><label for="craving-level">Ansiedad ahora</label><div class="range-row"><input id="craving-level" type="range" min="1" max="10" value="5" oninput="document.getElementById('craving-output').value=this.value+'/10'"><output id="craving-output">5/10</output></div></div>
+    <div class="field" style="margin-top:12px"><label for="craving-trigger">¿Qué la activó?</label><select id="craving-trigger"><option value="estrés">Estrés</option><option value="aburrimiento">Aburrimiento</option><option value="después de comer">Después de comer</option><option value="bloqueo de trabajo">Bloqueo de trabajo</option><option value="situación social">Situación social</option><option value="otro">Otro</option></select></div>
+    <div class="resist-plan"><div class="resist-step"><b>1</b><div><strong>Respira y toma agua</strong><span>Separa el impulso de la acción durante un momento.</span></div></div><div class="resist-step"><b>2</b><div><strong>Cambia de lugar</strong><span>Camina, lávate la cara o sal del espacio asociado al cigarrillo.</span></div></div><div class="resist-step"><b>3</b><div><strong>Haz la tarea más fácil</strong><span>Una historia simple ocupa tu atención y calienta el sistema.</span></div></div></div>
+    <div class="button-row"><button class="btn btn-success" type="submit">Resistí → abrir tarea fácil</button><button class="btn btn-secondary" type="button" onclick="closeDialog('craving-dialog')">Todavía estoy pasando el impulso</button></div>
+  </form>
+</dialog>
+
+<dialog class="nt-dialog" id="lapse-dialog" aria-labelledby="lapse-title">
+  <form class="dialog-body" onsubmit="registerLapse(event)">
+    <div class="dialog-head"><div><h3 id="lapse-title">Registra lo ocurrido sin borrar el aprendizaje</h3><p>Un cigarrillo no elimina tus intentos anteriores. Guardaremos el evento y el contador actual comenzará de nuevo desde ahora.</p></div><button class="dialog-close" type="button" onclick="closeDialog('lapse-dialog')" aria-label="Cerrar">×</button></div>
+    <div class="dialog-grid"><div class="field"><label for="lapse-count">Cantidad</label><input id="lapse-count" type="number" min="1" max="100" value="1" required></div><div class="field"><label for="lapse-trigger">Detonante</label><input id="lapse-trigger" maxlength="100" placeholder="Estrés, reunión, comida..."></div></div>
+    <div class="button-row"><button class="btn btn-warning" type="submit">Registrar y reiniciar contador</button><button class="btn btn-secondary" type="button" onclick="closeDialog('lapse-dialog')">Cancelar</button></div>
+  </form>
+</dialog>
+
+<dialog class="nt-dialog health-dialog" id="health-modal" aria-labelledby="health-modal-title">
+  <div class="dialog-body">
+    <div class="dialog-head">
+      <div>
+        <h3 id="health-modal-title">Tu salud se recupera</h3>
+        <p>Proyecciones orientativas basadas en evidencia clínica (CDC / AHA / OMS)</p>
+      </div>
+      <button class="dialog-close" type="button" onclick="closeDialog('health-modal')" aria-label="Cerrar">×</button>
+    </div>
+
+    <div class="health-sec-title">MÉTRICAS BIOLÓGICAS EN VIVO</div>
+    <div class="hm-metrics">
+      <div class="hm-metric">
+        <div class="hm-mtop"><span class="hm-mic icon-blue">💨</span><div><strong>Oxígeno en sangre</strong><p>El monóxido de carbono baja al nivel normotípico (12h).</p></div><span class="hm-val text-blue" id="hm-o2-val">98%</span></div>
+        <div class="hm-track"><div class="hm-fill fill-blue" id="hm-o2-bar" style="width: 98%;"></div></div>
+      </div>
+
+      <div class="hm-metric">
+        <div class="hm-mtop"><span class="hm-mic icon-yellow">☁️</span><div><strong>Monóxido de carbono (CO)</strong><p>Gas de combustión tóxico. Se elimina en las primeras 12h.</p></div><span class="hm-val text-yellow" id="hm-co-val">2ppm</span></div>
+        <div class="hm-track"><div class="hm-fill fill-yellow" style="width: 85%;"></div></div>
+      </div>
+
+      <div class="hm-metric">
+        <div class="hm-mtop"><span class="hm-mic icon-purple">❤️</span><div><strong>Frecuencia cardíaca</strong><p>Retorno progresivo a ritmo sinusal basal (20 min).</p></div><span class="hm-val text-purple" id="hm-hr-val">72bpm</span></div>
+        <div class="hm-track"><div class="hm-fill fill-purple" style="width: 100%;"></div></div>
+      </div>
+
+      <div class="hm-metric">
+        <div class="hm-mtop"><span class="hm-mic icon-green">⚡</span><div><strong>Capacidad pulmonar neta</strong><p>Recuperación bronquial y oxigenación tisular acumulada.</p></div><span class="hm-val text-green" id="hm-lung-val">76.6%</span></div>
+        <div class="hm-track"><div class="hm-fill fill-green" id="hm-lung-bar" style="width: 76%;"></div></div>
+      </div>
+    </div>
+
+    <div class="hm-goal-box">
+      <div class="hm-goal-top"><span class="eyebrow">OBJETIVO FÍSICO · HOY</span><span class="hm-badge">Recomendado</span></div>
+      <h4>🚶‍♂️ Caminata 30 min + estiramiento torácico</h4>
+      <p>Aumenta la ventilación alveolar, mejora el flujo sanguíneo y disipa la ansiedad física.</p>
+    </div>
+
+    <div class="health-sec-title" style="margin-top:16px;">LÍNEA DE TIEMPO CLÍNICA DE RECUPERACIÓN</div>
+    <div class="hm-timeline">
+      <div class="hm-tl-item" id="tl-20m"><span class="hm-check">✓</span><div><strong>20 minutos · Estabilización cardiovascular</strong><p>La frecuencia cardíaca y la presión arterial descienden a valores basales.</p></div></div>
+      <div class="hm-tl-item" id="tl-12h"><span class="hm-check">✓</span><div><strong>12 horas · Oxigenación tisular completa</strong><p>El nivel de monóxido de carbono en sangre se normaliza.</p></div></div>
+      <div class="hm-tl-item" id="tl-24h"><span class="hm-check">✓</span><div><strong>24 horas · Descenso de riesgo coronario agudo</strong><p>Disminuye la probabilidad estadística de espasmo o evento cardíaco.</p></div></div>
+      <div class="hm-tl-item" id="tl-48h"><span class="hm-check">✓</span><div><strong>48 horas · Nicotina libre eliminada</strong><p>Terminaciones nerviosas de gusto y olfato inician su regeneración.</p></div></div>
+      <div class="hm-tl-item" id="tl-72h"><span class="hm-check">✓</span><div><strong>72 horas · Relajación bronquial</strong><p>Los bronquios se dilatan, facilitando la ventilación y aumentando el flujo de aire.</p></div></div>
+      <div class="hm-tl-item" id="tl-2w"><span class="hm-dot"></span><div><strong>2 a 12 semanas · Función pulmonar (+30%)</strong><p>Mejora sustancial de la circulación periférica y el rendimiento al caminar.</p></div></div>
+      <div class="hm-tl-item" id="tl-1m"><span class="hm-dot"></span><div><strong>1 a 9 meses · Regeneración ciliar</strong><p>Los cilios bronquiales limpian mucosidad, reduciendo tos y disnea de esfuerzo.</p></div></div>
+      <div class="hm-tl-item" id="tl-1y"><span class="hm-dot"></span><div><strong>1 año · Riesgo coronario a la mitad (-50%)</strong><p>El riesgo adicional de enfermedad coronaria es el 50% de un fumador activo.</p></div></div>
+    </div>
+
+    <div class="hm-tip-box">
+      <span class="hm-tip-icon">🧊</span>
+      <div><strong>Estrategia de regulación vagal</strong><p>Bebes un vaso de agua fría lentamente o respira en ritmo 4-7-8 cuando aparezca un antojo agudo.</p></div>
+    </div>
+
+    <div class="medical-note" style="margin-top:14px;">Proyecciones orientativas basadas en datos biomédicos de la Centers for Disease Control and Prevention (CDC), American Heart Association (AHA) y OMS. Los tiempos individuales varían y no sustituyen evaluación médica.</div>
+  </div>
+</dialog>
+
+<script>
+const STORAGE_KEY = 'nt_growth_os_simple_v1';
+const LEGACY_KEY = 'whabot_state';
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbxrS7lhNAg81TFWzJI5iEyXmou5Ucr6wIVRcZTa0ZjFJCQMOeUVGRkiF_6_YQFctHjd/exec';
+const TITLES = { today:'Hoy', sell:'Vender', publish:'Publicar', projects:'Proyectos' };
+
+const ACCOUNTS = [
+  {id:'personal',name:'Marca personal',handle:'@nachotorresrd',url:'https://www.instagram.com/nachotorresrd/',purpose:'Código, inteligencia artificial, construcción en público y conexión con todos tus sistemas.',ideas:[
+    {hook:'Lo que estoy construyendo hoy con código e IA.',body:'Muestra una pantalla real, explica el problema en una frase y comparte la decisión técnica o de producto que tomaste.',cta:'¿Quieres que publique el proceso completo?'},
+    {hook:'Una cosa que la IA hizo mal y cómo la corregí.',body:'Enseña el resultado inicial, la regla o contexto que faltaba y el resultado mejorado.',cta:'Guarda este aprendizaje para tu próximo proyecto con IA.'},
+    {hook:'Tengo varios sistemas; esta es la regla que evita que me dispersen.',body:'Comparte tu foco del día y los cuatro movimientos del panel: historia, contenido, prospección y producto.',cta:'¿Cómo decides qué proyecto mover hoy?'},
+    {hook:'De idea a sistema real: el paso que casi siempre se ignora.',body:'Explica cómo validas un problema con personas antes de seguir añadiendo funciones.',cta:'Sígueme para ver la construcción sin filtros.'},
+    {hook:'Creé una skill gratuita para que la IA construya mejores webs.',body:'Graba un clip usando NT-Skill Supreme en una web real: enseña el problema inicial, una regla aplicada y el resultado. No la vendas; invita a usarla y compartir feedback.',cta:'La skill está gratis en mi GitHub. Úsala en tu próxima web y mencióname en el resultado.'}
+  ]},
+  {id:'tech',name:'Reparación y tecnología móvil',handle:'@nachotechrd',url:'https://www.instagram.com/nachotechrd/',purpose:'Reparaciones de celulares, educación sobre tecnología móvil, confianza técnica y captación de clientes locales.',ideas:[
+    {hook:'Antes de cambiar tu celular, revisa esto.',body:'Comparte una comprobación simple de batería, almacenamiento, puerto o pantalla que ayude a decidir si reparar.',cta:'Escríbeme el modelo y el problema para orientarte.'},
+    {hook:'El error que convierte una reparación pequeña en una cara.',body:'Explica un hábito común que agrava daños por humedad, carga o golpes, sin exagerar el resultado.',cta:'Guarda este consejo y compártelo con alguien que lo necesite.'},
+    {hook:'Así se ve una reparación bien diagnosticada.',body:'Muestra el antes, la prueba realizada y el después sin revelar datos del cliente.',cta:'¿Tu teléfono presenta algo parecido? Envíame un mensaje.'},
+    {hook:'Tres señales de que el problema no es el cargador.',body:'Enseña señales observables y recomienda diagnóstico antes de comprar piezas al azar.',cta:'Comenta tu modelo y síntoma.'}
+  ]},
+  {id:'whabot',name:'WHABOT Pro',handle:'@whabotpro',url:'https://www.instagram.com/whabotpro/',purpose:'Demostraciones de automatización, atención por WhatsApp, captación y seguimiento para negocios.',ideas:[
+    {hook:'La pregunta que más ventas enfría en WhatsApp.',body:'Muestra una consulta repetida, la respuesta aprobada y cómo el caso pasa a una persona cuando hace falta.',cta:'Escríbeme “DEMO” y preparo un ejemplo con tu negocio.'},
+    {hook:'Automatizar no significa dejar al cliente hablando solo.',body:'Explica con una conversación cómo se captura el interés y se transfiere el caso importante al equipo.',cta:'¿Qué conversación nunca dejarías completamente al bot?'},
+    {hook:'De mensaje perdido a próximo paso organizado.',body:'Enseña el recorrido pregunta → respuesta → captura → seguimiento con una demo corta.',cta:'Pide una demo de 3 minutos.'},
+    {hook:'El primer flujo que automatizaría en un negocio local.',body:'Elige un nicho y muestra bienvenida, pregunta frecuente, captura y salida humana.',cta:'Comenta tu tipo de negocio y preparo el ejemplo.'}
+  ]},
+  {id:'posent',name:'POSENT',handle:'@posent.rd',url:'https://www.instagram.com/posent.rd/',purpose:'Educación y demostraciones sobre ventas, inventario, cotizaciones, clientes y operación de pequeños negocios.',ideas:[
+    {hook:'El inventario no se pierde de golpe: se desordena una venta a la vez.',body:'Muestra cómo registrar una venta y actualizar existencia dentro del mismo flujo.',cta:'¿Qué parte de tu inventario todavía controlas manualmente?'},
+    {hook:'Una cotización debería tardar minutos.',body:'Graba el recorrido desde seleccionar productos hasta dejar la cotización lista.',cta:'Comenta “COTIZACIÓN” para ver el flujo completo.'},
+    {hook:'Un POS útil empieza con una venta completada sin confusión.',body:'Muestra el proceso mínimo y señala el resultado que queda registrado.',cta:'¿Qué debería ser instantáneo en tu sistema de ventas?'},
+    {hook:'Tres datos que debes poder ver al cerrar el día.',body:'Explica ventas registradas, movimientos de inventario y próximos seguimientos sin inventar cifras.',cta:'Guarda esta lista para revisar tu operación.'}
+  ]}
+];
+
+const CONTENT_SCHEDULE = {
+  0:{primary:'personal',secondary:null,format:'Historia ligera',ideaIndex:2,story:'Comparte qué aprendiste esta semana o qué prepararás mañana.',content:'Reutiliza una pieza o publica un resumen corto. No grabes algo complejo.'},
+  1:{primary:'personal',secondary:null,format:'Reel corto',ideaIndex:0,story:'Muestra tu escritorio y el sistema de código o IA que moverás hoy.',content:'Código, IA o construcción en público para @nachotorresrd.'},
+  2:{primary:'tech',secondary:null,format:'Video práctico',ideaIndex:0,story:'Sube un detalle real de reparación, diagnóstico o tecnología móvil.',content:'Consejo o prueba de reparación exclusivamente para @nachotechrd.'},
+  3:{primary:'whabot',secondary:null,format:'Demo de producto',ideaIndex:0,story:'Muestra una conversación o automatización funcionando.',content:'Una demo concreta de WHABOT con un solo problema y un CTA.'},
+  4:{primary:'personal',secondary:null,format:'Clip de autoridad',ideaIndex:4,story:'Comparte un avance de código, IA o una web creada con tu skill.',content:'Clip educativo para @nachotorresrd: enseña NT-Skill Supreme gratis y muestra cómo ayuda a crear una web.'},
+  5:{primary:'posent',secondary:null,format:'Demo de producto',ideaIndex:0,story:'Muestra una venta, cotización, inventario o pantalla real.',content:'Una demostración útil de POSENT para pequeños negocios.'},
+  6:{primary:'tech',secondary:null,format:'Foto + consejo',ideaIndex:2,story:'Detrás de cámara de una reparación o prueba móvil.',content:'Foto, antes/después o consejo ligero para @nachotechrd. No mezcles código ni SaaS.'}
+};
+
+const BUILT_INS = [
+  {id:'whabot',name:'WHABOT Pro',kind:'SaaS',status:'focus',next:'Hablar con 5 negocios y observar dónde se frena su primera automatización.',description:'Automatización de atención, ventas y conversaciones.',sellTask:'Contacta 5 negocios que vendan por WhatsApp y pregunta cuál consulta se repite más.',sell:'Hola, vi que reciben consultas por mensajes. Estoy ayudando a negocios a responder lo repetitivo, capturar interesados y pasar lo importante al equipo. ¿Cuál es la pregunta que más se repite en su WhatsApp? Puedo mostrarte un ejemplo corto.',build:'Revisa una conversación u onboarding real y elimina el bloqueo más repetido.',ideas:[
+    {hook:'La pregunta que más ventas enfría en WhatsApp.',body:'Muestra una consulta repetida, cómo se responde hoy y cómo WHABOT puede responder con información aprobada y transferir el caso cuando hace falta.',cta:'Escríbeme “DEMO” y preparo un ejemplo con tu negocio.'},
+    {hook:'Automatizar no significa dejar al cliente hablando solo.',body:'Explica con una captura cómo una conversación pasa del flujo automático a una persona cuando la solicitud lo requiere.',cta:'¿Qué conversación nunca dejarías completamente al bot?'},
+    {hook:'Antes de añadir más IA, arregla este paso.',body:'Enseña el recorrido pregunta → respuesta → captura → seguimiento y señala dónde suelen perderse los interesados.',cta:'Guarda esta ruta para revisar tu WhatsApp.'}
+  ]},
+  {id:'posent',name:'POSENT',kind:'POS',status:'support',next:'Observar cómo un negocio registra su primera venta y anotar la fricción principal.',description:'Ventas, inventario, clientes, facturación y operación.',sellTask:'Habla con 5 negocios que aún controlen ventas o inventario manualmente.',sell:'Hola, vi que manejan productos y ventas. Estoy trabajando una forma más simple de organizar inventario, clientes, cotizaciones y recibos desde la web. ¿Qué parte de ese proceso todavía llevan manual o en varias herramientas?',build:'Completa una venta de principio a fin y corrige el paso que más confunde.',ideas:[
+    {hook:'El inventario no se pierde de golpe: se desordena una venta a la vez.',body:'Muestra cómo registrar una venta y descontar existencia dentro de un mismo flujo, sin prometer resultados inventados.',cta:'¿Qué parte de tu control de inventario te toma más tiempo?'},
+    {hook:'Una cotización debería tardar minutos, no una conversación completa.',body:'Graba el recorrido desde seleccionar productos hasta entregar la cotización.',cta:'Comenta “COTIZACIÓN” si quieres ver el flujo completo.'},
+    {hook:'La señal de un POS útil no es tener muchas pantallas.',body:'Explica que el valor aparece cuando una persona completa una venta, encuentra el inventario y entiende el resultado sin ayuda.',cta:'¿Qué debería ser instantáneo en tu POS ideal?'}
+  ]},
+  {id:'ntdesweb',name:'NTDESWEB',kind:'Servicio',status:'paused',next:'Enviar 3 diagnósticos breves a negocios con un problema digital visible.',description:'Diseño, desarrollo, automatización e implementación.',sellTask:'Envía 3 diagnósticos cortos a negocios con un problema digital visible.',sell:'Hola, estuve revisando su presencia digital y encontré una oportunidad concreta para simplificar cómo captan o atienden clientes. Si quieres, te envío un diagnóstico breve con el problema, la mejora propuesta y el alcance aproximado.',build:'Convierte una entrega reciente en un paquete con alcance, plazo y resultado claro.',ideas:[
+    {hook:'Una web bonita no compensa un próximo paso confuso.',body:'Audita una pantalla real y muestra cómo aclarar jerarquía, mensaje y CTA sin inventar métricas de conversión.',cta:'Envíame tu enlace y te digo cuál es el primer bloqueo que revisaría.'},
+    {hook:'Así convierto una petición abierta en un proyecto controlable.',body:'Comparte cómo defines problema, alcance, entregable, límite y validación antes de tocar código.',cta:'Guarda este proceso para tu próximo proyecto.'},
+    {hook:'Tres señales de que tu negocio necesita un sistema y no otra tarea manual.',body:'Habla de información duplicada, seguimiento perdido y decisiones sin datos visibles.',cta:'¿Cuál de estas tres te pasa ahora?'}
+  ]},
+  {id:'ntskill',name:'NT-Skill Supreme',kind:'Autoridad · gratuito',commercial:false,status:'paused',next:'Grabar un clip usando la skill en una web real e invitar a otros desarrolladores a probarla.',description:'Recurso gratuito para ayudar a desarrolladores y posicionar tu autoridad.',sellTask:'Invita 3 desarrolladores a instalar la skill y observar un caso real.',sell:'Estoy mejorando NT-Skill Supreme, un recurso gratuito para que agentes de IA produzcan interfaces más claras, accesibles y contextualizadas. Úsalo en una web real y cuéntame dónde la guía todavía falla.',build:'Usa la skill en una web, graba el antes/después con Reels Studio y publica el aprendizaje en @nachotorresrd.',ideas:[
+    {hook:'El problema no es que la IA no sepa CSS.',body:'Explica por qué una interfaz falla cuando no entiende contexto, jerarquía, accesibilidad y objetivo del producto.',cta:'Prueba NT-Skill Supreme en un componente y comparte el resultado.'},
+    {hook:'Antes y después de darle contexto de producto a un agente.',body:'Compara el mismo brief sin reglas y con un perfil visual y arquetipo definidos.',cta:'¿Qué tipo de interfaz quieres que pruebe después?'},
+    {hook:'Una regla de diseño que evita horas de corrección.',body:'Comparte una regla concreta de foco, movimiento accesible o datos verificables con un ejemplo.',cta:'Guárdala para tu próximo build con IA.'}
+  ]},
+  {id:'fx',name:'NTDESWEB FX + Showcases',kind:'Distribución',status:'paused',next:'Publicar un efecto con demo vivo, README corto y un CTA hacia un servicio o producto.',description:'Efectos, componentes y prueba pública de capacidad.',sellTask:'Comparte un demo con 3 posibles clientes y pregunta dónde lo aplicarían.',sell:'Construyo componentes y experiencias interactivas para productos que necesitan mostrar valor de forma memorable. Si tienes una pantalla o lanzamiento que se siente plano, puedo preparar un concepto breve.',build:'Termina un demo pequeño y conecta su README con una acción siguiente.',ideas:[
+    {hook:'Este efecto solo vale si ayuda a entender o decidir.',body:'Muestra el componente, explica cuándo usarlo y cuándo evitarlo. Incluye reduced motion y soporte táctil.',cta:'Descarga el ejemplo o dime en qué producto lo usarías.'},
+    {hook:'Cómo convierto un experimento visual en una pieza reutilizable.',body:'Enseña la separación entre efecto, contenido, accesibilidad y configuración.',cta:'El código y la demo están en mi GitHub.'},
+    {hook:'Una interacción pequeña puede explicar mejor que otro párrafo.',body:'Presenta un antes/después y describe qué relación visual hace más clara.',cta:'¿Quieres que publique el breakdown técnico?'}
+  ]},
+  {id:'reels',name:'Reels Studio',kind:'Herramienta interna · no vender',commercial:false,status:'paused',next:'Usar Reels Studio para terminar el próximo video antes de desarrollar otra función.',description:'Herramienta privada para producir tus propios clips y reels.',sellTask:'No se vende: úsala para producir la pieza asignada de hoy.',sell:'Reels Studio es una herramienta interna de producción y no forma parte de las ofertas comerciales.',build:'Produce una pieza completa para la cuenta asignada y anota dónde el flujo todavía se rompe.',ideas:[
+    {hook:'Construí una herramienta; ahora tiene que demostrar que ahorra pasos.',body:'Muestra el flujo completo desde idea hasta pieza publicada y señala la parte que todavía requiere trabajo manual.',cta:'¿Qué paso de crear contenido te gustaría eliminar?'},
+    {hook:'Un experimento WebGL necesita una función, no solo verse bien.',body:'Explica el objetivo narrativo o comercial detrás de la interacción y cómo respetas dispositivos y movimiento reducido.',cta:'¿Qué producto te gustaría explorar por dentro?'},
+    {hook:'La mejor prueba de una herramienta de contenido es el contenido que logra publicar.',body:'Comparte el resultado final, el tiempo de proceso observado y el siguiente aprendizaje sin usar cifras inventadas.',cta:'Sigue el laboratorio para ver la próxima iteración.'}
+  ]},
+  {id:'ntradar',name:'NT RADAR',kind:'Motor de prospección',status:'support',next:'Usarlo para guardar 5 oportunidades, auditar y enviar mensajes antes de añadir funciones.',description:'Búsqueda de negocios, auditoría IA y organización de leads.',sellTask:'Busca 5 negocios en NT RADAR, audítalos y envía el mensaje sugerido.',sell:'Encontré su negocio al revisar oportunidades digitales de su sector. Vi un punto concreto que podría ayudarles a captar o atender mejor clientes. ¿Te puedo enviar una observación breve y un ejemplo?',build:'Usa el flujo completo con 5 negocios y corrige únicamente el paso que te impida terminar.',ideas:[
+    {hook:'Cómo encuentro negocios con una brecha digital real.',body:'Muestra la búsqueda por nicho y ciudad, el filtro y cómo eliges oportunidades sin revelar datos privados.',cta:'¿Qué nicho debería analizar después?'},
+    {hook:'De Google Places a una conversación comercial útil.',body:'Enseña cómo NT RADAR organiza, audita y prepara el primer mensaje; deja claro que la decisión final sigue siendo humana.',cta:'Prueba el radar con tu ciudad.'},
+    {hook:'No necesitas cien leads; necesitas cinco con una razón para contactar.',body:'Explica el criterio usado para seleccionar oportunidades y definir el próximo paso.',cta:'¿Qué señal usarías para priorizar un negocio?'}
+  ]},
+  {id:'nachotech',name:'NachoTechRD',kind:'Servicio técnico + contenido',status:'paused',next:'Publicar un consejo móvil y convertir una reparación real en prueba de confianza.',description:'Reparación de celulares y educación sobre tecnología móvil.',sellTask:'Responde 5 consultas o contacta clientes anteriores con un consejo útil, sin spam.',sell:'Hola, vi tu consulta sobre el teléfono. Antes de recomendar una pieza o reparación, dime el modelo y el síntoma exacto. Así puedo orientarte sobre el diagnóstico correcto y el próximo paso.',build:'Documenta una reparación real con diagnóstico, proceso y prueba final.',ideas:[
+    {hook:'Antes de cambiar tu celular, revisa esto.',body:'Comparte una comprobación simple que ayude a decidir si vale la pena diagnosticar o reparar.',cta:'Escríbeme el modelo y el problema.'},
+    {hook:'El error que agrava una reparación pequeña.',body:'Explica un hábito común y qué hacer inmediatamente para evitar más daño.',cta:'Guarda este consejo.'},
+    {hook:'Así se ve una reparación bien diagnosticada.',body:'Muestra antes, prueba y después sin revelar información del cliente.',cta:'¿Tu teléfono presenta algo parecido?'}
+  ]}
+];
+
+function dateKey(date=new Date()){ return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`; }
+function escapeHTML(value){ return String(value??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
+function uid(){ return 'p-'+Date.now()+'-'+Math.random().toString(36).slice(2,7); }
+
+function loadState(){
+  let saved={}; let legacy={};
+  try { saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}'); } catch(e){}
+  try { legacy=JSON.parse(localStorage.getItem(LEGACY_KEY)||'{}'); } catch(e){}
+  const savedProjects=Array.isArray(saved.projects)?saved.projects:[];
+  const projects=BUILT_INS.map(base=>({...base,...(savedProjects.find(p=>p.id===base.id)||{})}));
+  savedProjects.filter(p=>!BUILT_INS.some(b=>b.id===p.id)).forEach(p=>projects.push(p));
+  return {activeProject:saved.activeProject||projects.find(p=>p.status==='focus')?.id||'whabot',sellProject:saved.sellProject||'whabot',projects,daily:saved.daily||{},crm:Array.isArray(saved.crm)?saved.crm:(legacy.crm||[]),contentIndex:saved.contentIndex||{},smoke:saved.smoke||{}};
+}
+let state=loadState();
+state.smoke={quitAt:'',cigarettesPerDay:10,packSize:20,packPrice:300,targetDays:30,bestStreakMs:0,history:[],...(state.smoke||{})};
+if(!Array.isArray(state.smoke.history)) state.smoke.history=[];
+
+function saveState(){
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
+  try { const legacy=JSON.parse(localStorage.getItem(LEGACY_KEY)||'{}'); legacy.crm=state.crm; localStorage.setItem(LEGACY_KEY,JSON.stringify(legacy)); } catch(e){}
+}
+function todayState(){
+  const key=dateKey();
+  if(!state.daily[key]) state.daily[key]={checked:{story:false,publish:false,sell:false,build:false},sales:{radar:false,qualify:false,send:false,follow:false},goal:''};
+  const day=state.daily[key];
+  day.checked={story:false,publish:false,sell:false,build:false,...(day.checked||{})};
+  day.sales={radar:false,qualify:false,send:false,follow:false,...(day.sales||{})};
+  if(!day.publishAccount) day.publishAccount=CONTENT_SCHEDULE[new Date().getDay()].primary;
+  return day;
+}
+function project(id=state.activeProject){ return state.projects.find(p=>p.id===id)||state.projects[0]; }
+function salesProject(){ return state.projects.find(p=>p.id===state.sellProject&&p.commercial!==false)||state.projects.find(p=>p.commercial!==false)||state.projects[0]; }
+function account(id=todayState().publishAccount){ return ACCOUNTS.find(a=>a.id===id)||ACCOUNTS[0]; }
+function scheduleFor(date=new Date()){ return CONTENT_SCHEDULE[date.getDay()]; }
+function currentIdeaIndex(selected=account()){
+  const stored=state.contentIndex[selected.id];
+  if(Number.isInteger(stored)) return ((stored%selected.ideas.length)+selected.ideas.length)%selected.ideas.length;
+  const plan=scheduleFor();
+  return selected.id===plan.primary?((plan.ideaIndex||0)%selected.ideas.length):0;
+}
+
+function smokeConfigured(){ return Boolean(state.smoke.quitAt)&&Number.isFinite(new Date(state.smoke.quitAt).getTime()); }
+function localDateTimeValue(value=new Date()){
+  const date=value instanceof Date?value:new Date(value);
+  return new Date(date.getTime()-date.getTimezoneOffset()*60000).toISOString().slice(0,16);
+}
+function openDialog(id){ const dialog=document.getElementById(id); if(dialog&&!dialog.open) dialog.showModal(); }
+function closeDialog(id){ const dialog=document.getElementById(id); if(dialog?.open) dialog.close(); }
+function openSmokeSetup(){
+  const smoke=state.smoke;
+  document.getElementById('quit-at').value=localDateTimeValue(smokeConfigured()?smoke.quitAt:new Date());
+  document.getElementById('cigs-day').value=smoke.cigarettesPerDay||10;
+  document.getElementById('pack-size').value=smoke.packSize||20;
+  document.getElementById('pack-price').value=smoke.packPrice??300;
+  document.getElementById('quit-goal').value=smoke.targetDays||30;
+  openDialog('smoke-setup-dialog');
+}
+function saveSmokeSetup(event){
+  event.preventDefault();
+  const quitAt=new Date(document.getElementById('quit-at').value), now=new Date();
+  if(!Number.isFinite(quitAt.getTime())||quitAt>now){ toast('La fecha del último cigarrillo debe ser válida y no puede estar en el futuro.'); return; }
+  state.smoke.quitAt=quitAt.toISOString();
+  state.smoke.cigarettesPerDay=Math.max(1,Number(document.getElementById('cigs-day').value)||10);
+  state.smoke.packSize=Math.max(1,Number(document.getElementById('pack-size').value)||20);
+  state.smoke.packPrice=Math.max(0,Number(document.getElementById('pack-price').value)||0);
+  state.smoke.targetDays=Math.max(1,Number(document.getElementById('quit-goal').value)||30);
+  saveState(); closeDialog('smoke-setup-dialog'); renderSmoke(); toast('Control de no fumar configurado.');
+}
+function smokeElapsed(){ return smokeConfigured()?Math.max(0,Date.now()-new Date(state.smoke.quitAt).getTime()):0; }
+
+function smokeHealth(elapsed){
+  const minute=60000, hour=3600000, day=86400000;
+  if(elapsed < 20*minute) return {now:'En 20 minutos, tu ritmo cardíaco y presión arterial retornan a niveles basales.',next:'Hito 12h: El monóxido de carbono en sangre se normaliza.'};
+  if(elapsed < 12*hour) return {now:'Hito 20m alcanzado: Presión arterial estabilizada.',next:'Próximo hito (12h): La oxigenación en sangre vuelve a capacidad máxima.'};
+  if(elapsed < 24*hour) return {now:'Hito 12h alcanzado: El monóxido de carbono descendió a nivel de no fumador.',next:'Próximo hito (24h): El riesgo de evento cardiovascular agudo comienza a descender.'};
+  if(elapsed < 48*hour) return {now:'Hito 24h alcanzado: Reducción inicial del riesgo coronario agudo.',next:'Próximo hito (48h): Nicotina libre eliminada del torrente sanguíneo.'};
+  if(elapsed < 72*hour) return {now:'Hito 48h alcanzado: Regeneración de terminaciones olfativas y gustativas.',next:'Próximo hito (72h): Relajación bronquial y mayor ventilación pulmonar.'};
+  if(elapsed < 14*day) return {now:'Hito 72h alcanzado: Broncodilatación y aumento de la capacidad ventilatoria.',next:'Entre 2 y 12 semanas: La función pulmonar neta se incrementa hasta un 30%.'};
+  if(elapsed < 90*day) return {now:'Fase de estabilización: Circulación periférica mejorada y función pulmonar en crecimiento.',next:'Entre 1 y 9 meses: Los cilios bronquiales se regeneran reduciendo tos y falta de aire.'};
+  if(elapsed < 365*day) return {now:'Fase avanzada: Cilios pulmonares regenerados, menor resistencia respiratoria.',next:'Al completar 1 año: El riesgo de enfermedad coronaria se reduce al 50% frente a un fumador activo.'};
+  return {now:'Hito 1 año alcanzado: Tu riesgo coronario adicional ha bajado al 50%.',next:'Entre 2 y 5 años: El riesgo de accidente cerebrovascular (ACV) iguala al de un no fumador.'};
+}
+
+function smokeEvent(type,details={}){
+  state.smoke.history.unshift({id:uid(),type,date:new Date().toISOString(),...details});
+  state.smoke.history=state.smoke.history.slice(0,120);
+}
+
+function renderSmoke(){
+  const empty=document.getElementById('smoke-empty'),dashboard=document.getElementById('smoke-dashboard');
+  if(!empty||!dashboard)return;
+  const configured=smokeConfigured(); empty.hidden=configured; dashboard.hidden=!configured;
+  const pill=document.getElementById('smoke-pill');
+  if(!configured){ pill.textContent='Sin configurar'; return; }
+
+  const elapsed=smokeElapsed(), day=86400000, hour=3600000, minute=60000, second=1000;
+  const days=Math.floor(elapsed/day), hours=Math.floor((elapsed%day)/hour), minutes=Math.floor((elapsed%hour)/minute), seconds=Math.floor((elapsed%minute)/second);
+  
+  // High-precision calculations based on exact elapsed time
+  const elapsedDaysExact = elapsed / day;
+  const cigsPerDay = state.smoke.cigarettesPerDay || 10;
+  const packSize = state.smoke.packSize || 20;
+  const packPrice = state.smoke.packPrice || 300;
+  const pricePerCig = packPrice / packSize;
+  
+  const avoided = Math.floor(elapsedDaysExact * cigsPerDay);
+  const savedExact = elapsedDaysExact * cigsPerDay * pricePerCig;
+  const monthlyProjection = 30 * cigsPerDay * pricePerCig;
+  const yearlyProjection = 365 * cigsPerDay * pricePerCig;
+
+  const goalMs=state.smoke.targetDays*day, progress=Math.min(100, (elapsed/goalMs)*100);
+  const today=todayState(), confirmed=today.smokeStatus==='clear', lapse=today.smokeStatus==='lapse';
+
+  // Feed big clock units
+  const suDays=document.getElementById('su-days'),suHours=document.getElementById('su-hours'),suMins=document.getElementById('su-mins'),suSecs=document.getElementById('su-secs');
+  if(suDays) suDays.textContent=days;
+  if(suHours) suHours.textContent=String(hours).padStart(2,'0');
+  if(suMins) suMins.textContent=String(minutes).padStart(2,'0');
+  if(suSecs) suSecs.textContent=String(seconds).padStart(2,'0');
+
+  // Legacy hidden element for JS compat
+  const smokeTimeEl=document.getElementById('smoke-time'); if(smokeTimeEl) smokeTimeEl.textContent=`${days} día${days===1?'':'s'} · ${hours} h · ${minutes} min`;
+
+  // Formatted currency & stats
+  const formatDOP = (val) => new Intl.NumberFormat('es-DO',{style:'currency',currency:'DOP',maximumFractionDigits:0}).format(val);
+  
+  const moneyEl = document.getElementById('smoke-money');
+  if(moneyEl) moneyEl.textContent = formatDOP(savedExact);
+
+  const moneySubEl = document.getElementById('smoke-money-sub');
+  if(moneySubEl) moneySubEl.textContent = `${formatDOP(monthlyProjection)}/mes est.`;
+
+  const avoidedEl = document.getElementById('smoke-avoided');
+  if(avoidedEl) avoidedEl.textContent = new Intl.NumberFormat('es-DO').format(avoided);
+
+  const packsAvoided = (avoided / packSize).toFixed(1);
+  const avoidedSubEl = document.getElementById('smoke-avoided-sub');
+  if(avoidedSubEl) avoidedSubEl.textContent = `${packsAvoided} paq. lib.`;
+
+  const streakEl = document.getElementById('smoke-streak');
+  if(streakEl) streakEl.textContent = `${days} día${days===1?'':'s'}`;
+
+  const goalTextEl=document.getElementById('smoke-goal-text');
+  if(goalTextEl) goalTextEl.textContent=`Meta: ${state.smoke.targetDays} días sin fumar`;
+  
+  const goalEl=document.getElementById('smoke-goal');
+  if(goalEl) goalEl.textContent=`${Math.floor(progress)}%`;
+  
+  const projNameEl=document.getElementById('smoke-project-name');
+  if(projNameEl) projNameEl.textContent=project().name;
+
+  document.getElementById('smoke-progress').style.width=`${progress}%`;
+  document.getElementById('smoke-check-label').textContent=confirmed?'confirmado':lapse?'reiniciado':'confirma hoy';
+
+  // Medical timeline dynamic updates in health modal
+  const o2Pct = Math.min(100, Math.floor(Math.min(1, elapsed / (12 * hour)) * 100));
+  const coPpm = Math.max(2, Math.floor(15 - Math.min(1, elapsed / (12 * hour)) * 13));
+  const hrBpm = elapsed >= (20 * minute) ? 72 : 88;
+  const lungPct = Math.min(100, Math.max(10, Math.floor( 70 + Math.min(1, elapsed / (90 * day)) * 30 )));
+
+  const o2ValEl = document.getElementById('hm-o2-val'), o2BarEl = document.getElementById('hm-o2-bar');
+  if(o2ValEl) o2ValEl.textContent = `${Math.max(90, Math.floor(90 + (o2Pct/100)*8))}%`;
+  if(o2BarEl) o2BarEl.style.width = `${Math.max(90, Math.floor(90 + (o2Pct/100)*8))}%`;
+
+  const coValEl = document.getElementById('hm-co-val');
+  if(coValEl) coValEl.textContent = `${coPpm}ppm`;
+
+  const hrValEl = document.getElementById('hm-hr-val');
+  if(hrValEl) hrValEl.textContent = `${hrBpm}bpm`;
+
+  const lungValEl = document.getElementById('hm-lung-val'), lungBarEl = document.getElementById('hm-lung-bar');
+  if(lungValEl) lungValEl.textContent = `${lungPct}%`;
+  if(lungBarEl) lungBarEl.style.width = `${lungPct}%`;
+
+  // Update Medical timeline checkmarks based on actual elapsed time
+  const timelineMilestones = [
+    { id: 'tl-20m', ms: 20 * minute },
+    { id: 'tl-12h', ms: 12 * hour },
+    { id: 'tl-24h', ms: 24 * hour },
+    { id: 'tl-48h', ms: 48 * hour },
+    { id: 'tl-72h', ms: 72 * hour },
+    { id: 'tl-2w',  ms: 14 * day },
+    { id: 'tl-1m',  ms: 30 * day },
+    { id: 'tl-1y',  ms: 365 * day }
+  ];
+  timelineMilestones.forEach(item => {
+    const el = document.getElementById(item.id);
+    if(el) el.classList.toggle('done', elapsed >= item.ms);
+  });
+
+  pill.textContent=confirmed?'Hoy protegido':lapse?'Nuevo comienzo':`${days} día${days===1?'':'s'} sin fumar`;
+  const confirm=document.getElementById('smoke-confirm'); 
+  if(confirm) confirm.innerHTML=`<span class="btn-ic">${confirmed?'✓':'✓'}</span> ${confirmed?'Decisión protegida ✓ → seguir guía':'Sigo sin fumar → comenzar guía'}`;
+
+  const labels={clear:'Día confirmado',craving:'Ansiedad resistida',lapse:'Cigarrillo registrado'};
+  const recent=state.smoke.history.slice(0,6);
+  document.getElementById('smoke-log-list').innerHTML=recent.length?recent.map(item=>`<div class="smoke-log-item"><span>${escapeHTML(labels[item.type]||item.type)}</span><span>${escapeHTML(new Intl.DateTimeFormat('es-DO',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'}).format(new Date(item.date)))}${item.level?` · ${escapeHTML(item.level)}/10`:''}</span></div>`).join(''):'<div class="smoke-log-item"><span>Aún no hay registros.</span></div>';
+}
+function moveToEasyTask(){ document.getElementById('next-action').scrollIntoView({behavior:'smooth',block:'center'}); }
+function confirmSmokeFree(){
+  if(!smokeConfigured()){ openSmokeSetup(); return; }
+  const day=todayState();
+  if(day.smokeStatus!=='clear'){ day.smokeStatus='clear'; smokeEvent('clear'); saveState(); }
+  renderSmoke(); toast('Decisión protegida. Ahora mueve una sola tarea.'); setTimeout(moveToEasyTask,180);
+}
+function openCravingDialog(){ if(!smokeConfigured()){openSmokeSetup();return;} openDialog('craving-dialog'); }
+function resistCraving(event){
+  event.preventDefault();
+  const level=Number(document.getElementById('craving-level').value),trigger=document.getElementById('craving-trigger').value;
+  smokeEvent('craving',{level,trigger}); todayState().cravingHandled=true; saveState(); closeDialog('craving-dialog'); renderSmoke(); toast('Impulso registrado como resistido. Abre la tarea más fácil.'); setTimeout(moveToEasyTask,180);
+}
+function openLapseDialog(){ if(!smokeConfigured()){openSmokeSetup();return;} openDialog('lapse-dialog'); }
+function registerLapse(event){
+  event.preventDefault();
+  const count=Math.max(1,Number(document.getElementById('lapse-count').value)||1),trigger=document.getElementById('lapse-trigger').value.trim();
+  const elapsed=smokeElapsed(); state.smoke.bestStreakMs=Math.max(state.smoke.bestStreakMs||0,elapsed); smokeEvent('lapse',{count,trigger,streakMs:elapsed});
+  state.smoke.quitAt=new Date().toISOString(); todayState().smokeStatus='lapse'; saveState(); closeDialog('lapse-dialog'); renderSmoke(); document.getElementById('lapse-count').value='1'; document.getElementById('lapse-trigger').value=''; toast('Registrado sin borrar tu historial. El contador inicia de nuevo.');
+}
+
+function showView(id){
+  if(!TITLES[id]) id='today';
+  document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===`view-${id}`));
+  document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===id));
+  document.getElementById('view-title').textContent=TITLES[id];
+  history.replaceState(null,'',`#${id}`);
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(id==='sell') renderSell();
+  if(id==='publish') renderPublish();
+  if(id==='projects') renderProjects();
+}
+document.querySelectorAll('[data-view]').forEach(button=>button.addEventListener('click',()=>showView(button.dataset.view)));
+
+function populateProjectSelects(){
+  const allOptions=state.projects.map(p=>`<option value="${escapeHTML(p.id)}">${escapeHTML(p.name)}</option>`).join('');
+  const sellOptions=state.projects.filter(p=>p.commercial!==false).map(p=>`<option value="${escapeHTML(p.id)}">${escapeHTML(p.name)}</option>`).join('');
+  document.getElementById('today-project').innerHTML=allOptions; document.getElementById('today-project').value=state.activeProject;
+  document.getElementById('sell-project').innerHTML=sellOptions; state.sellProject=salesProject().id; document.getElementById('sell-project').value=state.sellProject;
+}
+function changeFocus(id){
+  if(!state.projects.some(p=>p.id===id)) return;
+  const previous=state.projects.find(p=>p.status==='focus'&&p.id!==id);
+  const supportCount=state.projects.filter(p=>p.status==='support'&&p.id!==id).length;
+  state.activeProject=id;
+  if(previous) previous.status=supportCount>=2?'paused':'support';
+  state.projects.find(p=>p.id===id).status='focus';
+  saveState(); populateProjectSelects(); renderToday(); renderSell(); renderPublish(); renderSmoke(); toast(`${project().name} es tu foco actual.`);
+}
+function changeSellProject(id){ const selected=state.projects.find(p=>p.id===id&&p.commercial!==false); if(!selected)return; state.sellProject=id; saveState(); renderSell(); }
+function saveTodayGoal(value){ todayState().goal=value; saveState(); }
+
+function taskData(){
+  const p=project(), plan=scheduleFor(), primary=account(plan.primary), secondary=plan.secondary?account(plan.secondary):null, ai=todayState().aiPlan||{};
+  return {
+    story:{label:'5 min · fácil',title:'Sube una historia simple',text:ai.story||plan.story,color:'var(--amber)',account:primary.handle,external:primary.url},
+    publish:{label:'20 min · contenido',title:`Publica: ${plan.format}`,text:ai.publish||plan.content,color:'var(--violet)',account:secondary?`${primary.handle} + ${secondary.handle}`:primary.handle,view:'publish'},
+    sell:{label:'25 min · ventas',title:'Consigue 5 negocios con NT RADAR',text:ai.sell||'Busca, elige, audita y envía mensajes. No abras otra búsqueda hasta contactar los primeros 5.',color:'var(--green)',account:'NT RADAR',view:'sell'},
+    build:{label:'25 min · producto',title:'Mueve una sola pieza',text:ai.build||p.build||p.next,color:'var(--cyan)',account:p.name,view:'projects'}
+  };
+}
+function renderToday(){
+  const p=project(), day=todayState(), tasks=taskData();
+  document.getElementById('focus-heading').textContent=p.name;
+  document.getElementById('focus-description').textContent=p.description||'Proyecto personalizado.';
+  document.getElementById('today-project').value=p.id;
+  document.getElementById('today-goal').value=day.goal||'';
+  document.getElementById('ai-status').innerHTML=day.aiPlan?'<strong>Plan mejorado con IA.</strong> Se respetan la rotación y los límites de hoy.':'<strong>Plan base activo.</strong> La IA puede variar los consejos sin cambiar tus cuentas asignadas.';
+  document.getElementById('daily-moves').innerHTML=Object.entries(tasks).map(([key,t])=>`<article class="move-card ${day.checked[key]?'done':''}" style="--move-color:${t.color}"><div class="move-top"><div><div class="move-type">${t.label}</div><h3>${escapeHTML(t.title)}</h3></div><button class="check-button" aria-label="Marcar ${t.label}" aria-pressed="${day.checked[key]}" onclick="toggleDaily('${key}')">${day.checked[key]?'✓':'○'}</button></div><p>${escapeHTML(t.text)}</p><span class="account-chip">${escapeHTML(t.account)}</span><div class="move-actions"><button class="btn btn-secondary" onclick="runTask('${key}')">Abrir acción</button></div></article>`).join('');
+  updateProgress();
+  const next=Object.keys(tasks).find(k=>!day.checked[k]);
+  document.getElementById('next-action-text').textContent=next?`${tasks[next].label}: ${tasks[next].title}`:'Día completo. Anota el aprendizaje y descansa.';
+  document.getElementById('next-action').dataset.next=next||'';
+  const paused=state.projects.filter(p=>p.status==='paused').length;
+  document.getElementById('pause-note').innerHTML=`<strong>Protege el foco:</strong> ${paused} proyecto${paused===1?'':'s'} en pausa no reciben mejoras hoy.`;
+  renderSmoke();
+}
+function toggleDaily(key){ const day=todayState(); day.checked[key]=!day.checked[key]; saveState(); renderToday(); }
+function runTask(key){ const task=taskData()[key]; if(!task)return; if(task.external) window.open(task.external,'_blank','noopener'); else showView(task.view); }
+function focusFirstPending(){ const key=document.getElementById('next-action').dataset.next; if(!key){toast('Ya completaste los cuatro movimientos de hoy.');return;} runTask(key); }
+function updateProgress(){ const checked=todayState().checked; const done=['story','publish','sell','build'].filter(key=>checked[key]).length; const pct=Math.round(done/4*100); document.getElementById('side-progress').style.width=`${pct}%`; document.getElementById('side-progress-label').textContent=`${done} / 4`; }
+
+function saveAIKey(){
+  const input=document.getElementById('gemini-key'), key=input.value.trim();
+  if(!key){ toast('Pega una clave válida de Gemini.'); return; }
+  sessionStorage.setItem('nt_gemini_key',key); input.value=''; document.getElementById('ai-setup').open=false; toast('Clave disponible durante esta sesión.');
+}
+function restoreBasePlan(){ const day=todayState(); delete day.aiPlan; day.aiContentDisabled=false; saveState(); renderToday(); renderPublish(); toast('Plan base restaurado.'); }
+function limitText(value,max){ return String(value||'').trim().slice(0,max); }
+async function generateAIPlan(button){
+  const key=sessionStorage.getItem('nt_gemini_key');
+  if(!key){ document.getElementById('ai-setup').open=true; document.getElementById('gemini-key').focus(); toast('Configura tu clave de Gemini para activar recomendaciones variables.'); return; }
+  const p=project(), commercial=salesProject(), plan=scheduleFor(), primary=account(plan.primary), secondary=plan.secondary?account(plan.secondary):null, day=todayState();
+  const smokeContext=smokeConfigured()?{daysWithoutSmoking:Math.floor(smokeElapsed()/86400000),todayStatus:day.smokeStatus||'sin confirmar',cravingHandled:Boolean(day.cravingHandled)}:{configured:false};
+  const stageCounts=state.crm.reduce((totals,row)=>{const stage=row.estado||'nuevo';totals[stage]=(totals[stage]||0)+1;return totals;},{});
+  const recent=Object.entries(state.daily).sort(([a],[b])=>b.localeCompare(a)).slice(0,5).map(([date,value])=>({date,story:value.aiPlan?.story,publish:value.aiPlan?.publish,sell:value.aiPlan?.sell,build:value.aiPlan?.build})).filter(item=>item.story);
+  const prompt=`Actúa como director diario de productividad y contenido para Nacho Torres. Devuelve SOLO un objeto JSON válido, sin markdown, con estas claves: story, publish, sell, build, hook, body, cta.\n\nContexto de hoy:\n- Fecha: ${dateKey()}\n- Proyecto de desarrollo en foco: ${p.name}\n- Oferta comercial que sí se moverá con leads: ${commercial.name}\n- Próxima acción registrada: ${p.next||p.build}\n- Resultado deseado por Nacho: ${day.goal||'no definido'}\n- Control de no fumar, sin datos médicos: ${JSON.stringify(smokeContext)}\n- Instagram principal asignado: ${primary.handle}. Propósito: ${primary.purpose}\n- Instagram secundario opcional: ${secondary?secondary.handle+'; propósito: '+secondary.purpose:'ninguno'}\n- Formato sugerido: ${plan.format}\n- Estado agregado del CRM, sin datos personales: ${JSON.stringify(stageCounts)}\n- Planes recientes que NO debes repetir: ${JSON.stringify(recent)}\n\nReglas obligatorias:\n1. story debe ser una acción extremadamente fácil de 5 minutos para ${primary.handle}. Si hubo ansiedad hoy, reduce fricción y evita exigir una pieza compleja.\n2. publish debe ser una acción de contenido de máximo 20 minutos. No mezcles contenido entre cuentas. Solo permite un repost ocasional si existe una razón explícita.\n3. sell debe usar NT RADAR para seleccionar 5 negocios, auditar y contactar para ${commercial.name}; no pidas buscar cientos.\n4. build debe ser una acción de 25 minutos para ${p.name}, pequeña y terminable.\n5. NT-Skill Supreme es gratuito y se difunde con clips/tutoriales para generar autoridad como desarrollador; nunca lo presentes como producto de venta.\n6. Reels Studio es una herramienta interna para producir videos; nunca la vendas ni la presentes como oferta.\n7. ${primary.handle==='@nachotechrd'?'El contenido debe ser exclusivamente reparación de celulares o tecnología móvil. No mezcles código, SaaS ni IA de otras cuentas.':'Respeta estrictamente el propósito de la cuenta asignada.'}\n8. hook, body y cta forman una publicación lista para ${primary.handle}. Sin estadísticas, testimonios o resultados inventados.\n9. No des consejos médicos ni inventes beneficios de salud. El estado de no fumar solo sirve para ajustar la energía y la dificultad de las tareas.\n10. Escribe en español dominicano claro, directo y sin frases motivacionales vacías.\n11. Longitudes máximas: story 150 caracteres, publish 180, sell 180, build 180, hook 120, body 420, cta 120.`;
+  const old=button.textContent; button.disabled=true; button.textContent='Pensando...';
+  try{
+    const response=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent',{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':key},body:JSON.stringify({contents:[{role:'user',parts:[{text:prompt}]}],generationConfig:{maxOutputTokens:900}})});
+    const data=await response.json();
+    if(!response.ok) throw new Error(data?.error?.message||`Error ${response.status}`);
+    const raw=(data.candidates?.[0]?.content?.parts||[]).map(part=>part.text||'').join('').trim();
+    const match=raw.match(/\{[\s\S]*\}/); if(!match) throw new Error('La respuesta no contiene JSON válido.');
+    const result=JSON.parse(match[0]), required=['story','publish','sell','build','hook','body','cta'];
+    if(!required.every(field=>typeof result[field]==='string'&&result[field].trim())) throw new Error('La respuesta está incompleta.');
+    day.aiPlan={accountId:primary.id,story:limitText(result.story,150),publish:limitText(result.publish,180),sell:limitText(result.sell,180),build:limitText(result.build,180),hook:limitText(result.hook,120),body:limitText(result.body,420),cta:limitText(result.cta,120),generatedAt:new Date().toISOString()};
+    day.publishAccount=primary.id; day.aiContentDisabled=false; saveState(); renderToday(); renderPublish(); toast('Plan de hoy actualizado con IA.');
+  }catch(error){ console.error(error); toast(`No se pudo generar: ${error.message}`); }
+  finally{ button.disabled=false; button.textContent=old; }
+}
+
+function renderSell(){
+  const p=salesProject(), sales=todayState().sales;
+  document.getElementById('sell-project').value=p.id;
+  document.getElementById('sales-script').textContent=p.sell;
+  const steps=[['radar','Buscar en Radar','Un nicho + una ciudad'],['qualify','Elegir 5 negocios','Prioriza una brecha real'],['send','Enviar 5 mensajes','Usa la auditoría y personaliza'],['follow','3 seguimientos','Mueve respuestas pendientes']];
+  document.getElementById('sales-actions').innerHTML=steps.map(([key,title,desc])=>`<button class="action-step ${sales[key]?'done':''}" onclick="toggleSales('${key}')"><span class="action-check">${sales[key]?'✓':'○'}</span><span><strong>${title}</strong><span>${desc}</span></span></button>`).join('');
+  renderCRM();
+}
+function toggleSales(key){ const day=todayState(); day.sales[key]=!day.sales[key]; if(['radar','qualify','send','follow'].every(step=>day.sales[step])) day.checked.sell=true; saveState(); renderSell(); renderToday(); }
+async function copyText(text,button){
+  let copied=false;
+  try { await navigator.clipboard.writeText(text); copied=true; }
+  catch(error){
+    const area=document.createElement('textarea'); area.value=text; area.style.position='fixed'; area.style.opacity='0'; document.body.appendChild(area); area.select();
+    try { copied=document.execCommand('copy'); } catch(e){} area.remove();
+  }
+  if(copied){ const old=button.textContent; button.textContent='Copiado'; setTimeout(()=>button.textContent=old,1400); }
+  else toast('Selecciona y copia el texto manualmente.');
+}
+function copySalesScript(button){ copyText(salesProject().sell,button); }
+
+function renderPublish(){
+  const day=todayState(), selected=account(day.publishAccount), index=currentIdeaIndex(selected), baseIdea=selected.ideas[index];
+  const idea=day.aiPlan&&!day.aiContentDisabled&&day.aiPlan.accountId===selected.id?{hook:day.aiPlan.hook,body:day.aiPlan.body,cta:day.aiPlan.cta}:baseIdea;
+  const select=document.getElementById('publish-account');
+  select.innerHTML=ACCOUNTS.map(item=>`<option value="${item.id}">${escapeHTML(item.handle)} · ${escapeHTML(item.name)}</option>`).join('');
+  select.value=selected.id;
+  const format=document.getElementById('publish-format'), suggested=scheduleFor().format;
+  format.innerHTML=[suggested,'Reel corto','Historia','Carrusel','Post técnico'].filter((value,index,array)=>array.indexOf(value)===index).map(value=>`<option>${escapeHTML(value)}</option>`).join('');
+  document.getElementById('channel-purpose').innerHTML=`<strong>${escapeHTML(selected.handle)}</strong> · ${escapeHTML(selected.purpose)}`;
+  document.getElementById('content-hook').textContent=idea.hook;
+  document.getElementById('content-body').textContent=idea.body;
+  document.getElementById('content-cta').textContent=idea.cta;
+  document.getElementById('idea-bank').innerHTML=selected.ideas.map((x,i)=>`<button class="idea-chip" onclick="selectIdea(${i})">${escapeHTML(x.hook)}</button>`).join('');
+  document.getElementById('account-links').innerHTML=[...ACCOUNTS.map(item=>`<a class="account-link" href="${item.url}" target="_blank" rel="noreferrer"><strong>${escapeHTML(item.handle)}</strong><span>${escapeHTML(item.name)} →</span></a>`),'<a class="account-link" href="https://nachotechrd.com/links/" target="_blank" rel="noreferrer"><strong>Centro de enlaces</strong><span>Todos los destinos →</span></a>'].join('');
+  renderContentWeek();
+}
+function changePublishAccount(id){ if(!ACCOUNTS.some(item=>item.id===id))return; const day=todayState(); day.publishAccount=id; day.aiContentDisabled=id!==day.aiPlan?.accountId; saveState(); renderPublish(); renderToday(); }
+function selectIdea(index){ const selected=account(),day=todayState(); state.contentIndex[selected.id]=index; day.aiContentDisabled=true; saveState(); renderPublish(); }
+function nextIdea(){ const selected=account(),day=todayState(); state.contentIndex[selected.id]=(currentIdeaIndex(selected)+1)%selected.ideas.length; day.aiContentDisabled=true; saveState(); renderPublish(); }
+function contentText(){ const day=todayState(),selected=account(); if(day.aiPlan&&!day.aiContentDisabled&&day.aiPlan.accountId===selected.id)return `${day.aiPlan.hook}\n\n${day.aiPlan.body}\n\n${day.aiPlan.cta}`; const idea=selected.ideas[currentIdeaIndex(selected)]; return `${idea.hook}\n\n${idea.body}\n\n${idea.cta}`; }
+function copyContent(button){ copyText(contentText(),button); }
+function openAssignedInstagram(){ window.open(account().url,'_blank','noopener'); }
+function markPublished(){ const day=todayState(); day.checked.publish=true; day.publishedAccount=account().id; saveState(); renderPublish(); renderToday(); toast(`Publicación de ${account().handle} completada.`); }
+function renderContentWeek(){
+  const today=new Date(), monday=new Date(today); monday.setDate(today.getDate()-((today.getDay()+6)%7));
+  const cards=[];
+  for(let i=0;i<7;i++){
+    const date=new Date(monday); date.setDate(monday.getDate()+i);
+    const plan=scheduleFor(date), primary=account(plan.primary), secondary=plan.secondary?account(plan.secondary):null;
+    const saved=state.daily[dateKey(date)], isToday=dateKey(date)===dateKey(today), done=Boolean(saved?.checked?.publish);
+    cards.push(`<div class="week-day ${isToday?'today':''} ${done?'done':''}"><b>${new Intl.DateTimeFormat('es-DO',{weekday:'short'}).format(date)}</b><strong>${escapeHTML(primary.handle)}</strong><span>${secondary?`+ ${escapeHTML(secondary.handle)} · `:''}${escapeHTML(plan.format)}</span></div>`);
+  }
+  document.getElementById('content-week').innerHTML=cards.join('');
+}
+
+function renderProjects(){
+  const counts={focus:0,support:0,paused:0}; state.projects.forEach(p=>counts[p.status]=(counts[p.status]||0)+1);
+  document.getElementById('focus-count').textContent=counts.focus||0; document.getElementById('support-count').textContent=counts.support||0; document.getElementById('pause-count').textContent=counts.paused||0;
+  document.getElementById('project-list').innerHTML=state.projects.map(p=>`<div class="project-row ${p.status==='focus'?'focus':''}"><div class="project-name"><strong>${escapeHTML(p.name)}</strong><span>${escapeHTML(p.kind||'Proyecto')}</span></div><select class="input" aria-label="Estado de ${escapeHTML(p.name)}" onchange="setProjectStatus('${p.id}',this.value)"><option value="focus" ${p.status==='focus'?'selected':''}>Foco</option><option value="support" ${p.status==='support'?'selected':''}>Soporte</option><option value="paused" ${p.status==='paused'?'selected':''}>Pausa</option></select><input class="input project-next" aria-label="Próxima acción de ${escapeHTML(p.name)}" value="${escapeHTML(p.next||'')}" onchange="setProjectNext('${p.id}',this.value)"><div class="project-actions"><button class="btn btn-secondary btn-small" onclick="changeFocus('${p.id}');showView('today')">Abrir hoy</button>${p.custom?`<button class="btn btn-danger btn-small" onclick="removeProject('${p.id}')">Eliminar</button>`:''}</div></div>`).join('');
+}
+function setProjectStatus(id,status){
+  const current=state.projects.find(p=>p.id===id); if(!current)return;
+  if(status==='focus'){
+    const previous=state.projects.find(p=>p.id!==id&&p.status==='focus');
+    const supportCount=state.projects.filter(p=>p.status==='support'&&p.id!==id).length;
+    if(previous) previous.status=supportCount>=2?'paused':'support';
+    state.activeProject=id;
+  }
+  if(status==='support'&&current.status!=='support'&&state.projects.filter(p=>p.status==='support').length>=2){ toast('Ya tienes 2 proyectos de soporte. Pausa uno primero.'); renderProjects(); return; }
+  current.status=status;
+  if(!state.projects.some(p=>p.status==='focus')){ current.status='focus'; state.activeProject=id; toast('Debe existir un proyecto en foco.'); }
+  saveState(); populateProjectSelects(); renderProjects(); renderToday();
+}
+function setProjectNext(id,value){ const p=state.projects.find(p=>p.id===id); if(p){p.next=value.trim();saveState();toast('Próxima acción guardada.');} }
+function addProject(){
+  const name=document.getElementById('new-project-name').value.trim(),kind=document.getElementById('new-project-kind').value.trim(),next=document.getElementById('new-project-next').value.trim();
+  if(!name){toast('Escribe el nombre del proyecto.');return;}
+  state.projects.push({id:uid(),name,kind:kind||'Proyecto',status:'paused',next:next||'Definir el siguiente resultado verificable.',description:'Proyecto personalizado.',sellTask:`Habla con 3 personas que podrían necesitar ${name} y valida el problema.`,sell:`Hola, estoy validando ${name}. Quiero entender qué problema debería resolver primero y busco personas que vivan ese proceso. ¿Cuál es la parte más difícil ahora mismo?`,build:next||'Hablar con una persona usuaria y definir el siguiente paso.',ideas:[{hook:`Lo que estoy aprendiendo mientras construyo ${name}.`,body:'Comparte el problema observado, la decisión tomada y una captura o resultado real.',cta:'¿Cómo resolverías este problema?'},{hook:`Una decisión difícil dentro de ${name}.`,body:'Explica dos opciones, el criterio elegido y lo que necesitas validar.',cta:'¿Cuál opción elegirías y por qué?'},{hook:`Antes y después de una mejora en ${name}.`,body:'Muestra el cambio y explica qué parte del uso intentas hacer más clara.',cta:'¿Qué revisarías después?'}],custom:true});
+  ['new-project-name','new-project-kind','new-project-next'].forEach(id=>document.getElementById(id).value=''); saveState(); populateProjectSelects(); renderProjects(); toast('Proyecto añadido en pausa.');
+}
+function removeProject(id){ const p=state.projects.find(x=>x.id===id); if(!p?.custom)return; state.projects=state.projects.filter(x=>x.id!==id); saveState(); populateProjectSelects(); renderProjects(); }
+
+const STAGE_LABELS={nuevo:'Nuevo',contactado:'Contactado',respondio:'Respondió',demo:'Demo',propuesta:'Propuesta',piloto:'Piloto',cerrado:'Pago',perdido:'Perdido'};
+function addProspect(){
+  const name=document.getElementById('crm-name').value.trim(); if(!name){toast('Escribe el negocio o persona.');return;}
+  const row={id:Date.now(),negocio:name,contacto:document.getElementById('crm-contact').value.trim(),nicho:salesProject().name,estado:document.getElementById('crm-stage').value,paso:document.getElementById('crm-next').value.trim(),fecha:new Date().toLocaleDateString('es-DO')};
+  state.crm.unshift(row); saveState(); ['crm-name','crm-contact','crm-next'].forEach(id=>document.getElementById(id).value=''); renderCRM(); sendSheets('add',{prospecto:row}); toast('Prospecto guardado.');
+}
+function renderCRM(){
+  const list=document.getElementById('crm-list'); if(!list)return;
+  const term=(document.getElementById('crm-search')?.value||'').toLowerCase(),filter=document.getElementById('crm-filter')?.value||'';
+  const rows=state.crm.filter(p=>{const matches=[p.negocio,p.contacto,p.nicho,p.paso].join(' ').toLowerCase().includes(term); const status=!filter||(filter==='pendiente'?!['cerrado','perdido'].includes(p.estado):p.estado===filter);return matches&&status;});
+  list.innerHTML=rows.length?rows.map(p=>`<div class="crm-item"><div><strong>${escapeHTML(p.negocio)}</strong><p>${escapeHTML(p.nicho||'Sin proyecto')} · ${escapeHTML(p.contacto||'Sin contacto')}<br>Próximo: ${escapeHTML(p.paso||'Definir seguimiento')}</p><span class="status">${escapeHTML(STAGE_LABELS[p.estado]||p.estado||'Nuevo')}</span></div><button class="btn btn-danger btn-small" aria-label="Eliminar ${escapeHTML(p.negocio)}" onclick="removeProspect('${p.id}')">×</button></div>`).join(''):'<div class="empty">No hay prospectos en esta vista.</div>';
+}
+function removeProspect(id){ state.crm=state.crm.filter(p=>String(p.id)!==String(id)); saveState(); renderCRM(); sendSheets('delete',{id}); }
+function exportCRM(){ if(!state.crm.length){toast('No hay prospectos para exportar.');return;} const headers=['Negocio','Proyecto','Contacto','Estado','Próximo paso']; const rows=state.crm.map(p=>[p.negocio,p.nicho,p.contacto,p.estado,p.paso]); const csv=[headers,...rows].map(r=>r.map(c=>`"${String(c||'').replace(/"/g,'""')}"`).join(',')).join('\n'); const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'})); const a=document.createElement('a');a.href=url;a.download='nt-crm.csv';a.click();URL.revokeObjectURL(url); }
+function sendSheets(action,payload){
+  document.getElementById('sync-status').textContent='Sincronizando...';
+  fetch(SHEETS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action,...payload})}).then(()=>document.getElementById('sync-status').textContent='Local + envío realizado').catch(()=>document.getElementById('sync-status').textContent='Guardado local');
+}
+
+let toastTimer;
+function toast(message){ const el=document.getElementById('toast');el.textContent=message;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2200); }
+
+/* ── Single Topbar Phrase Rotator (every 30 seconds) ── */
+const TOPBAR_PHRASES = [
+  'Abre. Decide. Ejecuta. Cierra.',
+  '“No estás dejando algo, estás construyendo control.”',
+  'Un antojo agudo dura entre 3 y 5 minutos antes de disiparse (CDC).',
+  'Una sola acción mueve el sistema.',
+  'Consistencia > intensidad.',
+  'A las 12 horas, tu oxigenación celular vuelve a la capacidad normal (AHA).',
+  'Hoy es el día que importa.',
+  'Pequeño movimiento, gran dirección.',
+  'Beber agua fría estimula el nervio vago y reduce la tensión somática.',
+  'Protege tu foco. El resto puede esperar.',
+  'La nicotina libre abandona tu torrente sanguíneo en 48-72 horas (NHS).',
+  'Empieza lo más fácil. El momentum hace el resto.',
+  'Menos opciones. Más claridad.',
+  'No necesitas más energía. Necesitas menos fricción.',
+  'A los 12 meses sin fumar, el riesgo coronario se reduce un 50% (OMS).',
+  'Cada historia publicada es una semilla.'
+];
+let _topbarIdx = 0;
+function rotateTopbar(){
+  const el = document.getElementById('topbar-phrase');
+  if(!el) return;
+  _topbarIdx = (_topbarIdx + 1) % TOPBAR_PHRASES.length;
+  el.style.animation = 'none';
+  el.offsetHeight;
+  el.style.animation = '';
+  el.textContent = TOPBAR_PHRASES[_topbarIdx];
+}
+
+function init(){
+  populateProjectSelects(); renderToday(); renderSell(); renderPublish(); renderProjects();
+  const initial=location.hash.replace('#',''); showView(TITLES[initial]?initial:'today');
+  setInterval(renderSmoke,1000);
+  setInterval(rotateTopbar, 6000); // Cambia cada 6 segundos
+}
+init();
+</script>
+</body>
+</html>
