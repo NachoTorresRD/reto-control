@@ -1160,14 +1160,31 @@ dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur
           <button class="btn btn-secondary btn-small" id="ai-generate" onclick="generateAIPlan(this)">✨ Generar con IA</button>
           <button class="btn btn-secondary btn-small" onclick="restoreBasePlan()">Restaurar plan base</button>
           <details class="ai-setup" id="ai-setup">
-            <summary id="ai-setup-summary">⚙️ Configurar Gemini API Key</summary>
-            <div class="ai-fields">
-              <input class="input" id="gemini-key" type="password" autocomplete="off" placeholder="Pega tu clave de Gemini API aquí">
-              <button class="btn btn-secondary" onclick="saveAIKey()">Guardar clave permanentemente</button>
-            </div>
-            <div class="ai-help">
-              La clave se guarda localmente en tu navegador (`localStorage`). Nunca se envía a servidores externos excepto directamente a Google Gemini. 
-              <a href="https://aistudio.google.com/apikey" target="_blank" rel="noreferrer" style="color:var(--cyan)">Obtener clave gratis de Gemini studio →</a>
+            <summary id="ai-setup-summary">⚙️ Configurar Proveedor de IA (OpenRouter, Nvidia, HuggingFace, Gemini)</summary>
+            <div class="ai-provider-form">
+              <div class="field" style="margin-top:10px;">
+                <label for="ai-provider-select">Proveedor de IA</label>
+                <select class="input" id="ai-provider-select">
+                  <option value="openrouter">OpenRouter (DeepSeek R1, Llama 3.3, Qwen - Gratis/Pago)</option>
+                  <option value="nvidia">Nvidia NIM API (Llama 3.3 70B, Mistral)</option>
+                  <option value="huggingface">Hugging Face (Inference API / Serverless)</option>
+                  <option value="gemini">Google Gemini API</option>
+                </select>
+              </div>
+              <div class="field" style="margin-top:8px;">
+                <label for="ai-api-key">API Key del Proveedor</label>
+                <input class="input" id="ai-api-key" type="password" autocomplete="off" placeholder="Pega tu API Key de tu proveedor aquí">
+              </div>
+              <div class="field" style="margin-top:8px;">
+                <label for="ai-model-name">Nombre de Modelo (Opcional)</label>
+                <input class="input" id="ai-model-name" placeholder="Ej.: meta-llama/llama-3.3-70b-instruct:free ó meta/llama-3.3-70b-instruct">
+              </div>
+              <div class="button-row" style="margin-top:10px;">
+                <button class="btn btn-primary" onclick="saveAIProviderConfig()">Guardar Proveedor y API Key</button>
+              </div>
+              <div class="ai-help" id="ai-provider-help" style="margin-top:8px;">
+                La clave se guarda localmente en tu navegador (`localStorage`). Obtén tu clave en <a href="https://openrouter.ai/keys" target="_blank" rel="noreferrer" style="color:var(--cyan)">OpenRouter →</a>, <a href="https://build.nvidia.com/" target="_blank" rel="noreferrer" style="color:var(--cyan)">Nvidia NIM →</a>, o <a href="https://huggingface.co/settings/tokens" target="_blank" rel="noreferrer" style="color:var(--cyan)">HuggingFace →</a>
+              </div>
             </div>
           </details>
         </div>
@@ -1718,20 +1735,30 @@ function updateProgress(){
   if(spl) spl.textContent=`${done} / 4`; 
 }
 
-function getAIKey(){
-  return localStorage.getItem('nt_gemini_key') || sessionStorage.getItem('nt_gemini_key') || state.geminiKey || '';
+function getAIConfig(){
+  return {
+    provider: localStorage.getItem('nt_ai_provider') || 'openrouter',
+    apiKey: localStorage.getItem('nt_ai_key') || localStorage.getItem('nt_gemini_key') || state.geminiKey || '',
+    model: localStorage.getItem('nt_ai_model') || ''
+  };
 }
 
-function saveAIKey(){
-  const input=document.getElementById('gemini-key'), key=input?input.value.trim():'';
-  if(!key){ toast('Pega una clave válida de Gemini.'); return; }
-  localStorage.setItem('nt_gemini_key', key);
-  sessionStorage.setItem('nt_gemini_key', key);
-  state.geminiKey = key;
-  saveState();
+function saveAIProviderConfig(){
+  const provider = document.getElementById('ai-provider-select').value;
+  const key = document.getElementById('ai-api-key').value.trim();
+  const model = document.getElementById('ai-model-name').value.trim();
+  
+  if(!key){ toast('Introduce una API Key válida para el proveedor seleccionado.'); return; }
+  
+  localStorage.setItem('nt_ai_provider', provider);
+  localStorage.setItem('nt_ai_key', key);
+  localStorage.setItem('nt_ai_model', model);
+  if(provider === 'gemini') localStorage.setItem('nt_gemini_key', key);
+  
   const setupEl = document.getElementById('ai-setup');
   if(setupEl) setupEl.open = false;
-  toast('✓ Clave de Gemini API guardada permanentemente.');
+  
+  toast(`✓ Proveedor ${provider.toUpperCase()} guardado con éxito.`);
   renderToday();
 }
 
@@ -1739,7 +1766,7 @@ function restoreBasePlan(){ const day=todayState(); delete day.aiPlan; day.aiCon
 function limitText(value,max){ return String(value||'').trim().slice(0,max); }
 
 function renderToday(){
-  const p=project(), day=todayState(), tasks=taskData(), key=getAIKey();
+  const p=project(), day=todayState(), tasks=taskData(), cfg=getAIConfig();
   safeSetText('focus-heading', p.name);
   safeSetText('focus-description', p.description||'Proyecto personalizado.');
   safeSetValue('today-project', p.id);
@@ -1748,11 +1775,11 @@ function renderToday(){
   const aiStatusEl = document.getElementById('ai-status');
   if(aiStatusEl){
     if(day.aiPlan){
-      aiStatusEl.innerHTML = '<strong>✨ Plan e ideas con IA activos (Guardados).</strong> Se mantienen guardados para todo tu día.';
-    } else if(key){
-      aiStatusEl.innerHTML = '<strong>✓ Gemini API lista.</strong> Haz clic en "Generar con IA" para personalizar tareas y guion.';
+      aiStatusEl.innerHTML = `<strong>✨ Plan e ideas con IA activos (Guardados).</strong> Generados con ${cfg.provider.toUpperCase()}.`;
+    } else if(cfg.apiKey){
+      aiStatusEl.innerHTML = `<strong>✓ Proveedor ${cfg.provider.toUpperCase()} listo.</strong> Haz clic en "Generar con IA" para personalizar tareas y guion.`;
     } else {
-      aiStatusEl.innerHTML = '<strong>Plan base activo.</strong> Despliega la pestaña abajo para guardar tu Gemini API Key.';
+      aiStatusEl.innerHTML = '<strong>Plan base activo.</strong> Configura tu proveedor de IA abajo (OpenRouter, Nvidia, HF, Gemini).';
     }
   }
 
@@ -1761,12 +1788,18 @@ function renderToday(){
     aiGenBtn.textContent = day.aiPlan ? '🔄 Regenerar con IA' : '✨ Generar con IA';
   }
 
-  const keyInput = document.getElementById('gemini-key');
-  if(keyInput && key && !keyInput.value){
-    keyInput.value = key;
+  safeSetValue('ai-provider-select', cfg.provider);
+  const keyInput = document.getElementById('ai-api-key');
+  if(keyInput && cfg.apiKey && !keyInput.value){
+    keyInput.value = cfg.apiKey;
   }
-  if(key){
-    safeSetText('ai-setup-summary', '⚙️ Gemini API Key guardada ✓');
+  const modelInput = document.getElementById('ai-model-name');
+  if(modelInput && cfg.model && !modelInput.value){
+    modelInput.value = cfg.model;
+  }
+
+  if(cfg.apiKey){
+    safeSetText('ai-setup-summary', `⚙️ Proveedor ${cfg.provider.toUpperCase()} configurado ✓`);
   }
 
   safeSetHTML('daily-moves', Object.entries(tasks).map(([keyName,t])=>`<article class="move-card ${day.checked[keyName]?'done':''}" style="--move-color:${t.color}"><div class="move-top"><div><div class="move-type">${t.label}</div><h3>${escapeHTML(t.title)}</h3></div><button class="check-button" aria-label="Marcar ${t.label}" aria-pressed="${day.checked[keyName]}" onclick="toggleDaily('${keyName}')">${day.checked[keyName]?'✓':'○'}</button></div><p>${escapeHTML(t.text)}</p><span class="account-chip">${escapeHTML(t.account)}</span><div class="move-actions"><button class="btn btn-secondary" onclick="runTask('${keyName}')">Abrir acción</button></div></article>`).join(''));
@@ -1780,49 +1813,89 @@ function renderToday(){
   renderSmoke();
 }
 
+async function callUniversalAIProvider(prompt){
+  const { provider, apiKey, model } = getAIConfig();
+  if(!apiKey) throw new Error('No hay una API Key configurada. Abre "Configurar Proveedor de IA".');
+
+  let endpoint = '', headers = { 'Content-Type': 'application/json' }, body = {};
+
+  if(provider === 'openrouter'){
+    endpoint = 'https://openrouter.ai/api/v1/chat/completions';
+    headers['Authorization'] = `Bearer ${apiKey}`;
+    headers['HTTP-Referer'] = 'https://reto-control.app';
+    headers['X-Title'] = 'Reto Control';
+    body = {
+      model: model || 'meta-llama/llama-3.3-70b-instruct:free',
+      messages: [{ role: 'user', content: prompt }]
+    };
+  } else if(provider === 'nvidia'){
+    endpoint = 'https://integrate.api.nvidia.com/v1/chat/completions';
+    headers['Authorization'] = `Bearer ${apiKey}`;
+    body = {
+      model: model || 'meta/llama-3.3-70b-instruct',
+      messages: [{ role: 'user', content: prompt }],
+      temperature: 0.2
+    };
+  } else if(provider === 'huggingface'){
+    const hfModel = model || 'Qwen/Qwen2.5-Coder-32B-Instruct';
+    endpoint = `https://api-inference.huggingface.co/models/${hfModel}/v1/chat/completions`;
+    headers['Authorization'] = `Bearer ${apiKey}`;
+    body = {
+      model: hfModel,
+      messages: [{ role: 'user', content: prompt }]
+    };
+  } else {
+    // Gemini API with robust fallbacks
+    const geminiModels = [model || 'gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-2.0-flash-exp'];
+    let lastErr = null;
+    for(const gModel of geminiModels){
+      try {
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${gModel}:generateContent`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
+          body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: prompt }] }], generationConfig: { maxOutputTokens: 900 } })
+        });
+        const data = await res.json();
+        if(!res.ok) throw new Error(data?.error?.message || `HTTP ${res.status} en ${gModel}`);
+        const text = (data.candidates?.[0]?.content?.parts || []).map(p=>p.text||'').join('').trim();
+        if(text) return text;
+      } catch(e){
+        lastErr = e;
+      }
+    }
+    throw new Error(lastErr?.message || 'Gemini API no devolvió contenido.');
+  }
+
+  const response = await fetch(endpoint, { method: 'POST', headers, body: JSON.stringify(body) });
+  const data = await response.json();
+  if(!response.ok) throw new Error(data?.error?.message || data?.error || `HTTP ${response.status} en ${provider}`);
+  return data.choices?.[0]?.message?.content || '';
+}
+
 async function generateAIPlan(button){
-  const key=getAIKey();
-  if(!key){ 
+  const cfg=getAIConfig();
+  if(!cfg.apiKey){ 
     const setupEl = document.getElementById('ai-setup');
     if(setupEl) setupEl.open=true; 
-    const keyEl = document.getElementById('gemini-key');
+    const keyEl = document.getElementById('ai-api-key');
     if(keyEl) keyEl.focus(); 
-    toast('Configura tu clave de Gemini API para generar tu plan personal.'); 
+    toast(`Configura tu API Key para ${cfg.provider.toUpperCase()} abajo.`); 
     return; 
   }
   const p=project(), commercial=salesProject(), plan=scheduleFor(), primary=account(plan.primary), secondary=plan.secondary?account(plan.secondary):null, day=todayState();
   const smokeContext=smokeConfigured()?{daysWithoutSmoking:Math.floor(smokeElapsed()/86400000),todayStatus:day.smokeStatus||'sin confirmar',cravingHandled:Boolean(day.cravingHandled)}:{configured:false};
   const stageCounts=state.crm.reduce((totals,row)=>{const stage=row.estado||'nuevo';totals[stage]=(totals[stage]||0)+1;return totals;},{});
   const recent=Object.entries(state.daily).sort(([a],[b])=>b.localeCompare(a)).slice(0,5).map(([date,value])=>({date,story:value.aiPlan?.story,publish:value.aiPlan?.publish,sell:value.aiPlan?.sell,build:value.aiPlan?.build})).filter(item=>item.story);
-  const prompt=`Actúa como director diario de productividad y contenido para Nacho Torres. Devuelve SOLO un objeto JSON válido, sin markdown, con estas claves: story, publish, sell, build, hook, body, cta.\n\nContexto de hoy:\n- Fecha: ${dateKey()}\n- Proyecto de desarrollo en foco: ${p.name}\n- Oferta comercial que sí se moverá con leads: ${commercial.name}\n- Próxima acción registrada: ${p.next||p.build}\n- Resultado deseado por Nacho: ${day.goal||'no definido'}\n- Control de no fumar, sin datos médicos: ${JSON.stringify(smokeContext)}\n- Instagram principal asignado: ${primary.handle}. Propósito: ${primary.purpose}\n- Instagram secundario opcional: ${secondary?secondary.handle+'; propósito: '+secondary.purpose:'ninguno'}\n- Formato sugerido: ${plan.format}\n- Estado agregado del CRM, sin datos personales: ${JSON.stringify(stageCounts)}\n- Planes recientes que NO debes repetir: ${JSON.stringify(recent)}\n\nReglas obligatorias:\n1. story debe ser una acción extremadamente fácil de 5 minutos para ${primary.handle}.\n2. publish debe ser una acción de contenido de máximo 20 minutos.\n3. sell debe usar NT RADAR para seleccionar 5 negocios, auditar y contactar para ${commercial.name}.\n4. build debe ser una acción de 25 minutos para ${p.name}, pequeña y terminable.\n5. NT-Skill Supreme es gratuito y se difunde con clips/tutoriales para generar autoridad.\n6. Reels Studio es una herramienta interna para producir videos.\n7. ${primary.handle==='@nachotechrd'?'El contenido debe ser exclusivamente reparación de celulares o tecnología móvil.':'Respeta strictly el propósito de la cuenta asignada.'}\n8. hook, body y cta forman una publicación lista para ${primary.handle}.\n9. No des consejos médicos ni inventes beneficios de salud.\n10. Escribe en español dominicano claro, directo y sin frases vacías.\n11. Longitudes máximas: story 150 caracteres, publish 180, sell 180, build 180, hook 120, body 420, cta 120.`;
+  const prompt=`Actúa como director diario de productividad y contenido para Nacho Torres. Devuelve SOLO un objeto JSON válido, sin markdown ni comillas externas, con exactamente estas claves: story, publish, sell, build, hook, body, cta.\n\nContexto de hoy:\n- Fecha: ${dateKey()}\n- Proyecto de desarrollo en foco: ${p.name}\n- Oferta comercial que sí se moverá con leads: ${commercial.name}\n- Próxima acción registrada: ${p.next||p.build}\n- Resultado deseado por Nacho: ${day.goal||'no definido'}\n- Control de no fumar, sin datos médicos: ${JSON.stringify(smokeContext)}\n- Instagram principal asignado: ${primary.handle}. Propósito: ${primary.purpose}\n- Instagram secundario opcional: ${secondary?secondary.handle+'; propósito: '+secondary.purpose:'ninguno'}\n- Formato sugerido: ${plan.format}\n- Estado agregado del CRM, sin datos personales: ${JSON.stringify(stageCounts)}\n- Planes recientes que NO debes repetir: ${JSON.stringify(recent)}\n\nReglas obligatorias:\n1. story debe ser una acción extremadamente fácil de 5 minutos para ${primary.handle}.\n2. publish debe ser una acción de contenido de máximo 20 minutos.\n3. sell debe usar NT RADAR para seleccionar 5 negocios, auditar y contactar para ${commercial.name}.\n4. build debe ser una acción de 25 minutos para ${p.name}, pequeña y terminable.\n5. NT-Skill Supreme es gratuito y se difunde con clips/tutoriales para generar autoridad.\n6. Reels Studio es una herramienta interna para producir videos.\n7. ${primary.handle==='@nachotechrd'?'El contenido debe ser exclusivamente reparación de celulares o tecnología móvil.':'Respeta estrictamente el propósito de la cuenta asignada.'}\n8. hook, body y cta forman una publicación lista para ${primary.handle}.\n9. No des consejos médicos ni inventes beneficios de salud.\n10. Escribe en español dominicano claro, directo y sin frases vacías.\n11. Longitudes máximas: story 150 caracteres, publish 180, sell 180, build 180, hook 120, body 420, cta 120.`;
   
-  const old=button.textContent; button.disabled=true; button.textContent='✨ Generando consejos...';
-  const models = ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-2.0-flash-exp'];
-  let rawText = '', lastError = null;
-
-  for(const model of models){
-    try {
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
-        body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: prompt }] }], generationConfig: { maxOutputTokens: 900 } })
-      });
-      const data = await response.json();
-      if(!response.ok) throw new Error(data?.error?.message || `HTTP ${response.status} en ${model}`);
-      rawText = (data.candidates?.[0]?.content?.parts || []).map(p=>p.text||'').join('').trim();
-      if(rawText) break;
-    } catch(err){
-      console.warn(`Falló ${model}:`, err.message);
-      if(!lastError) lastError = err;
-    }
-  }
+  const old=button.textContent; button.disabled=true; button.textContent=`✨ Generando con ${cfg.provider.toUpperCase()}...`;
 
   try {
-    if(!rawText) throw new Error(lastError?.message || 'No se recibió respuesta de los modelos de Gemini.');
+    const rawText = await callUniversalAIProvider(prompt);
     const match = rawText.match(/\{[\s\S]*\}/); 
-    if(!match) throw new Error('La respuesta no contiene JSON válido.');
+    if(!match) throw new Error('La respuesta no contiene un formato JSON válido.');
     const result = JSON.parse(match[0]), required = ['story','publish','sell','build','hook','body','cta'];
-    if(!required.every(field => typeof result[field] === 'string' && result[field].trim())) throw new Error('La respuesta está incompleta.');
+    if(!required.every(field => typeof result[field] === 'string' && result[field].trim())) throw new Error('La respuesta recibida está incompleta.');
     
     // Save AI generated plan permanently in state & localStorage
     day.aiPlan = {
@@ -1841,10 +1914,10 @@ async function generateAIPlan(button){
     saveState(); 
     renderToday(); 
     renderPublish(); 
-    toast('✨ Plan e ideas guardados con éxito.');
+    toast(`✨ Plan e ideas generados con ${cfg.provider.toUpperCase()} guardados con éxito.`);
   } catch(error){
     console.error(error); 
-    toast(`Error al generar con IA: ${error.message}`); 
+    toast(`Error al generar con IA (${cfg.provider}): ${error.message}`); 
   } finally { 
     button.disabled = false; 
     button.textContent = old; 
