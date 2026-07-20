@@ -1154,10 +1154,15 @@ dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur
           <div><div class="eyebrow">Foco activo</div><h3 id="focus-heading">WHABOT Pro</h3><p id="focus-description"></p></div>
           <div class="field focus-control"><label for="today-project">Sistema que vas a mover</label><select id="today-project" onchange="changeFocus(this.value)"></select></div>
         </div>
-        <div class="goal-row"><div class="field"><label for="today-goal">Resultado que quieres dejar listo hoy</label><input id="today-goal" maxlength="140" placeholder="Ej.: agendar una demo y publicar un caso" oninput="saveTodayGoal(this.value)"></div><button class="btn btn-primary" onclick="focusFirstPending()">Empezar siguiente acción</button></div>
+        <div class="goal-row">
+          <div class="field"><label for="today-goal">Resultado que quieres dejar listo hoy</label><input id="today-goal" maxlength="140" placeholder="Ej.: agendar una demo y publicar un caso" oninput="saveTodayGoal(this.value)"></div>
+          <div class="field"><label for="today-ai-focus">🎯 Enfoque para la IA (Opcional)</label><input id="today-ai-focus" maxlength="140" placeholder="Ej.: Captar clientes B2B / Día suave por baja energía / Lanzar Reel" oninput="saveTodayAIFocus(this.value)"></div>
+          <button class="btn btn-primary" onclick="focusFirstPending()">Empezar siguiente acción</button>
+        </div>
         <div class="ai-bar">
           <div class="ai-status" id="ai-status"><strong>Plan base activo.</strong> Haz clic en "Generar con IA" para personalizar tus tareas y contenido.</div>
           <button class="btn btn-secondary btn-small" id="ai-generate" onclick="generateAIPlan(this)">✨ Generar con IA</button>
+          <button class="btn btn-secondary btn-small" id="ai-view-history" onclick="openAIHistoryModal()">📜 Ver Consejos e Historial</button>
           <button class="btn btn-secondary btn-small" onclick="restoreBasePlan()">Restaurar plan base</button>
           <details class="ai-setup" id="ai-setup">
             <summary id="ai-setup-summary">⚙️ Configurar Proveedor de IA (OpenRouter, Nvidia, HuggingFace, Gemini)</summary>
@@ -1366,6 +1371,53 @@ dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur
     </div>
 
     <div class="medical-note" style="margin-top:14px;">Proyecciones orientativas basadas en datos biomédicos de la Centers for Disease Control and Prevention (CDC), American Heart Association (AHA) y OMS. Los tiempos individuales varían y no sustituyen evaluación médica.</div>
+  </div>
+</dialog>
+
+<!-- Modal de Consejos e Historial de IA -->
+<dialog class="nt-dialog" id="ai-history-dialog" style="max-width: 680px; width: 92vw;">
+  <div class="dialog-body">
+    <div class="dialog-head">
+      <div>
+        <h3>✨ Consejos de IA & Historial Guardado</h3>
+        <p>Revisa las recomendaciones generadas por la IA, copia tus guiones y conoce el contexto enviado.</p>
+      </div>
+      <button class="dialog-close" type="button" onclick="closeDialog('ai-history-dialog')" aria-label="Cerrar">×</button>
+    </div>
+
+    <!-- Pestañas internas del modal -->
+    <div class="ai-history-tabs" style="display:flex; gap:8px; margin-bottom:14px; border-bottom:1px solid var(--border-subtle); padding-bottom:8px; flex-wrap:wrap;">
+      <button class="btn btn-secondary btn-small" id="tab-btn-plan" onclick="switchAITab('plan')">📋 Consejos de Hoy</button>
+      <button class="btn btn-secondary btn-small" id="tab-btn-context" onclick="switchAITab('context')">🧠 Contexto Enviado</button>
+      <button class="btn btn-secondary btn-small" id="tab-btn-past" onclick="switchAITab('past')">📚 Historial Pasado</button>
+    </div>
+
+    <!-- Tab 1: Consejos de Hoy -->
+    <div id="ai-tab-plan">
+      <div id="ai-plan-content" style="display:grid; gap:12px; max-height:420px; overflow-y:auto; padding-right:4px;">
+        <!-- Contenido dinámico -->
+      </div>
+    </div>
+
+    <!-- Tab 2: Contexto Enviado -->
+    <div id="ai-tab-context" hidden>
+      <div style="padding:14px; background:rgba(6,10,18,0.6); border:1px solid var(--border-subtle); border-radius:var(--radius-md); font-size:11px; line-height:1.6; max-height:420px; overflow-y:auto;">
+        <h4 style="color:var(--cyan); margin-bottom:8px;">🎯 Contexto y Parámetros enviados a la IA</h4>
+        <p style="color:var(--muted-2); margin-bottom:10px;">La IA analiza estos datos de tu cuenta para sugerirte acciones relevantes sin improvisar:</p>
+        <div id="ai-context-details"></div>
+      </div>
+    </div>
+
+    <!-- Tab 3: Historial Pasado -->
+    <div id="ai-tab-past" hidden>
+      <div id="ai-history-list" style="display:grid; gap:10px; max-height:420px; overflow-y:auto; padding-right:4px;">
+        <!-- Lista histórica dinámica -->
+      </div>
+    </div>
+
+    <div class="button-row" style="margin-top:16px;">
+      <button class="btn btn-secondary" onclick="closeDialog('ai-history-dialog')">Cerrar</button>
+    </div>
   </div>
 </dialog>
 
@@ -1713,6 +1765,7 @@ function changeFocus(id){
 }
 function changeSellProject(id){ const selected=state.projects.find(p=>p.id===id&&p.commercial!==false); if(!selected)return; state.sellProject=id; saveState(); renderSell(); }
 function saveTodayGoal(value){ todayState().goal=value; saveState(); }
+function saveTodayAIFocus(value){ todayState().aiFocus=value; saveState(); }
 
 function taskData(){
   const p=project(), plan=scheduleFor(), primary=account(plan.primary), secondary=plan.secondary?account(plan.secondary):null, ai=todayState().aiPlan||{};
@@ -1771,6 +1824,7 @@ function renderToday(){
   safeSetText('focus-description', p.description||'Proyecto personalizado.');
   safeSetValue('today-project', p.id);
   safeSetValue('today-goal', day.goal||'');
+  safeSetValue('today-ai-focus', day.aiFocus||'');
   
   const aiStatusEl = document.getElementById('ai-status');
   if(aiStatusEl){
@@ -1811,6 +1865,118 @@ function renderToday(){
   const paused=state.projects.filter(p=>p.status==='paused').length;
   safeSetHTML('pause-note', `<strong>Protege el foco:</strong> ${paused} proyecto${paused===1?'':'s'} en pausa no reciben mejoras hoy.`);
   renderSmoke();
+}
+
+function switchAITab(tab){
+  ['plan','context','past'].forEach(t => {
+    const el = document.getElementById(`ai-tab-${t}`);
+    const btn = document.getElementById(`tab-btn-${t}`);
+    if(el) el.hidden = (t !== tab);
+    if(btn) btn.classList.toggle('btn-primary', t === tab);
+    if(btn) btn.classList.toggle('btn-secondary', t !== tab);
+  });
+}
+
+function openAIHistoryModal(){
+  const day = todayState();
+  const p = project();
+  const commercial = salesProject();
+  const plan = scheduleFor();
+  const primary = account(plan.primary);
+  const secondary = plan.secondary ? account(plan.secondary) : null;
+  const cfg = getAIConfig();
+
+  // Render Tab 1: Current Plan
+  const planContainer = document.getElementById('ai-plan-content');
+  if(planContainer){
+    if(day.aiPlan){
+      planContainer.innerHTML = `
+        <div style="padding:10px; background:rgba(139,92,246,0.1); border:1px solid rgba(139,92,246,0.3); border-radius:var(--radius-md); font-size:11px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <strong>✨ Plan Activo de Hoy (${new Date(day.aiPlan.generatedAt || Date.now()).toLocaleTimeString('es-DO', {hour:'2-digit', minute:'2-digit'})})</strong>
+            <button class="btn btn-secondary btn-small" onclick="copyText('${escapeHTML(day.aiPlan.hook + '\\n\\n' + day.aiPlan.body + '\\n\\n' + day.aiPlan.cta)}', this)">📋 Copiar Guion Redes</button>
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <div style="padding:10px; background:rgba(6,10,18,0.5); border:1px solid var(--border-subtle); border-radius:var(--radius-md); font-size:11px;">
+            <b style="color:var(--amber);">1. Historia (5 min):</b>
+            <p style="margin-top:4px; color:var(--text);">${escapeHTML(day.aiPlan.story)}</p>
+          </div>
+          <div style="padding:10px; background:rgba(6,10,18,0.5); border:1px solid var(--border-subtle); border-radius:var(--radius-md); font-size:11px;">
+            <b style="color:var(--violet);">2. Publicación (20 min):</b>
+            <p style="margin-top:4px; color:var(--text);">${escapeHTML(day.aiPlan.publish)}</p>
+          </div>
+          <div style="padding:10px; background:rgba(6,10,18,0.5); border:1px solid var(--border-subtle); border-radius:var(--radius-md); font-size:11px;">
+            <b style="color:var(--green);">3. Prospección (25 min):</b>
+            <p style="margin-top:4px; color:var(--text);">${escapeHTML(day.aiPlan.sell)}</p>
+          </div>
+          <div style="padding:10px; background:rgba(6,10,18,0.5); border:1px solid var(--border-subtle); border-radius:var(--radius-md); font-size:11px;">
+            <b style="color:var(--cyan);">4. Producto (25 min):</b>
+            <p style="margin-top:4px; color:var(--text);">${escapeHTML(day.aiPlan.build)}</p>
+          </div>
+        </div>
+        <div style="padding:12px; background:rgba(6,10,18,0.6); border:1px solid var(--border-subtle); border-radius:var(--radius-md); font-size:11px;">
+          <b style="color:var(--violet);">Guion de Publicación Redes (${escapeHTML(primary.handle)}):</b>
+          <p style="margin-top:6px; font-weight:700; color:var(--cyan);">${escapeHTML(day.aiPlan.hook)}</p>
+          <p style="margin-top:4px; white-space:pre-line;">${escapeHTML(day.aiPlan.body)}</p>
+          <p style="margin-top:4px; color:var(--amber);">${escapeHTML(day.aiPlan.cta)}</p>
+        </div>
+      `;
+    } else {
+      planContainer.innerHTML = `
+        <div style="padding:24px; text-align:center; color:var(--muted); font-size:12px;">
+          Aún no has generado un plan con IA para el día de hoy.<br>
+          <button class="btn btn-primary" style="margin-top:12px;" onclick="closeDialog('ai-history-dialog'); generateAIPlan(document.getElementById('ai-generate'));">✨ Generar plan con IA ahora</button>
+        </div>
+      `;
+    }
+  }
+
+  // Render Tab 2: Context Details
+  const contextContainer = document.getElementById('ai-context-details');
+  if(contextContainer){
+    const smokeContext = smokeConfigured() ? `${Math.floor(smokeElapsed()/86400000)} días sin fumar (Estado: ${day.smokeStatus || 'normal'})` : 'No configurado';
+    const stageCounts = state.crm.reduce((totals,row)=>{const stage=row.estado||'nuevo';totals[stage]=(totals[stage]||0)+1;return totals;},{});
+    contextContainer.innerHTML = `
+      <ul style="display:grid; gap:6px; padding-left:14px; list-style:disc;">
+        <li><b>Proveedor de IA activo:</b> <span style="color:var(--cyan);">${cfg.provider.toUpperCase()}</span> ${cfg.model ? '('+cfg.model+')' : ''}</li>
+        <li><b>Proyecto Foco Activo:</b> <span style="color:var(--text);">${escapeHTML(p.name)}</span> — ${escapeHTML(p.description || 'Sin desc')}</li>
+        <li><b>Oferta Comercial a Prospectar:</b> <span style="color:var(--text);">${escapeHTML(commercial.name)}</span></li>
+        <li><b>Resultado Deseado del Día:</b> <span style="color:var(--amber);">${escapeHTML(day.goal || 'No definido por el usuario')}</span></li>
+        <li><b>Enfoque Específico para la IA:</b> <span style="color:var(--green);">${escapeHTML(day.aiFocus || 'Productividad equilibrada y tracción de ventas')}</span></li>
+        <li><b>Instagram Asignado Hoy:</b> <span style="color:var(--violet);">${escapeHTML(primary.handle)}</span> (${escapeHTML(primary.purpose)})</li>
+        <li><b>Control No Fumar:</b> ${escapeHTML(smokeContext)}</li>
+        <li><b>Métricas de Prospección CRM:</b> ${JSON.stringify(stageCounts)}</li>
+      </ul>
+    `;
+  }
+
+  // Render Tab 3: Past History
+  const historyContainer = document.getElementById('ai-history-list');
+  if(historyContainer){
+    const historyEntries = Object.entries(state.daily)
+      .filter(([date, d]) => d.aiPlan && d.aiPlan.story)
+      .sort(([a], [b]) => b.localeCompare(a));
+
+    if(historyEntries.length){
+      historyContainer.innerHTML = historyEntries.map(([date, d]) => `
+        <div style="padding:12px; background:rgba(6,10,18,0.5); border:1px solid var(--border-subtle); border-radius:var(--radius-md); font-size:11px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <strong style="color:var(--cyan);">${date}</strong>
+            <button class="btn btn-secondary btn-small" onclick="copyText('${escapeHTML(d.aiPlan.hook + '\\n\\n' + d.aiPlan.body + '\\n\\n' + d.aiPlan.cta)}', this)">📋 Copiar Guion</button>
+          </div>
+          <p style="color:var(--muted-2);"><b>Historia:</b> ${escapeHTML(d.aiPlan.story)}</p>
+          <p style="color:var(--muted-2); margin-top:2px;"><b>Ventas:</b> ${escapeHTML(d.aiPlan.sell)}</p>
+          <p style="color:var(--muted-2); margin-top:2px;"><b>Producto:</b> ${escapeHTML(d.aiPlan.build)}</p>
+        </div>
+      `).join('');
+    } else {
+      historyContainer.innerHTML = '<div style="padding:20px; text-align:center; color:var(--muted); font-size:11px;">No hay planes pasados de IA registrados.</div>';
+    }
+  }
+
+  switchAITab('plan');
+  openDialog('ai-history-dialog');
 }
 
 async function callUniversalAIProvider(prompt){
@@ -1914,7 +2080,7 @@ async function generateAIPlan(button){
   const smokeContext=smokeConfigured()?{daysWithoutSmoking:Math.floor(smokeElapsed()/86400000),todayStatus:day.smokeStatus||'sin confirmar',cravingHandled:Boolean(day.cravingHandled)}:{configured:false};
   const stageCounts=state.crm.reduce((totals,row)=>{const stage=row.estado||'nuevo';totals[stage]=(totals[stage]||0)+1;return totals;},{});
   const recent=Object.entries(state.daily).sort(([a],[b])=>b.localeCompare(a)).slice(0,5).map(([date,value])=>({date,story:value.aiPlan?.story,publish:value.aiPlan?.publish,sell:value.aiPlan?.sell,build:value.aiPlan?.build})).filter(item=>item.story);
-  const prompt=`Actúa como director diario de productividad y contenido para Nacho Torres. Devuelve SOLO un objeto JSON válido, sin markdown ni comillas externas, con exactamente estas claves: story, publish, sell, build, hook, body, cta.\n\nContexto de hoy:\n- Fecha: ${dateKey()}\n- Proyecto de desarrollo en foco: ${p.name}\n- Oferta comercial que sí se moverá con leads: ${commercial.name}\n- Próxima acción registrada: ${p.next||p.build}\n- Resultado deseado por Nacho: ${day.goal||'no definido'}\n- Control de no fumar, sin datos médicos: ${JSON.stringify(smokeContext)}\n- Instagram principal asignado: ${primary.handle}. Propósito: ${primary.purpose}\n- Instagram secundario opcional: ${secondary?secondary.handle+'; propósito: '+secondary.purpose:'ninguno'}\n- Formato sugerido: ${plan.format}\n- Estado agregado del CRM, sin datos personales: ${JSON.stringify(stageCounts)}\n- Planes recientes que NO debes repetir: ${JSON.stringify(recent)}\n\nReglas obligatorias:\n1. story debe ser una acción extremadamente fácil de 5 minutos para ${primary.handle}.\n2. publish debe ser una acción de contenido de máximo 20 minutos.\n3. sell debe usar NT RADAR para seleccionar 5 negocios, auditar y contactar para ${commercial.name}.\n4. build debe ser una acción de 25 minutos para ${p.name}, pequeña y terminable.\n5. NT-Skill Supreme es gratuito y se difunde con clips/tutoriales para generar autoridad.\n6. Reels Studio es una herramienta interna para producir videos.\n7. ${primary.handle==='@nachotechrd'?'El contenido debe ser exclusivamente reparación de celulares o tecnología móvil.':'Respeta estrictamente el propósito de la cuenta asignada.'}\n8. hook, body y cta forman una publicación lista para ${primary.handle}.\n9. No des consejos médicos ni inventes beneficios de salud.\n10. Escribe en español dominicano claro, directo y sin frases vacías.\n11. Longitudes máximas: story 150 caracteres, publish 180, sell 180, build 180, hook 120, body 420, cta 120.`;
+  const prompt=`Actúa como director diario de productividad y contenido para Nacho Torres. Devuelve SOLO un objeto JSON válido, sin markdown ni comillas externas, con exactamente estas claves: story, publish, sell, build, hook, body, cta.\n\nContexto de hoy:\n- Fecha: ${dateKey()}\n- Proyecto de desarrollo en foco: ${p.name}\n- Oferta comercial que sí se moverá con leads: ${commercial.name}\n- Próxima acción registrada: ${p.next||p.build}\n- Resultado deseado por Nacho: ${day.goal||'no definido'}\n- Enfoque / Meta de IA indicada por Nacho para hoy: ${day.aiFocus||'Productividad equilibrada y tracción de ventas'}\n- Control de no fumar, sin datos médicos: ${JSON.stringify(smokeContext)}\n- Instagram principal asignado: ${primary.handle}. Propósito: ${primary.purpose}\n- Instagram secundario opcional: ${secondary?secondary.handle+'; propósito: '+secondary.purpose:'ninguno'}\n- Formato sugerido: ${plan.format}\n- Estado agregado del CRM, sin datos personales: ${JSON.stringify(stageCounts)}\n- Planes recientes que NO debes repetir: ${JSON.stringify(recent)}\n\nReglas obligatorias:\n1. story debe ser una acción extremadamente fácil de 5 minutos para ${primary.handle}.\n2. publish debe ser una acción de contenido de máximo 20 minutos.\n3. sell debe usar NT RADAR para seleccionar 5 negocios, auditar y contactar para ${commercial.name}.\n4. build debe ser una acción de 25 minutos para ${p.name}, pequeña y terminable.\n5. NT-Skill Supreme es gratuito y se difunde con clips/tutoriales para generar autoridad.\n6. Reels Studio es una herramienta interna para producir videos.\n7. ${primary.handle==='@nachotechrd'?'El contenido debe ser exclusivamente reparación de celulares o tecnología móvil.':'Respeta estrictamente el propósito de la cuenta asignada.'}\n8. hook, body y cta forman una publicación lista para ${primary.handle}.\n9. No des consejos médicos ni inventes beneficios de salud.\n10. Escribe en español dominicano claro, directo y sin frases vacías.\n11. Longitudes máximas: story 150 caracteres, publish 180, sell 180, build 180, hook 120, body 420, cta 120.`;
   
   const old=button.textContent; button.disabled=true; button.textContent=`✨ Generando con ${cfg.provider.toUpperCase()}...`;
 
