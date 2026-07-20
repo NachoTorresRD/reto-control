@@ -1797,7 +1797,7 @@ async function generateAIPlan(button){
   const prompt=`Actúa como director diario de productividad y contenido para Nacho Torres. Devuelve SOLO un objeto JSON válido, sin markdown, con estas claves: story, publish, sell, build, hook, body, cta.\n\nContexto de hoy:\n- Fecha: ${dateKey()}\n- Proyecto de desarrollo en foco: ${p.name}\n- Oferta comercial que sí se moverá con leads: ${commercial.name}\n- Próxima acción registrada: ${p.next||p.build}\n- Resultado deseado por Nacho: ${day.goal||'no definido'}\n- Control de no fumar, sin datos médicos: ${JSON.stringify(smokeContext)}\n- Instagram principal asignado: ${primary.handle}. Propósito: ${primary.purpose}\n- Instagram secundario opcional: ${secondary?secondary.handle+'; propósito: '+secondary.purpose:'ninguno'}\n- Formato sugerido: ${plan.format}\n- Estado agregado del CRM, sin datos personales: ${JSON.stringify(stageCounts)}\n- Planes recientes que NO debes repetir: ${JSON.stringify(recent)}\n\nReglas obligatorias:\n1. story debe ser una acción extremadamente fácil de 5 minutos para ${primary.handle}.\n2. publish debe ser una acción de contenido de máximo 20 minutos.\n3. sell debe usar NT RADAR para seleccionar 5 negocios, auditar y contactar para ${commercial.name}.\n4. build debe ser una acción de 25 minutos para ${p.name}, pequeña y terminable.\n5. NT-Skill Supreme es gratuito y se difunde con clips/tutoriales para generar autoridad.\n6. Reels Studio es una herramienta interna para producir videos.\n7. ${primary.handle==='@nachotechrd'?'El contenido debe ser exclusivamente reparación de celulares o tecnología móvil.':'Respeta strictly el propósito de la cuenta asignada.'}\n8. hook, body y cta forman una publicación lista para ${primary.handle}.\n9. No des consejos médicos ni inventes beneficios de salud.\n10. Escribe en español dominicano claro, directo y sin frases vacías.\n11. Longitudes máximas: story 150 caracteres, publish 180, sell 180, build 180, hook 120, body 420, cta 120.`;
   
   const old=button.textContent; button.disabled=true; button.textContent='✨ Generando consejos...';
-  const models = ['gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-2.5-flash'];
+  const models = ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-2.0-flash-exp'];
   let rawText = '', lastError = null;
 
   for(const model of models){
@@ -1808,11 +1808,12 @@ async function generateAIPlan(button){
         body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: prompt }] }], generationConfig: { maxOutputTokens: 900 } })
       });
       const data = await response.json();
-      if(!response.ok) throw new Error(data?.error?.message || `HTTP ${response.status}`);
+      if(!response.ok) throw new Error(data?.error?.message || `HTTP ${response.status} en ${model}`);
       rawText = (data.candidates?.[0]?.content?.parts || []).map(p=>p.text||'').join('').trim();
       if(rawText) break;
     } catch(err){
-      lastError = err;
+      console.warn(`Falló ${model}:`, err.message);
+      if(!lastError) lastError = err;
     }
   }
 
