@@ -1655,7 +1655,8 @@ function showView(id){
   if(!TITLES[id]) id='today';
   document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===`view-${id}`));
   document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===id));
-  document.getElementById('view-title').textContent=TITLES[id];
+  const viewTitleEl = document.getElementById('view-title');
+  if(viewTitleEl) viewTitleEl.textContent = TITLES[id];
   history.replaceState(null,'',`#${id}`);
   window.scrollTo({top:0,behavior:'smooth'});
   if(id==='sell') renderSell();
@@ -1664,11 +1665,15 @@ function showView(id){
 }
 document.querySelectorAll('[data-view]').forEach(button=>button.addEventListener('click',()=>showView(button.dataset.view)));
 
+function safeSetText(id, text){ const el = document.getElementById(id); if(el) el.textContent = text; }
+function safeSetHTML(id, html){ const el = document.getElementById(id); if(el) el.innerHTML = html; }
+function safeSetValue(id, val){ const el = document.getElementById(id); if(el) el.value = val; }
+
 function populateProjectSelects(){
   const allOptions=state.projects.map(p=>`<option value="${escapeHTML(p.id)}">${escapeHTML(p.name)}</option>`).join('');
   const sellOptions=state.projects.filter(p=>p.commercial!==false).map(p=>`<option value="${escapeHTML(p.id)}">${escapeHTML(p.name)}</option>`).join('');
-  document.getElementById('today-project').innerHTML=allOptions; document.getElementById('today-project').value=state.activeProject;
-  document.getElementById('sell-project').innerHTML=sellOptions; state.sellProject=salesProject().id; document.getElementById('sell-project').value=state.sellProject;
+  safeSetHTML('today-project', allOptions); safeSetValue('today-project', state.activeProject);
+  safeSetHTML('sell-project', sellOptions); state.sellProject=salesProject().id; safeSetValue('sell-project', state.sellProject);
 }
 function changeFocus(id){
   if(!state.projects.some(p=>p.id===id)) return;
@@ -1693,24 +1698,32 @@ function taskData(){
 }
 function renderToday(){
   const p=project(), day=todayState(), tasks=taskData();
-  document.getElementById('focus-heading').textContent=p.name;
-  document.getElementById('focus-description').textContent=p.description||'Proyecto personalizado.';
-  document.getElementById('today-project').value=p.id;
-  document.getElementById('today-goal').value=day.goal||'';
-  document.getElementById('ai-status').innerHTML=day.aiPlan?'<strong>Plan mejorado con IA.</strong> Se respetan la rotación y los límites de hoy.':'<strong>Plan base activo.</strong> La IA puede variar los consejos sin cambiar tus cuentas asignadas.';
-  document.getElementById('daily-moves').innerHTML=Object.entries(tasks).map(([key,t])=>`<article class="move-card ${day.checked[key]?'done':''}" style="--move-color:${t.color}"><div class="move-top"><div><div class="move-type">${t.label}</div><h3>${escapeHTML(t.title)}</h3></div><button class="check-button" aria-label="Marcar ${t.label}" aria-pressed="${day.checked[key]}" onclick="toggleDaily('${key}')">${day.checked[key]?'✓':'○'}</button></div><p>${escapeHTML(t.text)}</p><span class="account-chip">${escapeHTML(t.account)}</span><div class="move-actions"><button class="btn btn-secondary" onclick="runTask('${key}')">Abrir acción</button></div></article>`).join('');
+  safeSetText('focus-heading', p.name);
+  safeSetText('focus-description', p.description||'Proyecto personalizado.');
+  safeSetValue('today-project', p.id);
+  safeSetValue('today-goal', day.goal||'');
+  safeSetHTML('ai-status', day.aiPlan?'<strong>Plan mejorado con IA.</strong> Se respetan la rotación y los límites de hoy.':'<strong>Plan base activo.</strong> La IA puede variar los consejos sin cambiar tus cuentas asignadas.');
+  safeSetHTML('daily-moves', Object.entries(tasks).map(([key,t])=>`<article class="move-card ${day.checked[key]?'done':''}" style="--move-color:${t.color}"><div class="move-top"><div><div class="move-type">${t.label}</div><h3>${escapeHTML(t.title)}</h3></div><button class="check-button" aria-label="Marcar ${t.label}" aria-pressed="${day.checked[key]}" onclick="toggleDaily('${key}')">${day.checked[key]?'✓':'○'}</button></div><p>${escapeHTML(t.text)}</p><span class="account-chip">${escapeHTML(t.account)}</span><div class="move-actions"><button class="btn btn-secondary" onclick="runTask('${key}')">Abrir acción</button></div></article>`).join(''));
   updateProgress();
   const next=Object.keys(tasks).find(k=>!day.checked[k]);
-  document.getElementById('next-action-text').textContent=next?`${tasks[next].label}: ${tasks[next].title}`:'Día completo. Anota el aprendizaje y descansa.';
-  document.getElementById('next-action').dataset.next=next||'';
+  safeSetText('next-action-text', next?`${tasks[next].label}: ${tasks[next].title}`:'Día completo. Anota el aprendizaje y descansa.');
+  const nextActEl = document.getElementById('next-action');
+  if(nextActEl) nextActEl.dataset.next=next||'';
   const paused=state.projects.filter(p=>p.status==='paused').length;
-  document.getElementById('pause-note').innerHTML=`<strong>Protege el foco:</strong> ${paused} proyecto${paused===1?'':'s'} en pausa no reciben mejoras hoy.`;
+  safeSetHTML('pause-note', `<strong>Protege el foco:</strong> ${paused} proyecto${paused===1?'':'s'} en pausa no reciben mejoras hoy.`);
   renderSmoke();
 }
 function toggleDaily(key){ const day=todayState(); day.checked[key]=!day.checked[key]; saveState(); renderToday(); }
 function runTask(key){ const task=taskData()[key]; if(!task)return; if(task.external) window.open(task.external,'_blank','noopener'); else showView(task.view); }
-function focusFirstPending(){ const key=document.getElementById('next-action').dataset.next; if(!key){toast('Ya completaste los cuatro movimientos de hoy.');return;} runTask(key); }
-function updateProgress(){ const checked=todayState().checked; const done=['story','publish','sell','build'].filter(key=>checked[key]).length; const pct=Math.round(done/4*100); document.getElementById('side-progress').style.width=`${pct}%`; document.getElementById('side-progress-label').textContent=`${done} / 4`; }
+function focusFirstPending(){ const nextActEl=document.getElementById('next-action'); const key=nextActEl?nextActEl.dataset.next:''; if(!key){toast('Ya completaste los cuatro movimientos de hoy.');return;} runTask(key); }
+function updateProgress(){ 
+  const checked=todayState().checked; 
+  const done=['story','publish','sell','build'].filter(key=>checked[key]).length; 
+  const pct=Math.round(done/4*100); 
+  const sp=document.getElementById('side-progress'), spl=document.getElementById('side-progress-label');
+  if(sp) sp.style.width=`${pct}%`; 
+  if(spl) spl.textContent=`${done} / 4`; 
+}
 
 function saveAIKey(){
   const input=document.getElementById('gemini-key'), key=input.value.trim();
@@ -1744,10 +1757,10 @@ async function generateAIPlan(button){
 
 function renderSell(){
   const p=salesProject(), sales=todayState().sales;
-  document.getElementById('sell-project').value=p.id;
-  document.getElementById('sales-script').textContent=p.sell;
+  safeSetValue('sell-project', p.id);
+  safeSetText('sales-script', p.sell);
   const steps=[['radar','Buscar en Radar','Un nicho + una ciudad'],['qualify','Elegir 5 negocios','Prioriza una brecha real'],['send','Enviar 5 mensajes','Usa la auditoría y personaliza'],['follow','3 seguimientos','Mueve respuestas pendientes']];
-  document.getElementById('sales-actions').innerHTML=steps.map(([key,title,desc])=>`<button class="action-step ${sales[key]?'done':''}" onclick="toggleSales('${key}')"><span class="action-check">${sales[key]?'✓':'○'}</span><span><strong>${title}</strong><span>${desc}</span></span></button>`).join('');
+  safeSetHTML('sales-actions', steps.map(([key,title,desc])=>`<button class="action-step ${sales[key]?'done':''}" onclick="toggleSales('${key}')"><span class="action-check">${sales[key]?'✓':'○'}</span><span><strong>${title}</strong><span>${desc}</span></span></button>`).join(''));
   renderCRM();
 }
 function toggleSales(key){ const day=todayState(); day.sales[key]=!day.sales[key]; if(['radar','qualify','send','follow'].every(step=>day.sales[step])) day.checked.sell=true; saveState(); renderSell(); renderToday(); }
@@ -1766,17 +1779,16 @@ function copySalesScript(button){ copyText(salesProject().sell,button); }
 function renderPublish(){
   const day=todayState(), selected=account(day.publishAccount), index=currentIdeaIndex(selected), baseIdea=selected.ideas[index];
   const idea=day.aiPlan&&!day.aiContentDisabled&&day.aiPlan.accountId===selected.id?{hook:day.aiPlan.hook,body:day.aiPlan.body,cta:day.aiPlan.cta}:baseIdea;
-  const select=document.getElementById('publish-account');
-  select.innerHTML=ACCOUNTS.map(item=>`<option value="${item.id}">${escapeHTML(item.handle)} · ${escapeHTML(item.name)}</option>`).join('');
-  select.value=selected.id;
-  const format=document.getElementById('publish-format'), suggested=scheduleFor().format;
-  format.innerHTML=[suggested,'Reel corto','Historia','Carrusel','Post técnico'].filter((value,index,array)=>array.indexOf(value)===index).map(value=>`<option>${escapeHTML(value)}</option>`).join('');
-  document.getElementById('channel-purpose').innerHTML=`<strong>${escapeHTML(selected.handle)}</strong> · ${escapeHTML(selected.purpose)}`;
-  document.getElementById('content-hook').textContent=idea.hook;
-  document.getElementById('content-body').textContent=idea.body;
-  document.getElementById('content-cta').textContent=idea.cta;
-  document.getElementById('idea-bank').innerHTML=selected.ideas.map((x,i)=>`<button class="idea-chip" onclick="selectIdea(${i})">${escapeHTML(x.hook)}</button>`).join('');
-  document.getElementById('account-links').innerHTML=[...ACCOUNTS.map(item=>`<a class="account-link" href="${item.url}" target="_blank" rel="noreferrer"><strong>${escapeHTML(item.handle)}</strong><span>${escapeHTML(item.name)} →</span></a>`),'<a class="account-link" href="https://nachotechrd.com/links/" target="_blank" rel="noreferrer"><strong>Centro de enlaces</strong><span>Todos los destinos →</span></a>'].join('');
+  safeSetHTML('publish-account', ACCOUNTS.map(item=>`<option value="${item.id}">${escapeHTML(item.handle)} · ${escapeHTML(item.name)}</option>`).join(''));
+  safeSetValue('publish-account', selected.id);
+  const suggested=scheduleFor().format;
+  safeSetHTML('publish-format', [suggested,'Reel corto','Historia','Carrusel','Post técnico'].filter((value,index,array)=>array.indexOf(value)===index).map(value=>`<option>${escapeHTML(value)}</option>`).join(''));
+  safeSetHTML('channel-purpose', `<strong>${escapeHTML(selected.handle)}</strong> · ${escapeHTML(selected.purpose)}`);
+  safeSetText('content-hook', idea.hook);
+  safeSetText('content-body', idea.body);
+  safeSetText('content-cta', idea.cta);
+  safeSetHTML('idea-bank', selected.ideas.map((x,i)=>`<button class="idea-chip" onclick="selectIdea(${i})">${escapeHTML(x.hook)}</button>`).join(''));
+  safeSetHTML('account-links', [...ACCOUNTS.map(item=>`<a class="account-link" href="${item.url}" target="_blank" rel="noreferrer"><strong>${escapeHTML(item.handle)}</strong><span>${escapeHTML(item.name)} →</span></a>`),'<a class="account-link" href="https://nachotechrd.com/links/" target="_blank" rel="noreferrer"><strong>Centro de enlaces</strong><span>Todos los destinos →</span></a>'].join(''));
   renderContentWeek();
 }
 function changePublishAccount(id){ if(!ACCOUNTS.some(item=>item.id===id))return; const day=todayState(); day.publishAccount=id; day.aiContentDisabled=id!==day.aiPlan?.accountId; saveState(); renderPublish(); renderToday(); }
@@ -1795,13 +1807,13 @@ function renderContentWeek(){
     const saved=state.daily[dateKey(date)], isToday=dateKey(date)===dateKey(today), done=Boolean(saved?.checked?.publish);
     cards.push(`<div class="week-day ${isToday?'today':''} ${done?'done':''}"><b>${new Intl.DateTimeFormat('es-DO',{weekday:'short'}).format(date)}</b><strong>${escapeHTML(primary.handle)}</strong><span>${secondary?`+ ${escapeHTML(secondary.handle)} · `:''}${escapeHTML(plan.format)}</span></div>`);
   }
-  document.getElementById('content-week').innerHTML=cards.join('');
+  safeSetHTML('content-week', cards.join(''));
 }
 
 function renderProjects(){
   const counts={focus:0,support:0,paused:0}; state.projects.forEach(p=>counts[p.status]=(counts[p.status]||0)+1);
-  document.getElementById('focus-count').textContent=counts.focus||0; document.getElementById('support-count').textContent=counts.support||0; document.getElementById('pause-count').textContent=counts.paused||0;
-  document.getElementById('project-list').innerHTML=state.projects.map(p=>`<div class="project-row ${p.status==='focus'?'focus':''}"><div class="project-name"><strong>${escapeHTML(p.name)}</strong><span>${escapeHTML(p.kind||'Proyecto')}</span></div><select class="input" aria-label="Estado de ${escapeHTML(p.name)}" onchange="setProjectStatus('${p.id}',this.value)"><option value="focus" ${p.status==='focus'?'selected':''}>Foco</option><option value="support" ${p.status==='support'?'selected':''}>Soporte</option><option value="paused" ${p.status==='paused'?'selected':''}>Pausa</option></select><input class="input project-next" aria-label="Próxima acción de ${escapeHTML(p.name)}" value="${escapeHTML(p.next||'')}" onchange="setProjectNext('${p.id}',this.value)"><div class="project-actions"><button class="btn btn-secondary btn-small" onclick="changeFocus('${p.id}');showView('today')">Abrir hoy</button>${p.custom?`<button class="btn btn-danger btn-small" onclick="removeProject('${p.id}')">Eliminar</button>`:''}</div></div>`).join('');
+  safeSetText('focus-count', counts.focus||0); safeSetText('support-count', counts.support||0); safeSetText('pause-count', counts.paused||0);
+  safeSetHTML('project-list', state.projects.map(p=>`<div class="project-row ${p.status==='focus'?'focus':''}"><div class="project-name"><strong>${escapeHTML(p.name)}</strong><span>${escapeHTML(p.kind||'Proyecto')}</span></div><select class="input" aria-label="Estado de ${escapeHTML(p.name)}" onchange="setProjectStatus('${p.id}',this.value)"><option value="focus" ${p.status==='focus'?'selected':''}>Foco</option><option value="support" ${p.status==='support'?'selected':''}>Soporte</option><option value="paused" ${p.status==='paused'?'selected':''}>Pausa</option></select><input class="input project-next" aria-label="Próxima acción de ${escapeHTML(p.name)}" value="${escapeHTML(p.next||'')}" onchange="setProjectNext('${p.id}',this.value)"><div class="project-actions"><button class="btn btn-secondary btn-small" onclick="changeFocus('${p.id}');showView('today')">Abrir hoy</button>${p.custom?`<button class="btn btn-danger btn-small" onclick="removeProject('${p.id}')">Eliminar</button>`:''}</div></div>`).join(''));
 }
 function setProjectStatus(id,status){
   const current=state.projects.find(p=>p.id===id); if(!current)return;
