@@ -149,20 +149,30 @@ button { cursor: pointer; }
 
 .topbar {
   position: sticky; top: 0; z-index: 30;
-  min-height: 48px;
+  min-height: 52px;
   display: flex; align-items: center; justify-content: center;
-  padding: 0 20px;
+  padding: 6px 20px;
   border-bottom: 1px solid var(--border-subtle);
   background: rgba(6,10,18,.97);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
 }
+.topbar-phrase-box {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 6px 18px;
+  background: linear-gradient(135deg, rgba(139,92,246,0.16), rgba(15,23,42,0.85));
+  border: 1px solid rgba(139,92,246,0.38);
+  border-radius: var(--radius-pill);
+  box-shadow: 0 4px 14px rgba(139,92,246,0.18);
+  max-width: 92%;
+}
 .topbar-phrase {
-  font: 500 12px 'Inter', sans-serif;
-  color: var(--muted);
-  letter-spacing: .04em;
+  font: 500 12px/1.4 'Inter', sans-serif;
+  font-style: italic;
+  color: #f1f5f9;
+  letter-spacing: .01em;
   text-align: center;
-  animation: tip-fade .5s ease;
+  transition: opacity .25s ease, transform .25s ease;
 }
 .topbar-brand { display: none; }
 .view-title { display: none; }
@@ -1026,7 +1036,9 @@ dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur
   <main class="main">
     <header class="topbar">
       <span id="date-pill" hidden></span>
-      <p class="topbar-phrase" id="topbar-phrase" aria-live="polite">Abre. Decide. Ejecuta. Cierra.</p>
+      <div class="topbar-phrase-box">
+        <p class="topbar-phrase" id="topbar-phrase" aria-live="polite">“Tu proyecto necesita tu mejor versión.”</p>
+      </div>
     </header>
 
     <section class="view active" id="view-today">
@@ -1800,41 +1812,38 @@ function sendSheets(action,payload){
 let toastTimer;
 function toast(message){ const el=document.getElementById('toast');el.textContent=message;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2200); }
 
-/* ── Single Topbar Phrase Rotator (every 30 seconds) ── */
+/* ── Topbar Modern Phrase Rotator ── */
 const TOPBAR_PHRASES = [
-  'Abre. Decide. Ejecuta. Cierra.',
-  '“No estás dejando algo, estás construyendo control.”',
-  'Un antojo agudo dura entre 3 y 5 minutos antes de disiparse (CDC).',
-  'Una sola acción mueve el sistema.',
-  'Consistencia > intensidad.',
-  'A las 12 horas, tu oxigenación celular vuelve a la capacidad normal (AHA).',
-  'Hoy es el día que importa.',
-  'Pequeño movimiento, gran dirección.',
-  'Beber agua fría estimula el nervio vago y reduce la tensión somática.',
-  'Protege tu foco. El resto puede esperar.',
-  'La nicotina libre abandona tu torrente sanguíneo en 48-72 horas (NHS).',
-  'Empieza lo más fácil. El momentum hace el resto.',
-  'Menos opciones. Más claridad.',
-  'No necesitas más energía. Necesitas menos fricción.',
-  'A los 12 meses sin fumar, el riesgo coronario se reduce un 50% (OMS).',
-  'Cada historia publicada es una semilla.'
+  '“Tu proyecto necesita tu mejor versión.”',
+  '“5 minutos de enfoque valen más que 1 cigarrillo.”',
+  '“Cada vez que quieras fumar, trabaja 5 minutos en tu futuro.”',
+  '“Tu salud y tu negocio crecen al mismo tiempo.”',
+  '“No reemplaces la disciplina con nicotina.”',
+  '“Un impulso dura 3 minutos. Tu imperio dura para siempre.”',
+  '“El humo borra tu energía. El trabajo construye tu libertad.”',
+  '“Protege tu mente, el cigarrillo es una distracción cara.”',
+  '“La mejor versión de ti no necesita fumar.”',
+  '“La consistencia diaria vence a cualquier impulso.”'
 ];
 let _topbarIdx = 0;
 function rotateTopbar(){
   const el = document.getElementById('topbar-phrase');
   if(!el) return;
   _topbarIdx = (_topbarIdx + 1) % TOPBAR_PHRASES.length;
-  el.style.animation = 'none';
-  el.offsetHeight;
-  el.style.animation = '';
-  el.textContent = TOPBAR_PHRASES[_topbarIdx];
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(-3px)';
+  setTimeout(() => {
+    el.textContent = TOPBAR_PHRASES[_topbarIdx];
+    el.style.opacity = '1';
+    el.style.transform = 'translateY(0)';
+  }, 220);
 }
 
 function init(){
   populateProjectSelects(); renderToday(); renderSell(); renderPublish(); renderProjects();
   const initial=location.hash.replace('#',''); showView(TITLES[initial]?initial:'today');
   setInterval(renderSmoke,1000);
-  setInterval(rotateTopbar, 6000); // Cambia cada 6 segundos
+  setInterval(rotateTopbar, 4000); // Rotación cada 4 segundos
 }
 init();
 </script>
