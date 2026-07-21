@@ -6,6 +6,7 @@
 <meta name="description" content="Panel diario para dejar de fumar, proteger la energía y convertirla en acciones de contenido, ventas y producto.">
 <meta name="robots" content="noindex,nofollow">
 <title>NT Hoy — Disciplina y avance diario</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
 
@@ -1192,6 +1193,26 @@ dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur
               </div>
             </div>
           </details>
+          <details class="ai-setup" id="supabase-setup" style="margin-top:8px;">
+            <summary id="supabase-setup-summary">🗄️ Base de Datos Supabase (Respaldo en la Nube)</summary>
+            <div class="ai-provider-form">
+              <div class="field" style="margin-top:10px;">
+                <label for="supabase-url">URL de Supabase Project</label>
+                <input class="input" id="supabase-url" value="https://oberzwgvbrgqokoynqpm.supabase.co" placeholder="https://xyz.supabase.co">
+              </div>
+              <div class="field" style="margin-top:8px;">
+                <label for="supabase-key">Supabase Anon Public Key</label>
+                <input class="input" id="supabase-key" type="password" autocomplete="off" placeholder="Pega tu clave anon public (eyJhbGci...) de Supabase aquí">
+              </div>
+              <div class="button-row" style="margin-top:10px;">
+                <button class="btn btn-primary" onclick="saveSupabaseConfig()">Guardar y Conectar Supabase</button>
+                <button class="btn btn-secondary" onclick="syncWithSupabase(true)">🔄 Sincronizar Ahora</button>
+              </div>
+              <div class="ai-help" style="margin-top:8px;">
+                Guarda todo tu progreso (días sin fumar, proyectos, prospectos CRM y planes IA) en tu propia base de datos PostgreSQL de Supabase.
+              </div>
+            </div>
+          </details>
         </div>
       </div>
       <div class="next-action" id="next-action"><div><small>Siguiente acción</small><strong id="next-action-text"></strong></div><button class="btn btn-secondary btn-small" onclick="focusFirstPending()">Abrir</button></div>
@@ -1528,6 +1549,7 @@ if(!Array.isArray(state.smoke.history)) state.smoke.history=[];
 function saveState(){
   localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
   try { const legacy=JSON.parse(localStorage.getItem(LEGACY_KEY)||'{}'); legacy.crm=state.crm; localStorage.setItem(LEGACY_KEY,JSON.stringify(legacy)); } catch(e){}
+  syncWithSupabase(false);
 }
 function todayState(){
   const key=dateKey();
@@ -1854,6 +1876,16 @@ function renderToday(){
 
   if(cfg.apiKey){
     safeSetText('ai-setup-summary', `⚙️ Proveedor ${cfg.provider.toUpperCase()} configurado ✓`);
+  }
+
+  const suCfg = getSupabaseConfig();
+  safeSetValue('supabase-url', suCfg.url);
+  const suKeyInput = document.getElementById('supabase-key');
+  if(suKeyInput && suCfg.key && !suKeyInput.value){
+    suKeyInput.value = suCfg.key;
+  }
+  if(suCfg.key){
+    safeSetText('supabase-setup-summary', '🗄️ Base de Datos Supabase Conectada ✓');
   }
 
   safeSetHTML('daily-moves', Object.entries(tasks).map(([keyName,t])=>`<article class="move-card ${day.checked[keyName]?'done':''}" style="--move-color:${t.color}"><div class="move-top"><div><div class="move-type">${t.label}</div><h3>${escapeHTML(t.title)}</h3></div><button class="check-button" aria-label="Marcar ${t.label}" aria-pressed="${day.checked[keyName]}" onclick="toggleDaily('${keyName}')">${day.checked[keyName]?'✓':'○'}</button></div><p>${escapeHTML(t.text)}</p><span class="account-chip">${escapeHTML(t.account)}</span><div class="move-actions"><button class="btn btn-secondary" onclick="runTask('${keyName}')">Abrir acción</button></div></article>`).join(''));
@@ -2251,11 +2283,80 @@ function rotateTopbar(){
   }, 220);
 }
 
+/* ── Supabase Database Sync Module ── */
+function getSupabaseConfig(){
+  return {
+    url: localStorage.getItem('nt_supabase_url') || 'https://oberzwgvbrgqokoynqpm.supabase.co',
+    key: localStorage.getItem('nt_supabase_key') || ''
+  };
+}
+
+function saveSupabaseConfig(){
+  const url = document.getElementById('supabase-url').value.trim();
+  const key = document.getElementById('supabase-key').value.trim();
+  if(!url || !key){ toast('Introduce la URL y la Anon Public Key de Supabase.'); return; }
+  localStorage.setItem('nt_supabase_url', url);
+  localStorage.setItem('nt_supabase_key', key);
+  _supabaseClient = null;
+  const setupEl = document.getElementById('supabase-setup');
+  if(setupEl) setupEl.open = false;
+  toast('✓ Supabase DB configurado con éxito.');
+  syncWithSupabase(true);
+  renderToday();
+}
+
+let _supabaseClient = null;
+function getSupabaseClient(){
+  const cfg = getSupabaseConfig();
+  if(!cfg.url || !cfg.key || !window.supabase) return null;
+  if(!_supabaseClient){
+    try { _supabaseClient = window.supabase.createClient(cfg.url, cfg.key); } catch(e){}
+  }
+  return _supabaseClient;
+}
+
+async function syncWithSupabase(notify = false){
+  const client = getSupabaseClient();
+  if(!client) return;
+  try {
+    const { error } = await client.from('app_state').upsert({ id: 'main_user', state: state, updated_at: new Date().toISOString() });
+    if(error){
+      console.warn('Supabase Sync Warn:', error.message);
+      if(notify) toast(`Aviso Supabase: ${error.message}`);
+    } else {
+      console.log('✓ Sincronizado con Supabase');
+      if(notify) toast('✓ Estado sincronizado con Supabase DB');
+    }
+  } catch(err){
+    console.error(err);
+    if(notify) toast(`Error al conectar con Supabase: ${err.message}`);
+  }
+}
+
+async function loadStateFromSupabase(){
+  const client = getSupabaseClient();
+  if(!client) return;
+  try {
+    const { data, error } = await client.from('app_state').select('state').eq('id', 'main_user').single();
+    if(data && data.state){
+      state = { ...state, ...data.state };
+      saveState();
+      renderToday();
+      renderSmoke();
+      renderSell();
+      renderPublish();
+      renderProjects();
+      console.log('✓ Estado cargado desde Supabase DB');
+    }
+  } catch(e){}
+}
+
 function init(){
   populateProjectSelects(); renderToday(); renderSell(); renderPublish(); renderProjects();
   const initial=location.hash.replace('#',''); showView(TITLES[initial]?initial:'today');
   renderSmoke();
   rotateTopbar();
+  loadStateFromSupabase();
   setInterval(renderSmoke, 200); // 5 veces por segundo para fluidez en tiempo real
   setInterval(rotateTopbar, 4000); // Rotación cada 4 segundos
 }
