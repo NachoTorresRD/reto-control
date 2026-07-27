@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Panel diario para dejar de fumar, proteger la energía y convertirla en acciones de contenido, ventas y producto.">
+<meta name="description" content="Un espacio diario y privado para acompañarte mientras dejas de fumar, registrar tu progreso y atravesar los antojos sin juicios.">
 <meta name="robots" content="noindex,nofollow">
-<title>NT Hoy — Disciplina y avance diario</title>
+<title>NT Hoy — apoyo para dejar de fumar</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
@@ -61,6 +61,7 @@
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 body {
   min-height: 100vh;
+  overflow-x: clip;
   background: var(--bg);
   color: var(--text);
   font-family: 'Inter', system-ui, sans-serif;
@@ -221,7 +222,7 @@ button { cursor: pointer; }
 
 /* ── Buttons (Pro App Finishing) ── */
 .btn {
-  min-height: 42px;
+  min-height: 44px;
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   padding: 0 16px;
   border-radius: var(--radius-md); border: 1px solid transparent;
@@ -288,7 +289,7 @@ button { cursor: pointer; }
    TODAY VIEW — discipline card (smoke)
 ══════════════════════════════════════ */
 .discipline-card {
-  margin-bottom: 12px; padding: 15px 16px;
+  margin-bottom: 16px; padding: 18px;
   background: linear-gradient(135deg,
     rgba(52,211,153,.06) 0%,
     rgba(12,20,34,.95) 40%,
@@ -296,6 +297,71 @@ button { cursor: pointer; }
   border: 1px solid rgba(52,211,153,.18);
   border-radius: var(--radius-lg);
 }
+.smoke-empty {
+  min-height: 250px;
+  display: grid;
+  grid-template-columns: minmax(0,1fr) minmax(220px,.55fr);
+  gap: 28px;
+  align-items: center;
+  padding: 18px;
+}
+.smoke-empty-copy { min-width: 0; max-width: 620px; }
+.smoke-empty h3 {
+  margin-top: 7px;
+  font: 700 clamp(23px,3.5vw,36px)/1.08 'Space Grotesk', sans-serif;
+  letter-spacing: -.045em;
+}
+.smoke-empty p {
+  max-width: 580px; margin-top: 10px;
+  color: var(--muted-2); font-size: 13px; line-height: 1.65;
+}
+.setup-meta { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 16px; }
+.setup-meta span {
+  display: inline-flex; align-items: center; gap: 6px;
+  max-width: 100%;
+  padding: 6px 9px; color: var(--text-2);
+  background: rgba(255,255,255,.035);
+  border: 1px solid var(--border-subtle); border-radius: var(--radius-pill);
+  font-size: 10px; font-weight: 600;
+}
+.setup-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+.support-orbit {
+  width: min(220px,100%); aspect-ratio: 1; justify-self: center;
+  display: grid; place-items: center; position: relative;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(52,211,153,.18), rgba(34,211,238,.05) 50%, transparent 71%);
+}
+.support-orbit::before, .support-orbit::after {
+  content: ''; position: absolute; border-radius: 50%;
+  border: 1px solid rgba(52,211,153,.2);
+}
+.support-orbit::before { inset: 14%; }
+.support-orbit::after { inset: 28%; border-color: rgba(34,211,238,.24); }
+.orbit-heart {
+  position: relative; z-index: 1; width: 64px; height: 64px;
+  display: grid; place-items: center; border-radius: 22px;
+  color: var(--green); background: rgba(6,10,18,.84);
+  border: 1px solid rgba(52,211,153,.3);
+  font: 600 30px 'Space Grotesk', sans-serif;
+  box-shadow: 0 12px 40px rgba(52,211,153,.12);
+}
+.checkin-panel {
+  padding: 14px; margin-bottom: 12px;
+  background: linear-gradient(135deg, rgba(52,211,153,.1), rgba(34,211,238,.035));
+  border: 1px solid rgba(52,211,153,.22); border-radius: var(--radius-md);
+}
+.checkin-copy strong { display: block; font: 700 17px 'Space Grotesk', sans-serif; }
+.checkin-copy span { display: block; margin-top: 3px; color: var(--muted-2); font-size: 10.5px; line-height: 1.5; }
+.checkin-actions { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 8px; margin-top: 12px; }
+.checkin-button {
+  min-height: 46px; padding: 8px 10px;
+  color: var(--text-2); background: rgba(6,10,18,.48);
+  border: 1px solid rgba(255,255,255,.09); border-radius: var(--radius-sm);
+  font-size: 11px; font-weight: 700; line-height: 1.25;
+}
+.checkin-button:hover { color: var(--text); border-color: rgba(255,255,255,.2); }
+.checkin-button.support { color: #fde68a; border-color: rgba(251,191,36,.26); background: rgba(251,191,36,.07); }
+.checkin-button.restart { color: #fecdd3; }
 .discipline-head {
   display: flex; align-items: flex-start;
   justify-content: space-between; gap: 16px;
@@ -443,6 +509,7 @@ button { cursor: pointer; }
 
 /* ── Interactive Health Banner ── */
 .rc-health-banner {
+  width: 100%; color: inherit; text-align: left;
   display: flex; align-items: center; gap: 10px;
   margin-top: 10px; padding: 10px 12px;
   background: rgba(52, 211, 153, 0.07);
@@ -459,24 +526,7 @@ button { cursor: pointer; }
 .hb-body strong { display: block; font-size: 11.5px; color: var(--text); }
 .hb-body span { font-size: 9px; color: var(--muted-2); }
 
-/* ── Reto Control Actions ── */
-.rc-actions { display: grid; gap: 8px; margin-top: 14px; }
-.btn-block { width: 100%; min-height: 42px; font-size: 13px; font-weight: 700; justify-content: center; }
-.btn-ic { margin-right: 6px; font-size: 14px; }
-.rc-sub-actions { display: flex; gap: 8px; }
 .wide { flex: 1; }
-
-.smoke-bridge {
-  margin-top: 12px; padding: 10px 12px;
-  background: rgba(15, 23, 42, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: var(--radius-sm);
-  color: #cbd5e1; font-size: 11px; line-height: 1.5; font-weight: 500;
-}
-.smoke-bridge.ready {
-  color: #4ade80; background: rgba(52, 211, 153, 0.08);
-  border-color: rgba(52, 211, 153, 0.25); font-weight: 600;
-}
 .smoke-log { margin-top: 10px; color: var(--muted-2); font-size: 10px; }
 .smoke-log summary { width: max-content; cursor: pointer; font-weight: 700; color: var(--cyan); }
 .smoke-log-list { display: grid; gap: 6px; margin-top: 8px; }
@@ -487,6 +537,30 @@ button { cursor: pointer; }
   font-size: 11px;
 }
 .smoke-log-item span:last-child { text-align: right; color: var(--muted); font-size: 10px; }
+.smoke-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 12px; }
+.smoke-footer .smoke-log { margin-top: 0; }
+
+.work-area {
+  margin-top: 16px; padding: 0;
+  border: 1px solid var(--border-subtle); border-radius: var(--radius-lg);
+  background: rgba(12,20,34,.42); overflow: hidden;
+}
+.work-area > summary {
+  min-height: 70px; display: flex; align-items: center; gap: 13px;
+  padding: 14px 18px; cursor: pointer; list-style: none;
+}
+.work-area > summary::-webkit-details-marker { display: none; }
+.work-summary-icon {
+  width: 38px; height: 38px; flex: 0 0 auto; display: grid; place-items: center;
+  color: var(--cyan); background: var(--cyan-dim); border-radius: 12px;
+  border: 1px solid var(--cyan-glow); font-size: 17px;
+}
+.work-summary-copy { flex: 1; min-width: 0; }
+.work-summary-copy strong { display: block; font-size: 12px; }
+.work-summary-copy span { display: block; margin-top: 3px; color: var(--muted); font-size: 10px; line-height: 1.45; }
+.work-summary-arrow { color: var(--muted); transition: transform .2s ease; }
+.work-area[open] .work-summary-arrow { transform: rotate(180deg); }
+.work-area-content { padding: 0 16px 16px; }
 
 /* ── Health Modal Dialog Styling ── */
 .health-dialog { max-width: 480px; }
@@ -897,6 +971,25 @@ dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur
 .range-row { display: flex; align-items: center; gap: 12px; }
 .range-row input { flex: 1; accent-color: var(--violet); }
 .range-row output { min-width: 42px; color: var(--violet); font-weight: 800; font-variant-numeric: tabular-nums; }
+.breathing-card {
+  margin-bottom: 14px; padding: 16px;
+  display: grid; grid-template-columns: 82px 1fr; gap: 16px; align-items: center;
+  background: rgba(34,211,238,.055); border: 1px solid rgba(34,211,238,.16);
+  border-radius: var(--radius-lg);
+}
+.breathing-orb {
+  width: 72px; height: 72px; display: grid; place-items: center;
+  border-radius: 50%; color: var(--cyan); background: rgba(34,211,238,.12);
+  border: 1px solid rgba(34,211,238,.28); font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.breathing-card.active .breathing-orb { animation: breathe 12s ease-in-out infinite; }
+@keyframes breathe {
+  0%,100% { transform: scale(.82); box-shadow: 0 0 0 0 rgba(34,211,238,.06); }
+  34%,50% { transform: scale(1); box-shadow: 0 0 0 12px rgba(34,211,238,.035); }
+}
+.breathing-copy strong { display: block; font-size: 12px; }
+.breathing-copy p { margin: 3px 0 9px; color: var(--muted-2); font-size: 9.5px; line-height: 1.5; }
 .medical-note {
   margin-top: 12px; padding: 10px;
   color: var(--muted-2);
@@ -967,6 +1060,8 @@ dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur
   .today-hero { padding: 18px; }
   .discipline-card { padding: 16px; }
   .goal-row { grid-template-columns: 1fr; }
+  .smoke-empty { grid-template-columns: 1fr; min-height: 0; padding: 8px 2px; }
+  .support-orbit { display: none; }
   .ai-fields { grid-template-columns: 1fr; }
   .moves, .action-strip { grid-template-columns: 1fr; }
   .move-card { min-height: 0; }
@@ -1022,6 +1117,19 @@ dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur
    RESPONSIVE — MOBILE 480px
 ════════════════════════════════════ */
 @media (max-width: 480px) {
+  .topbar-phrase-box { max-width: 100%; padding-inline: 12px; }
+  .topbar-phrase { font-size: 10.5px; }
+  .ai-setup summary { width: 100%; max-width: 100%; overflow-wrap: anywhere; line-height: 1.45; }
+  .setup-meta { display: grid; justify-items: start; }
+  .setup-meta span { white-space: normal; }
+  .setup-actions { display: grid; grid-template-columns: minmax(0,1fr); }
+  .setup-actions .btn { width: 100%; white-space: normal; }
+  .work-area > summary { align-items: flex-start; padding-inline: 14px; }
+  .checkin-actions { grid-template-columns: 1fr; }
+  .checkin-button { text-align: left; padding-inline: 13px; }
+  .smoke-footer { align-items: flex-start; }
+  .breathing-card { grid-template-columns: 1fr; text-align: center; }
+  .breathing-orb { margin-inline: auto; }
   .crm-form, .crm-tools, .format-row, .project-summary { grid-template-columns: 1fr; }
   .discipline-head, .smoke-empty { align-items: flex-start; flex-direction: column; }
   .smoke-stats { grid-template-columns: 1fr 1fr; }
@@ -1044,9 +1152,9 @@ dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur
 <div class="app">
   <aside class="sidebar">
     <div class="brand">
-      <div class="brand-kicker">Tu sistema de ejecución</div>
+      <div class="brand-kicker">Tu espacio de apoyo</div>
       <h1>NT <span>HOY</span></h1>
-      <p>Abre. Decide. Ejecuta. Cierra.</p>
+      <p>Respira. Registra. Sigue a tu ritmo.</p>
     </div>
     <div class="day-progress">
       <div class="day-progress-top"><span>Avance de hoy</span><span id="side-progress-label">0 / 4</span></div>
@@ -1058,26 +1166,43 @@ dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur
       <button class="nav-button" data-view="publish"><span class="nav-index">03</span>Publicar</button>
       <button class="nav-button" data-view="projects"><span class="nav-index">04</span>Proyectos</button>
     </nav>
-    <div class="side-rule"><strong>Regla diaria</strong>Empieza fácil. Una sola cuenta principal de contenido. Lo que no terminaste ayer no se acumula: hoy comienza limpio.</div>
+    <div class="side-rule"><strong>Para recordar</strong>No tienes que hacerlo perfecto. Cada vez que vuelves a intentarlo, sigues aprendiendo a cuidarte.</div>
   </aside>
 
   <main class="main">
     <header class="topbar">
       <span id="date-pill" hidden></span>
       <div class="topbar-phrase-box">
-        <p class="topbar-phrase" id="topbar-phrase" aria-live="polite">“Tu proyecto necesita tu mejor versión.”</p>
+        <p class="topbar-phrase" id="topbar-phrase" aria-live="polite">“Hoy solo necesitas dar el siguiente paso.”</p>
       </div>
     </header>
 
     <section class="view active" id="view-today">
-      <div class="section-head"><div class="eyebrow">Solo lo importante</div><h2>¿Qué harás hoy?</h2></div>
+      <div class="section-head"><div class="eyebrow">Un paso a la vez</div><h2>¿Cómo estás hoy?</h2><p>Este espacio está para acompañarte, no para evaluarte. Elige lo que necesitas ahora.</p></div>
       <section class="discipline-card" aria-labelledby="discipline-title">
         <div class="smoke-empty" id="smoke-empty">
-          <p>Configura tu fecha de inicio y consumo habitual. Los cálculos se guardan solo en este dispositivo.</p>
-          <button class="btn btn-success" onclick="openSmokeSetup()">Configurar control</button>
+          <div class="smoke-empty-copy">
+            <div class="eyebrow">Tu punto de partida</div>
+            <h3 id="discipline-title">Empecemos contigo, sin presión</h3>
+            <p>Cuéntanos cuándo fue tu último cigarrillo. Verás tu progreso y tendrás una guía breve para esos momentos en que aparece el antojo.</p>
+            <div class="setup-meta"><span>✓ Toma cerca de 1 minuto</span><span>⌁ Privado por defecto</span></div>
+            <div class="setup-actions">
+              <button class="btn btn-success" onclick="openSmokeSetup()">Crear mi punto de partida</button>
+              <button class="btn btn-secondary" onclick="openCravingDialog()">Necesito apoyo ahora</button>
+            </div>
+          </div>
+          <div class="support-orbit" aria-hidden="true"><div class="orbit-heart">♡</div></div>
         </div>
 
         <div id="smoke-dashboard" hidden>
+          <div class="checkin-panel">
+            <div class="checkin-copy"><strong id="checkin-title">¿Qué necesitas ahora?</strong><span id="checkin-description">Puedes registrar cómo vas o abrir apoyo inmediato. Sin juicios.</span></div>
+            <div class="checkin-actions" aria-label="Registro rápido">
+              <button class="checkin-button" onclick="confirmSmokeFree()">✓ Estoy bien por ahora</button>
+              <button class="checkin-button support" onclick="openCravingDialog()">◌ Tengo un antojo</button>
+              <button class="checkin-button restart" onclick="openLapseDialog()">↻ Fumé y quiero retomar</button>
+            </div>
+          </div>
           <!-- 4-Color Clock Section -->
           <div class="smoke-clock-wrapper">
             <div class="smoke-clock-title">TIEMPO SIN FUMAR <span class="live-dot-pill"><span class="live-dot"></span> EN VIVO</span></div>
@@ -1113,43 +1238,39 @@ dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur
               <div class="rc-sub" id="smoke-avoided-sub">0 paquetes lib.</div>
             </div>
             <div class="rc-card">
-              <div class="rc-card-top"><span class="rc-icon icon-purple">⚡</span><span class="rc-title">RACHA</span></div>
+              <div class="rc-card-top"><span class="rc-icon icon-purple">⌁</span><span class="rc-title">TIEMPO ACTUAL</span></div>
               <div class="rc-val" id="smoke-streak">0 días</div>
               <div class="rc-sub" id="smoke-check-label">confirma hoy</div>
             </div>
             <div class="rc-card">
-              <div class="rc-card-top"><span class="rc-icon icon-yellow">🎯</span><span class="rc-title">PROYECTO</span></div>
-              <div class="rc-val val-project" id="smoke-project-name">WHABOT Pro</div>
-              <div class="rc-sub">foco activo</div>
+              <div class="rc-card-top"><span class="rc-icon icon-yellow">↗</span><span class="rc-title">MEJOR RECORRIDO</span></div>
+              <div class="rc-val" id="smoke-best">0 días</div>
+              <div class="rc-sub">tu avance cuenta</div>
             </div>
           </div>
 
           <!-- Interactive Health Banner -->
-          <div class="rc-health-banner" onclick="openDialog('health-modal')" role="button" tabindex="0">
+          <button class="rc-health-banner" type="button" onclick="openDialog('health-modal')">
             <div class="hb-icon">♡</div>
             <div class="hb-body">
-              <strong>Tu salud se está recuperando</strong>
-              <span>Oxígeno, pulmones, corazón y objetivo físico del día ›</span>
+              <strong>Cambios que pueden empezar al dejar de fumar</strong>
+              <span>Consulta una guía orientativa; esta app no mide tu cuerpo ›</span>
             </div>
-          </div>
+          </button>
 
-          <!-- Reto Control Action Buttons -->
-          <div class="rc-actions">
-            <button class="btn btn-warning btn-block" onclick="openCravingDialog()">
-              <span class="btn-ic">⚠️</span> Tengo ansiedad
-            </button>
-            <button class="btn btn-success btn-block" id="smoke-confirm" onclick="confirmSmokeFree()">
-              <span class="btn-ic">✓</span> Sigo sin fumar → comenzar guía
-            </button>
-            <div class="rc-sub-actions">
-              <button class="btn btn-secondary btn-small wide" onclick="openLapseDialog()">🔄 Tuve recaída / +Cigarrillo</button>
-              <button class="btn btn-secondary btn-small" onclick="openSmokeSetup()">⚙ Ajustes</button>
-            </div>
+          <div class="smoke-footer">
+            <details class="smoke-log"><summary>Ver mi recorrido</summary><div class="smoke-log-list" id="smoke-log-list"></div></details>
+            <button class="btn btn-secondary btn-small" onclick="openSmokeSetup()">⚙ Ajustes</button>
           </div>
-
-          <details class="smoke-log"><summary>Ver registro</summary><div class="smoke-log-list" id="smoke-log-list"></div></details>
         </div>
       </section>
+      <details class="work-area" id="work-area">
+        <summary>
+          <span class="work-summary-icon" aria-hidden="true">→</span>
+          <span class="work-summary-copy"><strong>Cuando estés listo: continúa con una acción pequeña</strong><span>Tu plan de trabajo está aquí, separado de tu proceso para dejar de fumar.</span></span>
+          <span class="work-summary-arrow" aria-hidden="true">⌄</span>
+        </summary>
+        <div class="work-area-content">
       <div class="card today-hero">
         <div class="hero-row">
           <div><div class="eyebrow">Foco activo</div><h3 id="focus-heading">WHABOT Pro</h3><p id="focus-description"></p></div>
@@ -1217,7 +1338,9 @@ dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur
       </div>
       <div class="next-action" id="next-action"><div><small>Siguiente acción</small><strong id="next-action-text"></strong></div><button class="btn btn-secondary btn-small" onclick="focusFirstPending()">Abrir</button></div>
       <div class="moves" id="daily-moves"></div>
-      <div class="day-note"><div class="compact-note"><strong>Modo mínimo:</strong> si hoy tienes poca energía, completa la historia y los 5 contactos. El día todavía produjo señal.</div><div class="compact-note" id="pause-note"><strong>Protege el foco:</strong> los proyectos pausados no reciben mejoras hoy.</div></div>
+      <div class="day-note"><div class="compact-note"><strong>Modo suave:</strong> si hoy tienes poca energía, una acción de 5 minutos es suficiente. Puedes volver mañana.</div><div class="compact-note" id="pause-note"><strong>Protege el foco:</strong> los proyectos pausados no reciben mejoras hoy.</div></div>
+        </div>
+      </details>
     </section>
 
     <section class="view" id="view-sell">
@@ -1304,7 +1427,7 @@ dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur
 
 <dialog class="nt-dialog" id="smoke-setup-dialog" aria-labelledby="smoke-setup-title">
   <form class="dialog-body" onsubmit="saveSmokeSetup(event)">
-    <div class="dialog-head"><div><h3 id="smoke-setup-title">Configura tu control</h3><p>Usaremos estos datos únicamente para calcular tu tiempo, dinero y cigarrillos evitados en este navegador.</p></div><button class="dialog-close" type="button" onclick="closeDialog('smoke-setup-dialog')" aria-label="Cerrar">×</button></div>
+    <div class="dialog-head"><div><h3 id="smoke-setup-title">Crea tu punto de partida</h3><p>No es un examen. Estos datos solo nos ayudan a mostrar un progreso que tenga sentido para ti.</p></div><button class="dialog-close" type="button" onclick="closeDialog('smoke-setup-dialog')" aria-label="Cerrar">×</button></div>
     <div class="dialog-grid">
       <div class="field wide"><label for="quit-at">Último cigarrillo</label><input id="quit-at" type="datetime-local" required></div>
       <div class="field"><label for="cigs-day">Cigarrillos por día</label><input id="cigs-day" type="number" min="1" max="100" step="1" value="10" required></div>
@@ -1312,26 +1435,31 @@ dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur
       <div class="field"><label for="pack-price">Precio del paquete (RD$)</label><input id="pack-price" type="number" min="0" max="100000" step="1" value="300" required></div>
       <div class="field"><label for="quit-goal">Meta inicial en días</label><input id="quit-goal" type="number" min="1" max="3650" step="1" value="30" required></div>
     </div>
-    <div class="button-row"><button class="btn btn-success" type="submit">Guardar y empezar</button><button class="btn btn-secondary" type="button" onclick="closeDialog('smoke-setup-dialog')">Cancelar</button></div>
-    <div class="medical-note">Este panel acompaña tu decisión, pero no sustituye apoyo médico. El CDC indica que combinar orientación profesional y tratamientos aprobados ofrece mejores probabilidades de dejar de fumar.</div>
+    <div class="button-row"><button class="btn btn-success" type="submit">Guardar mi punto de partida</button><button class="btn btn-secondary" type="button" onclick="closeDialog('smoke-setup-dialog')">Ahora no</button></div>
+    <div class="medical-note">La app es una herramienta de acompañamiento, no atención médica. El apoyo profesional y los tratamientos aprobados pueden ayudarte a manejar la abstinencia y los antojos.</div>
   </form>
 </dialog>
 
 <dialog class="nt-dialog" id="craving-dialog" aria-labelledby="craving-title">
   <form class="dialog-body" onsubmit="resistCraving(event)">
-    <div class="dialog-head"><div><h3 id="craving-title">Pasa estos minutos sin decidir fumar</h3><p>No tienes que resolver el día completo ahora. Solo atraviesa este impulso y vuelve a una acción pequeña.</p></div><button class="dialog-close" type="button" onclick="closeDialog('craving-dialog')" aria-label="Cerrar">×</button></div>
+    <div class="dialog-head"><div><h3 id="craving-title">Estoy contigo. Hagamos una pausa.</h3><p>No tienes que decidir nada para siempre. Vamos a ocuparnos solo de este momento.</p></div><button class="dialog-close" type="button" onclick="closeDialog('craving-dialog')" aria-label="Cerrar">×</button></div>
+    <div class="breathing-card" id="breathing-card">
+      <div class="breathing-orb" id="breathing-count" aria-live="polite">60</div>
+      <div class="breathing-copy"><strong id="breathing-phase">Respira a tu ritmo</strong><p>Si te resulta cómodo: inhala 4, pausa 2 y exhala 6. Puedes detenerte cuando quieras.</p><button class="btn btn-secondary btn-small" id="breathing-button" type="button" onclick="toggleBreathing()">Empezar 60 segundos</button></div>
+    </div>
     <div class="field"><label for="craving-level">Ansiedad ahora</label><div class="range-row"><input id="craving-level" type="range" min="1" max="10" value="5" oninput="document.getElementById('craving-output').value=this.value+'/10'"><output id="craving-output">5/10</output></div></div>
     <div class="field" style="margin-top:12px"><label for="craving-trigger">¿Qué la activó?</label><select id="craving-trigger"><option value="estrés">Estrés</option><option value="aburrimiento">Aburrimiento</option><option value="después de comer">Después de comer</option><option value="bloqueo de trabajo">Bloqueo de trabajo</option><option value="situación social">Situación social</option><option value="otro">Otro</option></select></div>
-    <div class="resist-plan"><div class="resist-step"><b>1</b><div><strong>Respira y toma agua</strong><span>Separa el impulso de la acción durante un momento.</span></div></div><div class="resist-step"><b>2</b><div><strong>Cambia de lugar</strong><span>Camina, lávate la cara o sal del espacio asociado al cigarrillo.</span></div></div><div class="resist-step"><b>3</b><div><strong>Haz la tarea más fácil</strong><span>Una historia simple ocupa tu atención y calienta el sistema.</span></div></div></div>
-    <div class="button-row"><button class="btn btn-success" type="submit">Resistí → abrir tarea fácil</button><button class="btn btn-secondary" type="button" onclick="closeDialog('craving-dialog')">Todavía estoy pasando el impulso</button></div>
+    <div class="resist-plan"><div class="resist-step"><b>1</b><div><strong>Toma agua lentamente</strong><span>Dale a tus manos y a tu boca una alternativa segura.</span></div></div><div class="resist-step"><b>2</b><div><strong>Cambia de lugar</strong><span>Aléjate de cigarrillos, encendedores o del espacio asociado a fumar.</span></div></div><div class="resist-step"><b>3</b><div><strong>Busca compañía</strong><span>Escribe o llama a alguien de confianza. No tienes que pasar este momento solo.</span></div></div></div>
+    <div class="button-row"><button class="btn btn-success" type="submit">Ya bajó un poco → guardar</button><button class="btn btn-secondary" type="button" onclick="copySupportMessage(this)">Pedir apoyo a alguien</button></div>
+    <div class="medical-note">Si los antojos son difíciles de manejar, un profesional de salud puede orientarte sobre consejería y tratamientos para dejar de fumar.</div>
   </form>
 </dialog>
 
 <dialog class="nt-dialog" id="lapse-dialog" aria-labelledby="lapse-title">
   <form class="dialog-body" onsubmit="registerLapse(event)">
-    <div class="dialog-head"><div><h3 id="lapse-title">Registra lo ocurrido sin borrar el aprendizaje</h3><p>Un cigarrillo no elimina tus intentos anteriores. Guardaremos el evento y el contador actual comenzará de nuevo desde ahora.</p></div><button class="dialog-close" type="button" onclick="closeDialog('lapse-dialog')" aria-label="Cerrar">×</button></div>
+    <div class="dialog-head"><div><h3 id="lapse-title">Está bien volver a empezar desde aquí</h3><p>Lo ocurrido no borra el tiempo que lograste ni lo que aprendiste. Lo registramos para ayudarte a reconocer el detonante.</p></div><button class="dialog-close" type="button" onclick="closeDialog('lapse-dialog')" aria-label="Cerrar">×</button></div>
     <div class="dialog-grid"><div class="field"><label for="lapse-count">Cantidad</label><input id="lapse-count" type="number" min="1" max="100" value="1" required></div><div class="field"><label for="lapse-trigger">Detonante</label><input id="lapse-trigger" maxlength="100" placeholder="Estrés, reunión, comida..."></div></div>
-    <div class="button-row"><button class="btn btn-warning" type="submit">Registrar y reiniciar contador</button><button class="btn btn-secondary" type="button" onclick="closeDialog('lapse-dialog')">Cancelar</button></div>
+    <div class="button-row"><button class="btn btn-warning" type="submit">Registrar y retomar desde ahora</button><button class="btn btn-secondary" type="button" onclick="closeDialog('lapse-dialog')">Ahora no</button></div>
   </form>
 </dialog>
 
@@ -1339,59 +1467,33 @@ dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur
   <div class="dialog-body">
     <div class="dialog-head">
       <div>
-        <h3 id="health-modal-title">Tu salud se recupera</h3>
-        <p>Proyecciones orientativas basadas en evidencia clínica (CDC / AHA / OMS)</p>
+        <h3 id="health-modal-title">Cambios esperados con el tiempo</h3>
+        <p>Información general para orientarte. Esta app no mide oxígeno, pulso ni función pulmonar.</p>
       </div>
       <button class="dialog-close" type="button" onclick="closeDialog('health-modal')" aria-label="Cerrar">×</button>
     </div>
 
-    <div class="health-sec-title">MÉTRICAS BIOLÓGICAS EN VIVO</div>
-    <div class="hm-metrics">
-      <div class="hm-metric">
-        <div class="hm-mtop"><span class="hm-mic icon-blue">💨</span><div><strong>Oxígeno en sangre</strong><p>El monóxido de carbono baja al nivel normotípico (12h).</p></div><span class="hm-val text-blue" id="hm-o2-val">98%</span></div>
-        <div class="hm-track"><div class="hm-fill fill-blue" id="hm-o2-bar" style="width: 98%;"></div></div>
-      </div>
-
-      <div class="hm-metric">
-        <div class="hm-mtop"><span class="hm-mic icon-yellow">☁️</span><div><strong>Monóxido de carbono (CO)</strong><p>Gas de combustión tóxico. Se elimina en las primeras 12h.</p></div><span class="hm-val text-yellow" id="hm-co-val">2ppm</span></div>
-        <div class="hm-track"><div class="hm-fill fill-yellow" style="width: 85%;"></div></div>
-      </div>
-
-      <div class="hm-metric">
-        <div class="hm-mtop"><span class="hm-mic icon-purple">❤️</span><div><strong>Frecuencia cardíaca</strong><p>Retorno progresivo a ritmo sinusal basal (20 min).</p></div><span class="hm-val text-purple" id="hm-hr-val">72bpm</span></div>
-        <div class="hm-track"><div class="hm-fill fill-purple" style="width: 100%;"></div></div>
-      </div>
-
-      <div class="hm-metric">
-        <div class="hm-mtop"><span class="hm-mic icon-green">⚡</span><div><strong>Capacidad pulmonar neta</strong><p>Recuperación bronquial y oxigenación tisular acumulada.</p></div><span class="hm-val text-green" id="hm-lung-val">76.6%</span></div>
-        <div class="hm-track"><div class="hm-fill fill-green" id="hm-lung-bar" style="width: 76%;"></div></div>
-      </div>
-    </div>
-
     <div class="hm-goal-box">
-      <div class="hm-goal-top"><span class="eyebrow">OBJETIVO FÍSICO · HOY</span><span class="hm-badge">Recomendado</span></div>
-      <h4>🚶‍♂️ Caminata 30 min + estiramiento torácico</h4>
-      <p>Aumenta la ventilación alveolar, mejora el flujo sanguíneo y disipa la ansiedad física.</p>
+      <div class="hm-goal-top"><span class="eyebrow">UNA OPCIÓN SUAVE · HOY</span><span class="hm-badge">A tu ritmo</span></div>
+      <h4>Camina unos minutos o cambia de ambiente</h4>
+      <p>Una distracción segura y alejarte de los recordatorios de fumar puede ayudarte a atravesar un antojo.</p>
     </div>
 
-    <div class="health-sec-title" style="margin-top:16px;">LÍNEA DE TIEMPO CLÍNICA DE RECUPERACIÓN</div>
+    <div class="health-sec-title" style="margin-top:16px;">LÍNEA DE TIEMPO ORIENTATIVA</div>
     <div class="hm-timeline">
-      <div class="hm-tl-item" id="tl-20m"><span class="hm-check">✓</span><div><strong>20 minutos · Estabilización cardiovascular</strong><p>La frecuencia cardíaca y la presión arterial descienden a valores basales.</p></div></div>
-      <div class="hm-tl-item" id="tl-12h"><span class="hm-check">✓</span><div><strong>12 horas · Oxigenación tisular completa</strong><p>El nivel de monóxido de carbono en sangre se normaliza.</p></div></div>
-      <div class="hm-tl-item" id="tl-24h"><span class="hm-check">✓</span><div><strong>24 horas · Descenso de riesgo coronario agudo</strong><p>Disminuye la probabilidad estadística de espasmo o evento cardíaco.</p></div></div>
-      <div class="hm-tl-item" id="tl-48h"><span class="hm-check">✓</span><div><strong>48 horas · Nicotina libre eliminada</strong><p>Terminaciones nerviosas de gusto y olfato inician su regeneración.</p></div></div>
-      <div class="hm-tl-item" id="tl-72h"><span class="hm-check">✓</span><div><strong>72 horas · Relajación bronquial</strong><p>Los bronquios se dilatan, facilitando la ventilación y aumentando el flujo de aire.</p></div></div>
-      <div class="hm-tl-item" id="tl-2w"><span class="hm-dot"></span><div><strong>2 a 12 semanas · Función pulmonar (+30%)</strong><p>Mejora sustancial de la circulación periférica y el rendimiento al caminar.</p></div></div>
-      <div class="hm-tl-item" id="tl-1m"><span class="hm-dot"></span><div><strong>1 a 9 meses · Regeneración ciliar</strong><p>Los cilios bronquiales limpian mucosidad, reduciendo tos y disnea de esfuerzo.</p></div></div>
-      <div class="hm-tl-item" id="tl-1y"><span class="hm-dot"></span><div><strong>1 año · Riesgo coronario a la mitad (-50%)</strong><p>El riesgo adicional de enfermedad coronaria es el 50% de un fumador activo.</p></div></div>
+      <div class="hm-tl-item" id="tl-20m"><span class="hm-check">✓</span><div><strong>Minutos después</strong><p>La frecuencia cardíaca empieza a bajar.</p></div></div>
+      <div class="hm-tl-item" id="tl-24h"><span class="hm-check">✓</span><div><strong>24 horas</strong><p>El nivel de nicotina en la sangre baja a cero.</p></div></div>
+      <div class="hm-tl-item" id="tl-72h"><span class="hm-dot"></span><div><strong>Después de varios días</strong><p>El monóxido de carbono en la sangre baja al nivel de una persona que no fuma.</p></div></div>
+      <div class="hm-tl-item" id="tl-1m"><span class="hm-dot"></span><div><strong>Entre 1 y 12 meses</strong><p>La tos y la falta de aire suelen disminuir.</p></div></div>
+      <div class="hm-tl-item" id="tl-1y"><span class="hm-dot"></span><div><strong>Entre 1 y 2 años</strong><p>El riesgo de ataque cardíaco baja de forma marcada frente a continuar fumando.</p></div></div>
     </div>
 
     <div class="hm-tip-box">
       <span class="hm-tip-icon">🧊</span>
-      <div><strong>Estrategia de regulación vagal</strong><p>Bebes un vaso de agua fría lentamente o respira en ritmo 4-7-8 cuando aparezca un antojo agudo.</p></div>
+      <div><strong>Prepara una alternativa segura</strong><p>Ten agua, goma de mascar o una persona de confianza disponible para los momentos difíciles.</p></div>
     </div>
 
-    <div class="medical-note" style="margin-top:14px;">Proyecciones orientativas basadas en datos biomédicos de la Centers for Disease Control and Prevention (CDC), American Heart Association (AHA) y OMS. Los tiempos individuales varían y no sustituyen evaluación médica.</div>
+    <div class="medical-note" style="margin-top:14px;">Los tiempos son orientativos y varían entre personas. Para apoyo personalizado, consulta a un profesional de salud. Fuente: <a href="https://www.cdc.gov/tobacco/about/benefits-of-quitting.html" target="_blank" rel="noreferrer" style="color:var(--amber)">CDC, beneficios de dejar de fumar</a>.</div>
   </div>
 </dialog>
 
@@ -1577,7 +1679,11 @@ function localDateTimeValue(value=new Date()){
   return new Date(date.getTime()-date.getTimezoneOffset()*60000).toISOString().slice(0,16);
 }
 function openDialog(id){ const dialog=document.getElementById(id); if(dialog&&!dialog.open) dialog.showModal(); }
-function closeDialog(id){ const dialog=document.getElementById(id); if(dialog?.open) dialog.close(); }
+function closeDialog(id){
+  const dialog=document.getElementById(id);
+  if(dialog?.open) dialog.close();
+  if(id==='craving-dialog') resetBreathing();
+}
 function openSmokeSetup(){
   const smoke=state.smoke;
   document.getElementById('quit-at').value=localDateTimeValue(smokeConfigured()?smoke.quitAt:new Date());
@@ -1596,22 +1702,9 @@ function saveSmokeSetup(event){
   state.smoke.packSize=Math.max(1,Number(document.getElementById('pack-size').value)||20);
   state.smoke.packPrice=Math.max(0,Number(document.getElementById('pack-price').value)||0);
   state.smoke.targetDays=Math.max(1,Number(document.getElementById('quit-goal').value)||30);
-  saveState(); closeDialog('smoke-setup-dialog'); renderSmoke(); toast('Control de no fumar configurado.');
+  saveState(); closeDialog('smoke-setup-dialog'); renderSmoke(); toast('Tu punto de partida quedó guardado.');
 }
 function smokeElapsed(){ return smokeConfigured()?Math.max(0,Date.now()-new Date(state.smoke.quitAt).getTime()):0; }
-
-function smokeHealth(elapsed){
-  const minute=60000, hour=3600000, day=86400000;
-  if(elapsed < 20*minute) return {now:'En 20 minutos, tu ritmo cardíaco y presión arterial retornan a niveles basales.',next:'Hito 12h: El monóxido de carbono en sangre se normaliza.'};
-  if(elapsed < 12*hour) return {now:'Hito 20m alcanzado: Presión arterial estabilizada.',next:'Próximo hito (12h): La oxigenación en sangre vuelve a capacidad máxima.'};
-  if(elapsed < 24*hour) return {now:'Hito 12h alcanzado: El monóxido de carbono descendió a nivel de no fumador.',next:'Próximo hito (24h): El riesgo de evento cardiovascular agudo comienza a descender.'};
-  if(elapsed < 48*hour) return {now:'Hito 24h alcanzado: Reducción inicial del riesgo coronario agudo.',next:'Próximo hito (48h): Nicotina libre eliminada del torrente sanguíneo.'};
-  if(elapsed < 72*hour) return {now:'Hito 48h alcanzado: Regeneración de terminaciones olfativas y gustativas.',next:'Próximo hito (72h): Relajación bronquial y mayor ventilación pulmonar.'};
-  if(elapsed < 14*day) return {now:'Hito 72h alcanzado: Broncodilatación y aumento de la capacidad ventilatoria.',next:'Entre 2 y 12 semanas: La función pulmonar neta se incrementa hasta un 30%.'};
-  if(elapsed < 90*day) return {now:'Fase de estabilización: Circulación periférica mejorada y función pulmonar en crecimiento.',next:'Entre 1 y 9 meses: Los cilios bronquiales se regeneran reduciendo tos y falta de aire.'};
-  if(elapsed < 365*day) return {now:'Fase avanzada: Cilios pulmonares regenerados, menor resistencia respiratoria.',next:'Al completar 1 año: El riesgo de enfermedad coronaria se reduce al 50% frente a un fumador activo.'};
-  return {now:'Hito 1 año alcanzado: Tu riesgo coronario adicional ha bajado al 50%.',next:'Entre 2 y 5 años: El riesgo de accidente cerebrovascular (ACV) iguala al de un no fumador.'};
-}
 
 function smokeEvent(type,details={}){
   state.smoke.history.unshift({id:uid(),type,date:new Date().toISOString(),...details});
@@ -1637,8 +1730,6 @@ function renderSmoke(){
   const avoided = Math.floor(elapsedDaysExact * cigsPerDay);
   const savedExact = elapsedDaysExact * cigsPerDay * pricePerCig;
   const monthlyProjection = 30 * cigsPerDay * pricePerCig;
-  const yearlyProjection = 365 * cigsPerDay * pricePerCig;
-
   const goalMs=state.smoke.targetDays*day, progress=Math.min(100, (elapsed/goalMs)*100);
   const today=todayState(), confirmed=today.smokeStatus==='clear', lapse=today.smokeStatus==='lapse';
 
@@ -1672,85 +1763,107 @@ function renderSmoke(){
   const streakEl = document.getElementById('smoke-streak');
   if(streakEl) streakEl.textContent = `${days} día${days===1?'':'s'}`;
 
+  const bestMs=Math.max(state.smoke.bestStreakMs||0,elapsed);
+  const bestDays=Math.floor(bestMs/day);
+  const bestEl=document.getElementById('smoke-best');
+  if(bestEl) bestEl.textContent=`${bestDays} día${bestDays===1?'':'s'}`;
+
   const goalTextEl=document.getElementById('smoke-goal-text');
   if(goalTextEl) goalTextEl.textContent=`Meta: ${state.smoke.targetDays} días sin fumar`;
   
   const goalEl=document.getElementById('smoke-goal');
   if(goalEl) goalEl.textContent=`${Math.floor(progress)}%`;
   
-  const projNameEl=document.getElementById('smoke-project-name');
-  if(projNameEl) projNameEl.textContent=project().name;
-
   const smokeProgressEl = document.getElementById('smoke-progress');
   if(smokeProgressEl) smokeProgressEl.style.width=`${progress}%`;
 
   const smokeCheckLabelEl = document.getElementById('smoke-check-label');
   if(smokeCheckLabelEl) smokeCheckLabelEl.textContent=confirmed?'confirmado':lapse?'reiniciado':'confirma hoy';
 
-  // Medical timeline dynamic updates in health modal
-  const o2Pct = Math.min(100, Math.floor(Math.min(1, elapsed / (12 * hour)) * 100));
-  const coPpm = Math.max(2, Math.floor(15 - Math.min(1, elapsed / (12 * hour)) * 13));
-  const hrBpm = elapsed >= (20 * minute) ? 72 : 88;
-  const lungPct = Math.min(100, Math.max(10, Math.floor( 70 + Math.min(1, elapsed / (90 * day)) * 30 )));
-
-  const o2ValEl = document.getElementById('hm-o2-val'), o2BarEl = document.getElementById('hm-o2-bar');
-  if(o2ValEl) o2ValEl.textContent = `${Math.max(90, Math.floor(90 + (o2Pct/100)*8))}%`;
-  if(o2BarEl) o2BarEl.style.width = `${Math.max(90, Math.floor(90 + (o2Pct/100)*8))}%`;
-
-  const coValEl = document.getElementById('hm-co-val');
-  if(coValEl) coValEl.textContent = `${coPpm}ppm`;
-
-  const hrValEl = document.getElementById('hm-hr-val');
-  if(hrValEl) hrValEl.textContent = `${hrBpm}bpm`;
-
-  const lungValEl = document.getElementById('hm-lung-val'), lungBarEl = document.getElementById('hm-lung-bar');
-  if(lungValEl) lungValEl.textContent = `${lungPct}%`;
-  if(lungBarEl) lungBarEl.style.width = `${lungPct}%`;
-
   // Update Medical timeline checkmarks based on actual elapsed time
   const timelineMilestones = [
-    { id: 'tl-20m', ms: 20 * minute },
-    { id: 'tl-12h', ms: 12 * hour },
+    { id: 'tl-20m', ms: minute },
     { id: 'tl-24h', ms: 24 * hour },
-    { id: 'tl-48h', ms: 48 * hour },
     { id: 'tl-72h', ms: 72 * hour },
-    { id: 'tl-2w',  ms: 14 * day },
     { id: 'tl-1m',  ms: 30 * day },
     { id: 'tl-1y',  ms: 365 * day }
   ];
   timelineMilestones.forEach(item => {
     const el = document.getElementById(item.id);
-    if(el) el.classList.toggle('done', elapsed >= item.ms);
+    if(el){
+      const done=elapsed>=item.ms,marker=el.querySelector('span');
+      el.classList.toggle('done',done);
+      if(marker){marker.className=done?'hm-check':'hm-dot';marker.textContent=done?'✓':'';}
+    }
   });
 
-  const confirm=document.getElementById('smoke-confirm'); 
-  if(confirm) confirm.innerHTML=`<span class="btn-ic">${confirmed?'✓':'✓'}</span> ${confirmed?'Decisión protegida ✓ → seguir guía':'Sigo sin fumar → comenzar guía'}`;
+  const checkinTitle=document.getElementById('checkin-title');
+  const checkinDescription=document.getElementById('checkin-description');
+  if(checkinTitle&&checkinDescription){
+    if(lapse){
+      checkinTitle.textContent='Volviste. Eso también cuenta.';
+      checkinDescription.textContent='El contador empieza desde ahora, pero lo aprendido y tu mejor recorrido siguen contigo.';
+    } else if(today.cravingHandled){
+      checkinTitle.textContent='Atravesaste un momento difícil.';
+      checkinDescription.textContent='Tómate un respiro. Puedes volver a abrir la guía todas las veces que la necesites.';
+    } else if(confirmed){
+      checkinTitle.textContent='Bien. Ya registraste cómo vas hoy.';
+      checkinDescription.textContent='No necesitas demostrar nada más. Vuelve cuando necesites apoyo.';
+    } else {
+      checkinTitle.textContent='¿Qué necesitas ahora?';
+      checkinDescription.textContent='Puedes registrar cómo vas o abrir apoyo inmediato. Sin juicios.';
+    }
+  }
 
-  const labels={clear:'Día confirmado',craving:'Ansiedad resistida',lapse:'Cigarrillo registrado'};
+  const labels={clear:'Hoy sigo sin fumar',craving:'Pedí apoyo para un antojo',lapse:'Retomé desde aquí'};
   const recent=state.smoke.history.slice(0,6);
   const logListEl = document.getElementById('smoke-log-list');
   if(logListEl) logListEl.innerHTML=recent.length?recent.map(item=>`<div class="smoke-log-item"><span>${escapeHTML(labels[item.type]||item.type)}</span><span>${escapeHTML(new Intl.DateTimeFormat('es-DO',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'}).format(new Date(item.date)))}${item.level?` · ${escapeHTML(item.level)}/10`:''}</span></div>`).join(''):'<div class="smoke-log-item"><span>Aún no hay registros.</span></div>';
 }
-function moveToEasyTask(){ document.getElementById('next-action').scrollIntoView({behavior:'smooth',block:'center'}); }
 function confirmSmokeFree(){
   if(!smokeConfigured()){ openSmokeSetup(); return; }
   const day=todayState();
   if(day.smokeStatus!=='clear'){ day.smokeStatus='clear'; smokeEvent('clear'); saveState(); }
-  renderSmoke(); toast('Decisión protegida. Ahora mueve una sola tarea.'); setTimeout(moveToEasyTask,180);
+  renderSmoke(); toast('Listo. Tu progreso de hoy quedó registrado.');
 }
-function openCravingDialog(){ if(!smokeConfigured()){openSmokeSetup();return;} openDialog('craving-dialog'); }
+function openCravingDialog(){ resetBreathing(); openDialog('craving-dialog'); }
 function resistCraving(event){
   event.preventDefault();
   const level=Number(document.getElementById('craving-level').value),trigger=document.getElementById('craving-trigger').value;
-  smokeEvent('craving',{level,trigger}); todayState().cravingHandled=true; saveState(); closeDialog('craving-dialog'); renderSmoke(); toast('Impulso registrado como resistido. Abre la tarea más fácil.'); setTimeout(moveToEasyTask,180);
+  if(smokeConfigured()){
+    smokeEvent('craving',{level,trigger}); todayState().cravingHandled=true; saveState();
+  }
+  closeDialog('craving-dialog'); renderSmoke(); toast('Bien hecho al darte este espacio. Vuelve cuando lo necesites.');
 }
 function openLapseDialog(){ if(!smokeConfigured()){openSmokeSetup();return;} openDialog('lapse-dialog'); }
 function registerLapse(event){
   event.preventDefault();
   const count=Math.max(1,Number(document.getElementById('lapse-count').value)||1),trigger=document.getElementById('lapse-trigger').value.trim();
   const elapsed=smokeElapsed(); state.smoke.bestStreakMs=Math.max(state.smoke.bestStreakMs||0,elapsed); smokeEvent('lapse',{count,trigger,streakMs:elapsed});
-  state.smoke.quitAt=new Date().toISOString(); todayState().smokeStatus='lapse'; saveState(); closeDialog('lapse-dialog'); renderSmoke(); document.getElementById('lapse-count').value='1'; document.getElementById('lapse-trigger').value=''; toast('Registrado sin borrar tu historial. El contador inicia de nuevo.');
+  state.smoke.quitAt=new Date().toISOString(); todayState().smokeStatus='lapse'; saveState(); closeDialog('lapse-dialog'); renderSmoke(); document.getElementById('lapse-count').value='1'; document.getElementById('lapse-trigger').value=''; toast('Registrado. Retomas desde ahora sin borrar lo aprendido.');
 }
+
+let breathingTimer=null;
+let breathingRemaining=60;
+let breathingRunning=false;
+function renderBreathing(){
+  const card=document.getElementById('breathing-card'),count=document.getElementById('breathing-count'),phase=document.getElementById('breathing-phase'),button=document.getElementById('breathing-button');
+  if(!card||!count||!phase||!button)return;
+  card.classList.toggle('active',breathingRunning);
+  count.textContent=breathingRemaining>0?breathingRemaining:'✓';
+  if(breathingRemaining<=0){ phase.textContent='Terminaste este minuto'; button.textContent='Hacer otro minuto'; }
+  else if(!breathingRunning){ phase.textContent=breathingRemaining<60?'Pausa cuando la necesites':'Respira a tu ritmo'; button.textContent=breathingRemaining<60?'Continuar':'Empezar 60 segundos'; }
+  else { const cycle=(60-breathingRemaining)%12; phase.textContent=cycle<4?'Inhala suave':cycle<6?'Pausa sin forzar':'Exhala despacio'; button.textContent='Pausar'; }
+}
+function stopBreathing(){ clearInterval(breathingTimer); breathingTimer=null; breathingRunning=false; renderBreathing(); }
+function resetBreathing(){ clearInterval(breathingTimer); breathingTimer=null; breathingRunning=false; breathingRemaining=60; renderBreathing(); }
+function toggleBreathing(){
+  if(breathingRunning){stopBreathing();return;}
+  if(breathingRemaining<=0)breathingRemaining=60;
+  breathingRunning=true;renderBreathing();
+  breathingTimer=setInterval(()=>{ breathingRemaining=Math.max(0,breathingRemaining-1); if(breathingRemaining===0){stopBreathing();toast('Completaste un minuto. Nota si el antojo cambió, aunque sea un poco.');}else renderBreathing(); },1000);
+}
+function copySupportMessage(button){ copyText('Hola. Estoy pasando un antojo de fumar y me ayudaría que te quedes conmigo por mensaje o llamada unos minutos.',button); }
 
 function showView(id){
   if(!TITLES[id]) id='today';
@@ -2256,16 +2369,14 @@ function toast(message){ const el=document.getElementById('toast');el.textConten
 
 /* ── Topbar Modern Phrase Rotator ── */
 const TOPBAR_PHRASES = [
-  '“Tu proyecto necesita tu mejor versión.”',
-  '“5 minutos de enfoque valen más que 1 cigarrillo.”',
-  '“Cada vez que quieras fumar, trabaja 5 minutos en tu futuro.”',
-  '“Tu salud y tu negocio crecen al mismo tiempo.”',
-  '“No reemplaces la disciplina con nicotina.”',
-  '“Un impulso dura 3 minutos. Tu imperio dura para siempre.”',
-  '“El humo borra tu energía. El trabajo construye tu libertad.”',
-  '“Protege tu mente, el cigarrillo es una distracción cara.”',
-  '“La mejor versión de ti no necesita fumar.”',
-  '“La consistencia diaria vence a cualquier impulso.”'
+  '“Hoy no tienes que hacerlo perfecto.”',
+  '“Un antojo es un momento, no una orden.”',
+  '“Volver a intentarlo también es avanzar.”',
+  '“Tu valor no depende de una racha.”',
+  '“Pedir apoyo también es cuidarte.”',
+  '“Respira. La siguiente decisión puede ser pequeña.”',
+  '“Lo que pasó antes no decide lo que haces ahora.”',
+  '“Háblate con la paciencia que le darías a alguien querido.”'
 ];
 let _topbarIdx = 0;
 function rotateTopbar(){
@@ -2353,11 +2464,12 @@ async function loadStateFromSupabase(){
 
 function init(){
   populateProjectSelects(); renderToday(); renderSell(); renderPublish(); renderProjects();
+  document.getElementById('craving-dialog')?.addEventListener('close',resetBreathing);
   const initial=location.hash.replace('#',''); showView(TITLES[initial]?initial:'today');
   renderSmoke();
   rotateTopbar();
   loadStateFromSupabase();
-  setInterval(renderSmoke, 200); // 5 veces por segundo para fluidez en tiempo real
+  setInterval(renderSmoke, 1000); // Actualización suficiente para el contador y más amable con la batería
   setInterval(rotateTopbar, 4000); // Rotación cada 4 segundos
 }
 init();
