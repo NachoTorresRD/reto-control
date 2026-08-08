@@ -1402,22 +1402,29 @@ dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur
             </div>
           </details>
           <details class="ai-setup" id="supabase-setup" style="margin-top:8px;">
-            <summary id="supabase-setup-summary">🗄️ Base de Datos Supabase (Respaldo en la Nube)</summary>
+            <summary id="supabase-setup-summary">🗄️ Base de Datos Supabase (Sincronización Multi-Dispositivo y Nube)</summary>
             <div class="ai-provider-form">
               <div class="field" style="margin-top:10px;">
+                <label for="supabase-user-id">👤 Tu ID de Usuario / PIN (para sincronizar Celular y PC)</label>
+                <input class="input" id="supabase-user-id" value="nacho" placeholder="Ej. nacho (tu ID de cuenta para ver tus mismos datos)">
+              </div>
+              <div class="field" style="margin-top:8px;">
                 <label for="supabase-url">URL de Supabase Project</label>
                 <input class="input" id="supabase-url" value="https://oberzwgvbrgqokoynqpm.supabase.co" placeholder="https://xyz.supabase.co">
               </div>
               <div class="field" style="margin-top:8px;">
                 <label for="supabase-key">Supabase Anon Public Key</label>
-                <input class="input" id="supabase-key" type="password" autocomplete="off" placeholder="Pega tu clave anon public (eyJhbGci...) de Supabase aquí">
+                <input class="input" id="supabase-key" type="password" autocomplete="off" value="sb_publishable_YWhPwuwfVoORAsW_Wa98IA_b2kb5U3c" placeholder="Clave anon public de Supabase">
               </div>
-              <div class="button-row" style="margin-top:10px;">
-                <button class="btn btn-primary" onclick="saveSupabaseConfig()">Guardar y Conectar Supabase</button>
-                <button class="btn btn-secondary" onclick="syncWithSupabase(true)">🔄 Sincronizar Ahora</button>
+              <div class="button-row" style="margin-top:10px; flex-wrap:wrap; gap:6px;">
+                <button class="btn btn-success" onclick="pushThisDeviceToCloud()">⬆️ Subir datos de ESTE dispositivo a la Nube</button>
+                <button class="btn btn-secondary" onclick="pullCloudToThisDevice()">⬇️ Traer datos de la Nube a este dispositivo</button>
+                <button class="btn btn-secondary" onclick="copySyncLink(this)">📱 Copiar Enlace para Celular</button>
               </div>
               <div class="ai-help" style="margin-top:8px;">
-                Guarda todo tu progreso (días sin fumar, proyectos, prospectos CRM y planes IA) en tu propia base de datos PostgreSQL de Supabase.
+                <b>¿Cómo pasar tus datos del iPhone a la PC?</b><br>
+                1. En tu <b>iPhone</b>: Presiona <b style="color:var(--green)">"⬆️ Subir datos de ESTE dispositivo a la Nube"</b>.<br>
+                2. En tu <b>PC</b>: Presiona <b style="color:var(--cyan)">"⬇️ Traer datos de la Nube a este dispositivo"</b>.
               </div>
             </div>
           </details>
@@ -2592,25 +2599,46 @@ function sendTestNotification() {
 }
 
 /* ── Supabase Database Sync Module ── */
+function getUserId() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const paramUser = urlParams.get('user') || urlParams.get('u');
+  if (paramUser) {
+    localStorage.setItem('nt_user_id', paramUser.trim());
+  }
+  return localStorage.getItem('nt_user_id') || 'nacho';
+}
+
 function getSupabaseConfig(){
   return {
     url: localStorage.getItem('nt_supabase_url') || 'https://oberzwgvbrgqokoynqpm.supabase.co',
-    key: localStorage.getItem('nt_supabase_key') || ''
+    key: localStorage.getItem('nt_supabase_key') || 'sb_publishable_YWhPwuwfVoORAsW_Wa98IA_b2kb5U3c',
+    userId: getUserId()
   };
 }
 
 function saveSupabaseConfig(){
   const url = document.getElementById('supabase-url').value.trim();
   const key = document.getElementById('supabase-key').value.trim();
+  const userIdInput = document.getElementById('supabase-user-id');
+  if (userIdInput && userIdInput.value.trim()) {
+    localStorage.setItem('nt_user_id', userIdInput.value.trim());
+  }
   if(!url || !key){ toast('Introduce la URL y la Anon Public Key de Supabase.'); return; }
   localStorage.setItem('nt_supabase_url', url);
   localStorage.setItem('nt_supabase_key', key);
   _supabaseClient = null;
   const setupEl = document.getElementById('supabase-setup');
   if(setupEl) setupEl.open = false;
-  toast('✓ Supabase DB configurado con éxito.');
-  syncWithSupabase(true);
+  toast(`✓ Supabase DB conectado para el usuario "${getUserId()}".`);
+  pushThisDeviceToCloud();
   renderToday();
+}
+
+function copySyncLink(button) {
+  const userId = getUserId();
+  const syncUrl = `${window.location.origin}${window.location.pathname}?user=${encodeURIComponent(userId)}`;
+  copyText(syncUrl, button);
+  toast(`📱 Enlace copiado para tu celular: ?user=${userId}`);
 }
 
 let _supabaseClient = null;
@@ -2623,30 +2651,52 @@ function getSupabaseClient(){
   return _supabaseClient;
 }
 
-async function syncWithSupabase(notify = false){
+async function pushThisDeviceToCloud(){
   const client = getSupabaseClient();
-  if(!client) return;
+  if(!client) { toast('Configura Supabase primero.'); return; }
+  const userId = getUserId();
   try {
-    const { error } = await client.from('app_state').upsert({ id: 'main_user', state: state, updated_at: new Date().toISOString() });
+    const { error } = await client.from('app_state').upsert({ id: userId, state: state, updated_at: new Date().toISOString() });
     if(error){
-      console.warn('Supabase Sync Warn:', error.message);
-      if(notify) toast(`Aviso Supabase: ${error.message}`);
+      console.warn('Supabase Push Error:', error.message);
+      toast(`Error al subir datos a la nube: ${error.message}`);
     } else {
-      console.log('✓ Sincronizado con Supabase');
-      if(notify) toast('✓ Estado sincronizado con Supabase DB');
+      console.log(`✓ Datos de este dispositivo subidos a Supabase (ID: ${userId})`);
+      toast(`⬆️ ¡Datos de este dispositivo guardados en la Nube! (ID: ${userId})`);
     }
   } catch(err){
     console.error(err);
-    if(notify) toast(`Error al conectar con Supabase: ${err.message}`);
+    toast(`Error al subir datos: ${err.message}`);
   }
 }
 
-async function loadStateFromSupabase(){
+async function pullCloudToThisDevice(){
+  await loadStateFromSupabase(true);
+}
+
+async function syncWithSupabase(notify = false){
+  return pushThisDeviceToCloud();
+}
+
+async function loadStateFromSupabase(force = false){
   const client = getSupabaseClient();
   if(!client) return;
+  const userId = getUserId();
   try {
-    const { data, error } = await client.from('app_state').select('state').eq('id', 'main_user').single();
+    const { data, error } = await client.from('app_state').select('state').eq('id', userId).single();
     if(data && data.state){
+      // Safety check: if local device already has quitAt and force is false, keep local unless forced
+      const localSmoke = state.smoke || {};
+      const cloudSmoke = data.state.smoke || {};
+      const localHasData = Boolean(localSmoke.quitAt) || (localSmoke.history && localSmoke.history.length > 0);
+      const cloudHasData = Boolean(cloudSmoke.quitAt) || (cloudSmoke.history && cloudSmoke.history.length > 0);
+
+      if(!force && localHasData && !cloudHasData){
+        console.log('El dispositivo local tiene datos activos y la Nube no. Subiendo datos locales a la Nube...');
+        pushThisDeviceToCloud();
+        return;
+      }
+
       state = { ...state, ...data.state };
       saveState();
       renderToday();
@@ -2654,19 +2704,31 @@ async function loadStateFromSupabase(){
       renderSell();
       renderPublish();
       renderProjects();
-      console.log('✓ Estado cargado desde Supabase DB');
+      console.log(`✓ Estado cargado desde Supabase DB (ID: ${userId})`);
+      if(force) toast('⬇️ ¡Datos de la Nube descargados con éxito en este dispositivo!');
     }
   } catch(e){}
 }
 
 function init(){
+  const userIdInput = document.getElementById('supabase-user-id');
+  if (userIdInput) userIdInput.value = getUserId();
+
   populateProjectSelects(); renderToday(); renderSell(); renderPublish(); renderProjects();
   document.getElementById('craving-dialog')?.addEventListener('close',resetBreathing);
   const initial=location.hash.replace('#',''); showView(TITLES[initial]?initial:'today');
   renderSmoke();
   rotateTopbar();
   updateNotifUI();
-  loadStateFromSupabase();
+  
+  // Protect local device data: if local device already has configured smoke data, push it to cloud automatically
+  const localSmoke = state.smoke || {};
+  if(Boolean(localSmoke.quitAt) || (localSmoke.history && localSmoke.history.length > 0)){
+    pushThisDeviceToCloud();
+  } else {
+    loadStateFromSupabase();
+  }
+
   setInterval(renderSmoke, 1000);
   setInterval(rotateTopbar, 4000);
 }
