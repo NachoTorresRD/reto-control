@@ -2142,10 +2142,9 @@ function renderToday(){
 
   const suCfg = getSupabaseConfig();
   safeSetValue('supabase-url', suCfg.url);
-  const suKeyInput = document.getElementById('supabase-key');
-  if(suKeyInput && suCfg.key && !suKeyInput.value){
-    suKeyInput.value = suCfg.key;
-  }
+  safeSetValue('supabase-key', suCfg.key);
+  safeSetValue('supabase-user-id', suCfg.userId);
+  safeSetValue('sync-user-id', suCfg.userId);
   if(suCfg.key){
     safeSetText('supabase-setup-summary', '🗄️ Base de Datos Supabase Conectada ✓');
   }
@@ -2664,28 +2663,39 @@ function getUserId() {
   return localStorage.getItem('nt_user_id') || 'nacho';
 }
 
+const DEFAULT_SUPABASE_URL = 'https://oberzwgvbrgqokoynqpm.supabase.co';
+const DEFAULT_SUPABASE_KEY = 'sb_publishable_YWhPwuwfVoORAsW_Wa98IA_b2kb5U3c';
+
 function getSupabaseConfig(){
+  const sUrl = localStorage.getItem('nt_supabase_url');
+  const sKey = localStorage.getItem('nt_supabase_key');
+  const url = (sUrl && sUrl.trim().length > 5) ? sUrl.trim() : DEFAULT_SUPABASE_URL;
+  const key = (sKey && sKey.trim().length > 5) ? sKey.trim() : DEFAULT_SUPABASE_KEY;
   return {
-    url: localStorage.getItem('nt_supabase_url') || 'https://oberzwgvbrgqokoynqpm.supabase.co',
-    key: localStorage.getItem('nt_supabase_key') || 'sb_publishable_YWhPwuwfVoORAsW_Wa98IA_b2kb5U3c',
+    url,
+    key,
     userId: getUserId()
   };
 }
 
 function saveSupabaseConfig(){
-  const url = document.getElementById('supabase-url').value.trim();
-  const key = document.getElementById('supabase-key').value.trim();
-  const userIdInput = document.getElementById('supabase-user-id');
-  if (userIdInput && userIdInput.value.trim()) {
-    localStorage.setItem('nt_user_id', userIdInput.value.trim());
-  }
-  if(!url || !key){ toast('Introduce la URL y la Anon Public Key de Supabase.'); return; }
+  const urlEl = document.getElementById('supabase-url');
+  const keyEl = document.getElementById('supabase-key');
+  const userIdEl = document.getElementById('supabase-user-id');
+  const syncUserIdEl = document.getElementById('sync-user-id');
+
+  const userId = (syncUserIdEl && syncUserIdEl.value.trim()) ? syncUserIdEl.value.trim() : ((userIdEl && userIdEl.value.trim()) ? userIdEl.value.trim() : getUserId());
+  const url = (urlEl && urlEl.value.trim()) ? urlEl.value.trim() : DEFAULT_SUPABASE_URL;
+  const key = (keyEl && keyEl.value.trim()) ? keyEl.value.trim() : DEFAULT_SUPABASE_KEY;
+
+  localStorage.setItem('nt_user_id', userId);
   localStorage.setItem('nt_supabase_url', url);
   localStorage.setItem('nt_supabase_key', key);
   _supabaseClient = null;
+
   const setupEl = document.getElementById('supabase-setup');
   if(setupEl) setupEl.open = false;
-  toast(`✓ Supabase DB conectado para el usuario "${getUserId()}".`);
+  toast(`✓ Supabase DB conectado para el usuario "${userId}".`);
   pushThisDeviceToCloud();
   renderToday();
 }
@@ -2700,8 +2710,7 @@ function copySyncLink(button) {
 let _supabaseClient = null;
 function getSupabaseClient(){
   const cfg = getSupabaseConfig();
-  if(!cfg.url || !cfg.key || !window.supabase) return null;
-  if(!_supabaseClient){
+  if(!_supabaseClient && window.supabase){
     try { _supabaseClient = window.supabase.createClient(cfg.url, cfg.key); } catch(e){}
   }
   return _supabaseClient;
@@ -2709,7 +2718,7 @@ function getSupabaseClient(){
 
 async function pushThisDeviceToCloud(){
   const client = getSupabaseClient();
-  if(!client) { toast('Configura Supabase primero.'); return; }
+  if(!client) { toast('Iniciando cliente de Supabase...'); return; }
   const userId = getUserId();
   try {
     const { error } = await client.from('app_state').upsert({ id: userId, state: state, updated_at: new Date().toISOString() });
