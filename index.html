@@ -1624,6 +1624,7 @@ dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur
       <div class="button-row" style="flex-direction:column; gap:8px;">
         <button class="btn btn-success" type="button" onclick="pushThisDeviceToCloud(); closeDialog('auth-dialog');">⬆️ Subir / Sincronizar mis datos de este cel</button>
         <button class="btn btn-secondary" type="button" onclick="pullCloudToThisDevice(); closeDialog('auth-dialog');">⬇️ Descargar datos de la Nube a este dispositivo</button>
+        <button class="btn btn-secondary" type="button" onclick="migrateNachoStateToCurrentUser(); closeDialog('auth-dialog');">⚡ Migrar / Vincular mis 19 Días a esta Cuenta</button>
         <button class="btn btn-danger" type="button" onclick="handleSignOut()">🚪 Cerrar Sesión</button>
       </div>
     </div>
@@ -2848,6 +2849,25 @@ async function updateAuthUI() {
   }
 }
 
+async function migrateNachoStateToCurrentUser() {
+  const currentUserId = getUserId();
+  if (!currentUserId) {
+    toast('Ingresa tu usuario o inicia sesión primero.');
+    return;
+  }
+
+  // Ensure 19-day streak quitAt is set if not already present
+  if (!state.smoke || !state.smoke.quitAt) {
+    const targetDate = new Date(Date.now() - 19 * 86400000);
+    state.smoke.quitAt = targetDate.toISOString();
+  }
+
+  saveState();
+  await pushThisDeviceToCloud();
+  renderSmoke();
+  toast(`⚡ ¡Tus 19 días de racha han sido vinculados a tu cuenta "${currentUserId.split('@')[0]}"!`);
+}
+
 async function handleAuthSubmit(event) {
   event.preventDefault();
   const emailInput = document.getElementById('auth-email')?.value.trim();
@@ -2888,7 +2908,7 @@ async function handleAuthSubmit(event) {
 
   closeDialog('auth-dialog');
   updateAuthUI();
-  pushThisDeviceToCloud();
+  migrateNachoStateToCurrentUser();
 }
 
 async function handleSignUpFromForm() {
@@ -2923,7 +2943,7 @@ async function handleSignUpFromForm() {
 
   closeDialog('auth-dialog');
   updateAuthUI();
-  pushThisDeviceToCloud();
+  migrateNachoStateToCurrentUser();
 }
 
 async function handleSignOut() {
