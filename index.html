@@ -3,9 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Un espacio diario y privado para acompañarte mientras dejas de fumar, registrar tu progreso y atravesar los antojos sin juicios.">
+<meta name="description" content="Panel diario de disciplina, control sin fumar y avance de proyectos.">
 <meta name="robots" content="noindex,nofollow">
-<title>NT Hoy — apoyo para dejar de fumar</title>
+<meta name="theme-color" content="#060a12">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Reto Control">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='100' fill='%23060a12'/><circle cx='256' cy='256' r='180' fill='none' stroke='%2322d3ee' stroke-width='32'/><path d='M256 140v116l80 48' fill='none' stroke='%2334d399' stroke-width='32' stroke-linecap='round'/></svg>">
+<title>Reto Control — Panel de Disciplina y Notificaciones</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
@@ -1000,6 +1006,59 @@ dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur
 }
 
 /* ════════════════════════════════════
+   NOTIFICATION MANAGER & IOS PWA STYLES
+════════════════════════════════════ */
+.notif-card {
+  margin-top: 14px;
+  padding: 16px 18px;
+  background: linear-gradient(135deg, rgba(34,211,238,.07), rgba(15,23,42,.9));
+  border: 1px solid rgba(34,211,238,.25);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 4px 20px rgba(0,0,0,.25);
+}
+.notif-head {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  gap: 14px; flex-wrap: wrap;
+}
+.notif-title-group h3 { font: 700 15px 'Space Grotesk', sans-serif; color: var(--text); }
+.notif-title-group p { margin-top: 3px; color: var(--muted-2); font-size: 11px; }
+.notif-badge {
+  display: inline-block; padding: 3px 9px; margin-bottom: 6px;
+  color: var(--cyan); background: var(--cyan-dim);
+  border: 1px solid var(--cyan-glow); border-radius: var(--radius-pill);
+  font-size: 9px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;
+}
+.ios-install-banner {
+  display: flex; gap: 12px; align-items: flex-start;
+  margin-top: 12px; padding: 12px 14px;
+  background: rgba(251,191,36,.09); border: 1px solid rgba(251,191,36,.3);
+  border-radius: var(--radius-md); font-size: 11px; line-height: 1.5;
+}
+.ios-banner-icon { font-size: 22px; flex: 0 0 auto; }
+.ios-banner-text strong { display: block; color: var(--amber); margin-bottom: 3px; }
+.ios-banner-text span { color: var(--text-2); }
+.notif-actions {
+  display: flex; gap: 10px; align-items: center; justify-content: space-between;
+  margin-top: 14px; flex-wrap: wrap;
+}
+.notif-status-pill {
+  padding: 4px 10px; color: var(--muted-2);
+  background: rgba(255,255,255,.04); border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-pill); font-size: 10px; font-weight: 600;
+}
+.notif-status-pill.active {
+  color: var(--green); background: var(--green-dim); border-color: rgba(52,211,153,.3);
+}
+
+/* Firm checkin action buttons */
+.checkin-button.firm-pass {
+  background: rgba(52,211,153,.08); border-color: rgba(52,211,153,.25); color: #34d399;
+}
+.checkin-button.firm-pass:hover {
+  background: rgba(52,211,153,.16); border-color: rgba(52,211,153,.4);
+}
+
+/* ════════════════════════════════════
    TOAST
 ════════════════════════════════════ */
 .toast {
@@ -1152,9 +1211,9 @@ dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur
 <div class="app">
   <aside class="sidebar">
     <div class="brand">
-      <div class="brand-kicker">Tu espacio de apoyo</div>
+      <div class="brand-kicker">CONTROL VIRAL · DISCIPLINA Y AVANCE</div>
       <h1>NT <span>HOY</span></h1>
-      <p>Respira. Registra. Sigue a tu ritmo.</p>
+      <p>Sin excusas. Registra. Mantén el foco.</p>
     </div>
     <div class="day-progress">
       <div class="day-progress-top"><span>Avance de hoy</span><span id="side-progress-label">0 / 4</span></div>
@@ -1166,41 +1225,41 @@ dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur
       <button class="nav-button" data-view="publish"><span class="nav-index">03</span>Publicar</button>
       <button class="nav-button" data-view="projects"><span class="nav-index">04</span>Proyectos</button>
     </nav>
-    <div class="side-rule"><strong>Para recordar</strong>No tienes que hacerlo perfecto. Cada vez que vuelves a intentarlo, sigues aprendiendo a cuidarte.</div>
+    <div class="side-rule"><strong>REGLA DE ORO</strong>Un antojo solo dura de 3 a 5 minutos. Si ejecutas una acción corta en esa ventana, aseguras la victoria de hoy.</div>
   </aside>
 
   <main class="main">
     <header class="topbar">
       <span id="date-pill" hidden></span>
       <div class="topbar-phrase-box">
-        <p class="topbar-phrase" id="topbar-phrase" aria-live="polite">“Hoy solo necesitas dar el siguiente paso.”</p>
+        <p class="topbar-phrase" id="topbar-phrase" aria-live="polite">“Cada minuto sin fumar es una victoria real de tu disciplina.”</p>
       </div>
     </header>
 
     <section class="view active" id="view-today">
-      <div class="section-head"><div class="eyebrow">Un paso a la vez</div><h2>¿Cómo estás hoy?</h2><p>Este espacio está para acompañarte, no para evaluarte. Elige lo que necesitas ahora.</p></div>
+      <div class="section-head"><div class="eyebrow">RETOMAR EL CONTROL</div><h2>Panel de Resistencia y Progreso</h2><p>Seguimiento firme de tu tiempo sin fumar, ahorro acumulado y ejecución diaria.</p></div>
       <section class="discipline-card" aria-labelledby="discipline-title">
         <div class="smoke-empty" id="smoke-empty">
           <div class="smoke-empty-copy">
-            <div class="eyebrow">Tu punto de partida</div>
-            <h3 id="discipline-title">Empecemos contigo, sin presión</h3>
-            <p>Cuéntanos cuándo fue tu último cigarrillo. Verás tu progreso y tendrás una guía breve para esos momentos en que aparece el antojo.</p>
-            <div class="setup-meta"><span>✓ Toma cerca de 1 minuto</span><span>⌁ Privado por defecto</span></div>
+            <div class="eyebrow">PUNTO DE PARTIDA Y COMPROMISO FIRME</div>
+            <h3 id="discipline-title">Define tu momento cero</h3>
+            <p>Indica cuándo fue tu último cigarrillo. Verás tu tiempo de resistencia en tiempo real, tu ahorro exacto y tendrás herramientas de intervención inmediata ante la ansiedad.</p>
+            <div class="setup-meta"><span>✓ Registro rápido en 1 minuto</span><span>⌁ Privado en tu dispositivo</span></div>
             <div class="setup-actions">
               <button class="btn btn-success" onclick="openSmokeSetup()">Crear mi punto de partida</button>
-              <button class="btn btn-secondary" onclick="openCravingDialog()">Necesito apoyo ahora</button>
+              <button class="btn btn-secondary" onclick="openCravingDialog()">⚡ Antojo activo (Plan de Acción)</button>
             </div>
           </div>
-          <div class="support-orbit" aria-hidden="true"><div class="orbit-heart">♡</div></div>
+          <div class="support-orbit" aria-hidden="true"><div class="orbit-heart">⚡</div></div>
         </div>
 
         <div id="smoke-dashboard" hidden>
           <div class="checkin-panel">
-            <div class="checkin-copy"><strong id="checkin-title">¿Qué necesitas ahora?</strong><span id="checkin-description">Puedes registrar cómo vas o abrir apoyo inmediato. Sin juicios.</span></div>
+            <div class="checkin-copy"><strong id="checkin-title">¿CUÁL ES TU ESTADO AHORA?</strong><span id="checkin-description">Confirma tu progreso diario o activa la intervención rápida ante la ansiedad.</span></div>
             <div class="checkin-actions" aria-label="Registro rápido">
-              <button class="checkin-button" onclick="confirmSmokeFree()">✓ Estoy bien por ahora</button>
-              <button class="checkin-button support" onclick="openCravingDialog()">◌ Tengo un antojo</button>
-              <button class="checkin-button restart" onclick="openLapseDialog()">↻ Fumé y quiero retomar</button>
+              <button class="checkin-button firm-pass" onclick="confirmSmokeFree()">✓ Mantengo el Control (0 Cigarrillos)</button>
+              <button class="checkin-button support" onclick="openCravingDialog()">⚡ Antojo Activo — Plan de Acción</button>
+              <button class="checkin-button restart" onclick="openLapseDialog()">↻ Reiniciar Contador — Retomar Ya</button>
             </div>
           </div>
           <!-- 4-Color Clock Section -->
@@ -1251,23 +1310,51 @@ dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur
 
           <!-- Interactive Health Banner -->
           <button class="rc-health-banner" type="button" onclick="openDialog('health-modal')">
-            <div class="hb-icon">♡</div>
+            <div class="hb-icon">💪</div>
             <div class="hb-body">
-              <strong>Cambios que pueden empezar al dejar de fumar</strong>
-              <span>Consulta una guía orientativa; esta app no mide tu cuerpo ›</span>
+              <strong>BENEFICIOS REALES EN TU ORGANISMO</strong>
+              <span>Consulta la recuperación fisiológica progresiva al mantenerte sin fumar ›</span>
             </div>
           </button>
 
+          <!-- iPhone & Web Notification Control Card -->
+          <div class="notif-card" id="notif-card">
+            <div class="notif-head">
+              <div class="notif-title-group">
+                <span class="notif-badge">🔔 NOTIFICACIONES DE CONTROL EN IPHONE Y WEB</span>
+                <h3>Alertas Automáticas de Apoyo</h3>
+                <p>Recibe recordatorios de firmeza en tu iPhone y navegador para mantener la racha intacta.</p>
+              </div>
+              <button class="btn btn-primary btn-small" id="btn-request-notif" onclick="requestNotificationPermission()">🔔 Activar Notificaciones</button>
+            </div>
+
+            <!-- iOS Safari Install Guide Banner (visible on iPhone Safari if not standalone PWA) -->
+            <div class="ios-install-banner" id="ios-install-banner" hidden>
+              <div class="ios-banner-icon">📱</div>
+              <div class="ios-banner-text">
+                <strong>Para activar notificaciones push en tu iPhone (iOS):</strong>
+                <span>1. En Safari, toca el botón <b>Compartir</b> (icono de cuadro con flecha arriba).<br>
+                2. Toca <b>"Añadir a pantalla de inicio"</b> y confirma.<br>
+                3. Abre la App desde tu pantalla de inicio y toca "Activar Notificaciones".</span>
+              </div>
+            </div>
+
+            <div class="notif-actions">
+              <button class="btn btn-secondary btn-small" onclick="sendTestNotification()">⚡ Probar Notificación Ahora</button>
+              <div class="notif-status-pill" id="notif-status-pill">Estado: Verificando...</div>
+            </div>
+          </div>
+
           <div class="smoke-footer">
-            <details class="smoke-log"><summary>Ver mi recorrido</summary><div class="smoke-log-list" id="smoke-log-list"></div></details>
-            <button class="btn btn-secondary btn-small" onclick="openSmokeSetup()">⚙ Ajustes</button>
+            <details class="smoke-log"><summary>Ver mi registro de control</summary><div class="smoke-log-list" id="smoke-log-list"></div></details>
+            <button class="btn btn-secondary btn-small" onclick="openSmokeSetup()">⚙ Ajustes de Meta</button>
           </div>
         </div>
       </section>
       <details class="work-area" id="work-area">
         <summary>
           <span class="work-summary-icon" aria-hidden="true">→</span>
-          <span class="work-summary-copy"><strong>Cuando estés listo: continúa con una acción pequeña</strong><span>Tu plan de trabajo está aquí, separado de tu proceso para dejar de fumar.</span></span>
+          <span class="work-summary-copy"><strong>🎯 Ejecución Diaria de Proyectos · 4 Movimientos Clave</strong><span>Completa tu plan de trabajo y tracción comercial del día.</span></span>
           <span class="work-summary-arrow" aria-hidden="true">⌄</span>
         </summary>
         <div class="work-area-content">
@@ -1427,7 +1514,7 @@ dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur
 
 <dialog class="nt-dialog" id="smoke-setup-dialog" aria-labelledby="smoke-setup-title">
   <form class="dialog-body" onsubmit="saveSmokeSetup(event)">
-    <div class="dialog-head"><div><h3 id="smoke-setup-title">Crea tu punto de partida</h3><p>No es un examen. Estos datos solo nos ayudan a mostrar un progreso que tenga sentido para ti.</p></div><button class="dialog-close" type="button" onclick="closeDialog('smoke-setup-dialog')" aria-label="Cerrar">×</button></div>
+    <div class="dialog-head"><div><h3 id="smoke-setup-title">Configura tu Punto de Partida</h3><p>Establece tus parámetros iniciales para medir con precisión matemática tu tiempo de control y tu ahorro acumulado.</p></div><button class="dialog-close" type="button" onclick="closeDialog('smoke-setup-dialog')" aria-label="Cerrar">×</button></div>
     <div class="dialog-grid">
       <div class="field wide"><label for="quit-at">Último cigarrillo</label><input id="quit-at" type="datetime-local" required></div>
       <div class="field"><label for="cigs-day">Cigarrillos por día</label><input id="cigs-day" type="number" min="1" max="100" step="1" value="10" required></div>
@@ -1436,30 +1523,29 @@ dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur
       <div class="field"><label for="quit-goal">Meta inicial en días</label><input id="quit-goal" type="number" min="1" max="3650" step="1" value="30" required></div>
     </div>
     <div class="button-row"><button class="btn btn-success" type="submit">Guardar mi punto de partida</button><button class="btn btn-secondary" type="button" onclick="closeDialog('smoke-setup-dialog')">Ahora no</button></div>
-    <div class="medical-note">La app es una herramienta de acompañamiento, no atención médica. El apoyo profesional y los tratamientos aprobados pueden ayudarte a manejar la abstinencia y los antojos.</div>
+    <div class="medical-note">Esta app es tu panel de control de conducta. Ante síntomas de abstinencia severa, consulta a un profesional de salud sobre parches o terapias complementarias.</div>
   </form>
 </dialog>
 
 <dialog class="nt-dialog" id="craving-dialog" aria-labelledby="craving-title">
   <form class="dialog-body" onsubmit="resistCraving(event)">
-    <div class="dialog-head"><div><h3 id="craving-title">Estoy contigo. Hagamos una pausa.</h3><p>No tienes que decidir nada para siempre. Vamos a ocuparnos solo de este momento.</p></div><button class="dialog-close" type="button" onclick="closeDialog('craving-dialog')" aria-label="Cerrar">×</button></div>
+    <div class="dialog-head"><div><h3 id="craving-title">⚡ Antojo Activo — Mantén la Calma y Ejecuta</h3><p>Este pico de ansiedad dura únicamente entre 3 y 5 minutos. Concéntrate en la respiración y toma acción inmediata.</p></div><button class="dialog-close" type="button" onclick="closeDialog('craving-dialog')" aria-label="Cerrar">×</button></div>
     <div class="breathing-card" id="breathing-card">
       <div class="breathing-orb" id="breathing-count" aria-live="polite">60</div>
-      <div class="breathing-copy"><strong id="breathing-phase">Respira a tu ritmo</strong><p>Si te resulta cómodo: inhala 4, pausa 2 y exhala 6. Puedes detenerte cuando quieras.</p><button class="btn btn-secondary btn-small" id="breathing-button" type="button" onclick="toggleBreathing()">Empezar 60 segundos</button></div>
+      <div class="breathing-copy"><strong id="breathing-phase">Inhala 4s · Pausa 2s · Exhala 6s</strong><p>Oxigena el cerebro para neutralizar la señal de impulso automático de la nicotina.</p><button class="btn btn-secondary btn-small" id="breathing-button" type="button" onclick="toggleBreathing()">Iniciar 60 Segundos</button></div>
     </div>
-    <div class="field"><label for="craving-level">Ansiedad ahora</label><div class="range-row"><input id="craving-level" type="range" min="1" max="10" value="5" oninput="document.getElementById('craving-output').value=this.value+'/10'"><output id="craving-output">5/10</output></div></div>
-    <div class="field" style="margin-top:12px"><label for="craving-trigger">¿Qué la activó?</label><select id="craving-trigger"><option value="estrés">Estrés</option><option value="aburrimiento">Aburrimiento</option><option value="después de comer">Después de comer</option><option value="bloqueo de trabajo">Bloqueo de trabajo</option><option value="situación social">Situación social</option><option value="otro">Otro</option></select></div>
-    <div class="resist-plan"><div class="resist-step"><b>1</b><div><strong>Toma agua lentamente</strong><span>Dale a tus manos y a tu boca una alternativa segura.</span></div></div><div class="resist-step"><b>2</b><div><strong>Cambia de lugar</strong><span>Aléjate de cigarrillos, encendedores o del espacio asociado a fumar.</span></div></div><div class="resist-step"><b>3</b><div><strong>Busca compañía</strong><span>Escribe o llama a alguien de confianza. No tienes que pasar este momento solo.</span></div></div></div>
-    <div class="button-row"><button class="btn btn-success" type="submit">Ya bajó un poco → guardar</button><button class="btn btn-secondary" type="button" onclick="copySupportMessage(this)">Pedir apoyo a alguien</button></div>
-    <div class="medical-note">Si los antojos son difíciles de manejar, un profesional de salud puede orientarte sobre consejería y tratamientos para dejar de fumar.</div>
+    <div class="field"><label for="craving-level">Nivel de Ansiedad Actual</label><div class="range-row"><input id="craving-level" type="range" min="1" max="10" value="5" oninput="document.getElementById('craving-output').value=this.value+'/10'"><output id="craving-output">5/10</output></div></div>
+    <div class="field" style="margin-top:12px"><label for="craving-trigger">¿Qué detonó el impulso?</label><select id="craving-trigger"><option value="estrés">Estrés laboral o personal</option><option value="aburrimiento">Aburrimiento / Inactividad</option><option value="después de comer">Después de comer / Café</option><option value="bloqueo de trabajo">Bloqueo o frustración</option><option value="situación social">Entorno social</option><option value="otro">Otro detonante</option></select></div>
+    <div class="resist-plan"><div class="resist-step"><b>1</b><div><strong>Bebe un vaso de agua helada</strong><span>Corta inmediatamente la respuesta del sistema nervioso.</span></div></div><div class="resist-step"><b>2</b><div><strong>Cambia de entorno de inmediato</strong><span>Ponte de pie, camina o sal del área donde solías fumar.</span></div></div><div class="resist-step"><b>3</b><div><strong>Mueve tu atención a una tarea corta</strong><span>Completa una acción de 5 minutos de tu lista de trabajo.</span></div></div></div>
+    <div class="button-row"><button class="btn btn-success" type="submit">✓ Antojo Neutralizado → Registrar Victoria</button><button class="btn btn-secondary" type="button" onclick="copySupportMessage(this)">Pedir Apoyo de Emergencia</button></div>
   </form>
 </dialog>
 
 <dialog class="nt-dialog" id="lapse-dialog" aria-labelledby="lapse-title">
   <form class="dialog-body" onsubmit="registerLapse(event)">
-    <div class="dialog-head"><div><h3 id="lapse-title">Está bien volver a empezar desde aquí</h3><p>Lo ocurrido no borra el tiempo que lograste ni lo que aprendiste. Lo registramos para ayudarte a reconocer el detonante.</p></div><button class="dialog-close" type="button" onclick="closeDialog('lapse-dialog')" aria-label="Cerrar">×</button></div>
-    <div class="dialog-grid"><div class="field"><label for="lapse-count">Cantidad</label><input id="lapse-count" type="number" min="1" max="100" value="1" required></div><div class="field"><label for="lapse-trigger">Detonante</label><input id="lapse-trigger" maxlength="100" placeholder="Estrés, reunión, comida..."></div></div>
-    <div class="button-row"><button class="btn btn-warning" type="submit">Registrar y retomar desde ahora</button><button class="btn btn-secondary" type="button" onclick="closeDialog('lapse-dialog')">Ahora no</button></div>
+    <div class="dialog-head"><div><h3 id="lapse-title">↻ Tropiezo Detectado — Retomar la Meta de Inmediato</h3><p>Un error momentáneo no destruye lo aprendido ni tus días ganados. Registra el detonante y reinicia tu contador con más determinación.</p></div><button class="dialog-close" type="button" onclick="closeDialog('lapse-dialog')" aria-label="Cerrar">×</button></div>
+    <div class="dialog-grid"><div class="field"><label for="lapse-count">Cantidad</label><input id="lapse-count" type="number" min="1" max="100" value="1" required></div><div class="field"><label for="lapse-trigger">Detonante exacto</label><input id="lapse-trigger" maxlength="100" placeholder="Estrés, reunión, alcohol..."></div></div>
+    <div class="button-row"><button class="btn btn-warning" type="submit">Registrar y Retomar Ya</button><button class="btn btn-secondary" type="button" onclick="closeDialog('lapse-dialog')">Cancelar</button></div>
   </form>
 </dialog>
 
@@ -1801,17 +1887,17 @@ function renderSmoke(){
   const checkinDescription=document.getElementById('checkin-description');
   if(checkinTitle&&checkinDescription){
     if(lapse){
-      checkinTitle.textContent='Volviste. Eso también cuenta.';
-      checkinDescription.textContent='El contador empieza desde ahora, pero lo aprendido y tu mejor recorrido siguen contigo.';
+      checkinTitle.textContent='Contador Reiniciado. De vuelta al control.';
+      checkinDescription.textContent='Tu determinación se mide en cómo te levantas hoy. Tu mejor racha sigue siendo la meta a superar.';
     } else if(today.cravingHandled){
-      checkinTitle.textContent='Atravesaste un momento difícil.';
-      checkinDescription.textContent='Tómate un respiro. Puedes volver a abrir la guía todas las veces que la necesites.';
+      checkinTitle.textContent='⚡ Antojo Neutralizado con Éxito.';
+      checkinDescription.textContent='Demostraste control. Cada victoria sobre la ansiedad fortalece tu disciplina.';
     } else if(confirmed){
-      checkinTitle.textContent='Bien. Ya registraste cómo vas hoy.';
-      checkinDescription.textContent='No necesitas demostrar nada más. Vuelve cuando necesites apoyo.';
+      checkinTitle.textContent='✓ Control Confirmado para Hoy.';
+      checkinDescription.textContent='Excelente firmeza. Mantén tu racha intacta el resto del día.';
     } else {
-      checkinTitle.textContent='¿Qué necesitas ahora?';
-      checkinDescription.textContent='Puedes registrar cómo vas o abrir apoyo inmediato. Sin juicios.';
+      checkinTitle.textContent='¿CUÁL ES TU ESTADO AHORA?';
+      checkinDescription.textContent='Confirma tu progreso diario o activa la intervención rápida ante la ansiedad.';
     }
   }
 
@@ -2369,14 +2455,14 @@ function toast(message){ const el=document.getElementById('toast');el.textConten
 
 /* ── Topbar Modern Phrase Rotator ── */
 const TOPBAR_PHRASES = [
-  '“Hoy no tienes que hacerlo perfecto.”',
-  '“Un antojo es un momento, no una orden.”',
-  '“Volver a intentarlo también es avanzar.”',
-  '“Tu valor no depende de una racha.”',
-  '“Pedir apoyo también es cuidarte.”',
-  '“Respira. La siguiente decisión puede ser pequeña.”',
-  '“Lo que pasó antes no decide lo que haces ahora.”',
-  '“Háblate con la paciencia que le darías a alguien querido.”'
+  '“Cada minuto sin fumar es una victoria real de tu disciplina.”',
+  '“El antojo dura de 3 a 5 minutos; tu victoria dura siempre.”',
+  '“La constancia vence al impulso. Mantén el control.”',
+  '“No rompas la racha. Tu cuerpo se está limpiando ahora mismo.”',
+  '“La disciplina es elegir tu salud por encima del hábito.”',
+  '“Un momento de tensión no destruye tu determinación.”',
+  '“El progreso real se construye rechazando una tentación a la vez.”',
+  '“Mantén la firmeza. Cada día sin fumar multiplica tu energía.”'
 ];
 let _topbarIdx = 0;
 function rotateTopbar(){
@@ -2392,6 +2478,117 @@ function rotateTopbar(){
     topbarEl.style.opacity = '1';
     topbarEl.style.transform = 'translateY(0)';
   }, 220);
+}
+
+/* ── iPhone (iOS) & Web Notification Manager Module ── */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg => console.log('✓ Service Worker registrado con éxito:', reg.scope))
+      .catch(err => console.warn('Error registrando Service Worker:', err));
+  });
+}
+
+function isIOS() {
+  return /iPhone|iPad|iPod/i.test(navigator.userAgent);
+}
+
+function isStandalone() {
+  return window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
+}
+
+function updateNotifUI() {
+  const banner = document.getElementById('ios-install-banner');
+  const statusPill = document.getElementById('notif-status-pill');
+  const reqBtn = document.getElementById('btn-request-notif');
+
+  // If on iPhone Safari and NOT added to home screen, show iOS install guide banner
+  if (isIOS() && !isStandalone()) {
+    if (banner) banner.hidden = false;
+  } else {
+    if (banner) banner.hidden = true;
+  }
+
+  if (!('Notification' in window)) {
+    if (statusPill) statusPill.textContent = 'Estado: Notificaciones no soportadas';
+    if (reqBtn) reqBtn.disabled = true;
+    return;
+  }
+
+  const perm = Notification.permission;
+  if (perm === 'granted') {
+    if (statusPill) {
+      statusPill.textContent = '✓ Notificaciones Habilitadas';
+      statusPill.classList.add('active');
+    }
+    if (reqBtn) {
+      reqBtn.textContent = '✓ Notificaciones Habilitadas';
+      reqBtn.classList.add('btn-success');
+      reqBtn.disabled = true;
+    }
+  } else if (perm === 'denied') {
+    if (statusPill) {
+      statusPill.textContent = '❌ Permiso Denegado en el Navegador';
+      statusPill.classList.remove('active');
+    }
+    if (reqBtn) {
+      reqBtn.textContent = 'Permiso Denegado';
+      reqBtn.disabled = true;
+    }
+  } else {
+    if (statusPill) statusPill.textContent = 'Estado: Pendiente de activar';
+    if (reqBtn) {
+      reqBtn.textContent = '🔔 Activar Notificaciones';
+      reqBtn.disabled = false;
+    }
+  }
+}
+
+async function requestNotificationPermission() {
+  if (!('Notification' in window)) {
+    toast('Este navegador no soporta notificaciones web.');
+    return;
+  }
+  if (isIOS() && !isStandalone()) {
+    toast('En iPhone (iOS), primero debes seleccionar "Añadir a pantalla de inicio" desde Safari.');
+    return;
+  }
+  try {
+    const permission = await Notification.requestPermission();
+    updateNotifUI();
+    if (permission === 'granted') {
+      toast('✓ ¡Notificaciones activadas! Ahora recibirás alertas en tu dispositivo.');
+      sendTestNotification();
+    } else if (permission === 'denied') {
+      toast('Permiso de notificaciones denegado en tu navegador.');
+    }
+  } catch (err) {
+    console.error(err);
+    toast('Error al solicitar permiso de notificaciones.');
+  }
+}
+
+function sendTestNotification() {
+  if (!('Notification' in window) || Notification.permission !== 'granted') {
+    toast('Primero debes activar los permisos de notificación.');
+    requestNotificationPermission();
+    return;
+  }
+  const title = 'Reto Control — ¡Notificación Activa!';
+  const options = {
+    body: 'Las alertas de firmeza están funcionando en tu dispositivo. ¡Mantén tu racha intacta!',
+    icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="100" fill="%23060a12"/><circle cx="256" cy="256" r="180" fill="none" stroke="%2322d3ee" stroke-width="32"/><path d="M256 140v116l80 48" fill="none" stroke="%2334d399" stroke-width="32" stroke-linecap="round"/></svg>',
+    tag: 'test-notification-tag'
+  };
+
+  if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+    navigator.serviceWorker.ready.then(reg => {
+      reg.showNotification(title, options);
+    });
+  } else {
+    new Notification(title, options);
+  }
+  toast('🔔 Notificación de prueba enviada.');
 }
 
 /* ── Supabase Database Sync Module ── */
@@ -2468,9 +2665,10 @@ function init(){
   const initial=location.hash.replace('#',''); showView(TITLES[initial]?initial:'today');
   renderSmoke();
   rotateTopbar();
+  updateNotifUI();
   loadStateFromSupabase();
-  setInterval(renderSmoke, 1000); // Actualización suficiente para el contador y más amable con la batería
-  setInterval(rotateTopbar, 4000); // Rotación cada 4 segundos
+  setInterval(renderSmoke, 1000);
+  setInterval(rotateTopbar, 4000);
 }
 init();
 </script>
