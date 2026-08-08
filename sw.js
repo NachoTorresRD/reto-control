@@ -1,5 +1,5 @@
 /* Service Worker — Reto Control & Notificaciones iOS/Web */
-const CACHE_NAME = 'reto-control-v1';
+const CACHE_NAME = 'reto-control-v2';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -30,7 +30,7 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Fetch Event (Network First, fallback to cache)
+// Fetch Event
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
   event.respondWith(
@@ -40,7 +40,7 @@ self.addEventListener('fetch', (event) => {
   );
 });
 
-// Push Event for Notifications
+// Push Event for Notifications (iOS Safari 16.4+ & Web)
 self.addEventListener('push', (event) => {
   let data = { title: 'Reto Control', body: 'Mantén tu firmeza hoy. Cada minuto sin fumar cuenta.' };
   if (event.data) {
@@ -55,7 +55,9 @@ self.addEventListener('push', (event) => {
     body: data.body,
     icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="100" fill="%23060a12"/><circle cx="256" cy="256" r="180" fill="none" stroke="%2322d3ee" stroke-width="32"/><path d="M256 140v116l80 48" fill="none" stroke="%2334d399" stroke-width="32" stroke-linecap="round"/></svg>',
     badge: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="100" fill="%23060a12"/><circle cx="256" cy="256" r="180" fill="none" stroke="%2322d3ee" stroke-width="32"/></svg>',
-    vibrate: [100, 50, 100],
+    vibrate: [200, 100, 200, 100, 200],
+    sound: 'default',
+    silent: false,
     data: { url: self.registration.scope },
     tag: data.tag || 'reto-control-alert',
     renotify: true

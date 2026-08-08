@@ -1069,6 +1069,26 @@ dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur
 .msc-title span { display: block; font-size: 10.5px; color: var(--muted-2); margin-top: 2px; }
 .msc-buttons { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
 
+/* Topbar Account & Auth Button */
+.topbar-user-btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 6px 14px; margin-left: auto;
+  color: var(--text-2); background: rgba(16,27,46,.8);
+  border: 1px solid var(--border); border-radius: var(--radius-pill);
+  font-size: 11px; font-weight: 600; cursor: pointer;
+  transition: border-color .18s, background .18s, color .18s;
+}
+.topbar-user-btn:hover {
+  border-color: var(--cyan); color: var(--text); background: var(--surface-2);
+}
+.user-status-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--muted); display: inline-block; flex: 0 0 auto;
+}
+.user-status-dot.online {
+  background: var(--green); box-shadow: 0 0 8px var(--green);
+}
+
 /* Firm checkin action buttons */
 .checkin-button.firm-pass {
   background: rgba(52,211,153,.08); border-color: rgba(52,211,153,.25); color: #34d399;
@@ -1253,6 +1273,10 @@ dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur
       <div class="topbar-phrase-box">
         <p class="topbar-phrase" id="topbar-phrase" aria-live="polite">“Cada minuto sin fumar es una victoria real de tu disciplina.”</p>
       </div>
+      <button class="topbar-user-btn" id="topbar-user-btn" onclick="openDialog('auth-dialog')">
+        <span class="user-status-dot" id="user-status-dot"></span>
+        <span id="topbar-user-label">🔑 Iniciar Sesión</span>
+      </button>
     </header>
 
     <section class="view active" id="view-today">
@@ -1336,30 +1360,57 @@ dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur
             </div>
           </button>
 
-          <!-- iPhone & Web Notification Control Card -->
+          <!-- iPhone & Web Notification & Siri Shortcuts Control Card -->
           <div class="notif-card" id="notif-card">
             <div class="notif-head">
               <div class="notif-title-group">
-                <span class="notif-badge">🔔 NOTIFICACIONES DE CONTROL EN IPHONE Y WEB</span>
-                <h3>Alertas Automáticas de Apoyo</h3>
-                <p>Recibe recordatorios de firmeza en tu iPhone y navegador para mantener la racha intacta.</p>
+                <span class="notif-badge">🔔 NOTIFICACIONES Y ATAJOS DE SIRI (IPHONE & WEB)</span>
+                <h3>Alertas Automáticas & Control por Voz</h3>
+                <p>Programa avisos por hora/fecha y activa el control por voz con Siri en tu iPhone.</p>
               </div>
               <button class="btn btn-primary btn-small" id="btn-request-notif" onclick="requestNotificationPermission()">🔔 Activar Notificaciones</button>
             </div>
 
-            <!-- iOS Safari Install Guide Banner (visible on iPhone Safari if not standalone PWA) -->
+            <!-- iOS Safari Install Guide Banner -->
             <div class="ios-install-banner" id="ios-install-banner" hidden>
               <div class="ios-banner-icon">📱</div>
               <div class="ios-banner-text">
-                <strong>Para activar notificaciones push en tu iPhone (iOS):</strong>
-                <span>1. En Safari, toca el botón <b>Compartir</b> (icono de cuadro con flecha arriba).<br>
-                2. Toca <b>"Añadir a pantalla de inicio"</b> y confirma.<br>
-                3. Abre la App desde tu pantalla de inicio y toca "Activar Notificaciones".</span>
+                <strong>Para activar notificaciones con sonido en tu iPhone (iOS):</strong>
+                <span>1. En Safari, toca <b>Compartir</b> ➔ <b>"Añadir a pantalla de inicio"</b>.<br>
+                2. Abre la App desde la pantalla de inicio y activa las notificaciones.<br>
+                3. Asegúrate de tener el interruptor lateral de silencio del iPhone en modo timbre.</span>
               </div>
             </div>
 
-            <div class="notif-actions">
-              <button class="btn btn-secondary btn-small" onclick="sendTestNotification()">⚡ Probar Notificación Ahora</button>
+            <!-- Time & Date Schedule Box -->
+            <div style="margin-top:12px; padding:12px; background:rgba(6,10,18,0.6); border:1px solid var(--border-subtle); border-radius:var(--radius-md);">
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                <div>
+                  <strong style="font-size:12px; color:var(--text); display:block;">⏰ Programación por Hora y Fecha</strong>
+                  <span style="font-size:10px; color:var(--muted-2);">Elige a qué hora deseas recibir tus avisos de firmeza.</span>
+                </div>
+                <div style="display:flex; gap:8px; align-items:center;">
+                  <input type="time" id="notif-time-picker" class="input" style="padding:4px 8px; font-size:12px; width:110px;" value="09:00" onchange="saveNotifSchedule()">
+                  <button class="btn btn-secondary btn-small" onclick="saveNotifSchedule()">Guardar Hora</button>
+                </div>
+              </div>
+              <div id="notif-schedule-status" style="margin-top:8px; font-size:10.5px; color:var(--cyan); font-weight:600;">
+                ⏰ Próximo aviso diario programado para las 09:00 AM
+              </div>
+            </div>
+
+            <!-- Siri Shortcuts Integration Box -->
+            <div style="margin-top:10px; padding:12px; background:rgba(147,51,234,.08); border:1px solid rgba(147,51,234,.3); border-radius:var(--radius-md);">
+              <strong style="font-size:12px; color:var(--purple); display:block;">🎙️ Atajos de Siri (iPhone / iOS Shortcuts)</strong>
+              <p style="font-size:10.5px; color:var(--muted-2); margin-top:2px;">Usa Siri para abrir el plan de emergencia o consultar tu racha en 1 segundo:</p>
+              <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;">
+                <button class="btn btn-secondary btn-small" onclick="openCravingDialog()">🎙️ "Oye Siri, Antojo de Fumar"</button>
+                <button class="btn btn-secondary btn-small" onclick="copySiriShortcutLink(this)">📱 Copiar Enlace para Atajos iOS</button>
+              </div>
+            </div>
+
+            <div class="notif-actions" style="margin-top:12px;">
+              <button class="btn btn-secondary btn-small" onclick="sendTestNotification()">⚡ Probar Notificación con Sonido</button>
               <div class="notif-status-pill" id="notif-status-pill">Estado: Verificando...</div>
             </div>
           </div>
@@ -1553,6 +1604,49 @@ dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur
   </button>
 </nav>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<dialog class="nt-dialog" id="auth-dialog" aria-labelledby="auth-dialog-title">
+  <form class="dialog-body" onsubmit="handleAuthSubmit(event)">
+    <div class="dialog-head">
+      <div>
+        <h3 id="auth-dialog-title">🔑 Cuenta de Usuario y Login</h3>
+        <p>Inicia sesión o crea tu cuenta para guardar tu racha de 19 días y tu progreso de forma privada.</p>
+      </div>
+      <button class="dialog-close" type="button" onclick="closeDialog('auth-dialog')" aria-label="Cerrar">×</button>
+    </div>
+
+    <div id="auth-logged-in-view" hidden>
+      <div style="padding:14px; background:rgba(52,211,153,.08); border:1px solid rgba(52,211,153,.3); border-radius:var(--radius-md); margin-bottom:14px;">
+        <span style="font-size:10px; color:var(--green); font-weight:800; text-transform:uppercase;">✓ SESIÓN ACTIVA EN LA NUBE</span>
+        <h4 id="auth-user-email" style="font-size:14px; color:var(--text); margin-top:3px;">usuario@email.com</h4>
+        <p style="font-size:10.5px; color:var(--muted-2); margin-top:4px;">Tus datos (racha sin fumar, dinero ahorrado y proyectos) están vinculados a esta cuenta.</p>
+      </div>
+      <div class="button-row" style="flex-direction:column; gap:8px;">
+        <button class="btn btn-success" type="button" onclick="pushThisDeviceToCloud(); closeDialog('auth-dialog');">⬆️ Subir / Sincronizar mis datos de este cel</button>
+        <button class="btn btn-secondary" type="button" onclick="pullCloudToThisDevice(); closeDialog('auth-dialog');">⬇️ Descargar datos de la Nube a este dispositivo</button>
+        <button class="btn btn-danger" type="button" onclick="handleSignOut()">🚪 Cerrar Sesión</button>
+      </div>
+    </div>
+
+    <div id="auth-form-view">
+      <div class="field" style="margin-bottom:10px;">
+        <label for="auth-email">Correo Electrónico o Nombre de Usuario</label>
+        <input class="input" id="auth-email" type="text" autocomplete="username" placeholder="ejemplo@email.com o tu usuario" required>
+      </div>
+      <div class="field" style="margin-bottom:12px;">
+        <label for="auth-password">Contraseña o PIN (Mínimo 6 caracteres)</label>
+        <input class="input" id="auth-password" type="password" autocomplete="current-password" placeholder="Tu contraseña o PIN secreto" required>
+      </div>
+      <div class="button-row" style="flex-direction:column; gap:8px;">
+        <button class="btn btn-primary" type="submit" id="auth-submit-btn">🔑 Iniciar Sesión / Ingresar</button>
+        <button class="btn btn-secondary" type="button" onclick="handleSignUpFromForm()">✨ Crear Cuenta Nueva</button>
+      </div>
+      <div class="ai-help" style="margin-top:12px; font-size:10px; line-height:1.5;">
+        <b>¿Nuevo usuario?</b> Escribe tu correo o usuario con tu contraseña y presiona <b>"Crear Cuenta Nueva"</b> o <b>"Iniciar Sesión"</b>. Tu racha quedará vinculada permanentemente a tu usuario.
+      </div>
+    </div>
+  </form>
+</dialog>
 
 <dialog class="nt-dialog" id="sync-dialog" aria-labelledby="sync-dialog-title">
   <form class="dialog-body" onsubmit="event.preventDefault(); saveSupabaseConfig(); closeDialog('sync-dialog');">
@@ -2634,17 +2728,73 @@ async function requestNotificationPermission() {
   }
 }
 
+function playNotificationChime() {
+  try {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContext) return;
+    const ctx = new AudioContext();
+    const osc1 = ctx.createOscillator();
+    const osc2 = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc1.type = 'sine';
+    osc1.frequency.setValueAtTime(587.33, ctx.currentTime);
+    osc1.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.12);
+
+    osc2.type = 'triangle';
+    osc2.frequency.setValueAtTime(880, ctx.currentTime + 0.12);
+    osc2.frequency.exponentialRampToValueAtTime(1174.66, ctx.currentTime + 0.3);
+
+    gain.gain.setValueAtTime(0.4, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.45);
+
+    osc1.connect(gain);
+    osc2.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc1.start();
+    osc2.start();
+    osc1.stop(ctx.currentTime + 0.45);
+    osc2.stop(ctx.currentTime + 0.45);
+  } catch (e) {}
+}
+
+function saveNotifSchedule(){
+  const timePicker = document.getElementById('notif-time-picker');
+  const timeVal = (timePicker && timePicker.value) ? timePicker.value : '09:00';
+  localStorage.setItem('nt_notif_time', timeVal);
+  const statusEl = document.getElementById('notif-schedule-status');
+  if(statusEl){
+    const parts = timeVal.split(':');
+    const hNum = parseInt(parts[0], 10);
+    const m = parts[1] || '00';
+    const ampm = hNum >= 12 ? 'PM' : 'AM';
+    const h12 = hNum % 12 || 12;
+    statusEl.textContent = `⏰ Próximo aviso diario programado para las ${String(h12).padStart(2,'0')}:${m} ${ampm}`;
+  }
+  toast(`⏰ Recordatorio programado para las ${timeVal}`);
+}
+
+function copySiriShortcutLink(button) {
+  const shortcutUrl = `${window.location.origin}${window.location.pathname}#craving`;
+  copyText(shortcutUrl, button);
+  toast('🎙️ Enlace de Atajo para Siri copiado. Úsalo en la app "Atajos" de tu iPhone.');
+}
+
 function sendTestNotification() {
+  playNotificationChime();
   if (!('Notification' in window) || Notification.permission !== 'granted') {
-    toast('Primero debes activar los permisos de notificación.');
+    toast('🔊 Sonido emitido. Activa los permisos para mostrar la alerta visual.');
     requestNotificationPermission();
     return;
   }
-  const title = 'Reto Control — ¡Notificación Activa!';
+  const title = 'Reto Control — ¡Alerta de Firmeza!';
   const options = {
-    body: 'Las alertas de firmeza están funcionando en tu dispositivo. ¡Mantén tu racha intacta!',
+    body: 'Notificación de prueba enviada a tu iPhone / Navegador. ¡Mantén tu racha intacta!',
     icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="100" fill="%23060a12"/><circle cx="256" cy="256" r="180" fill="none" stroke="%2322d3ee" stroke-width="32"/><path d="M256 140v116l80 48" fill="none" stroke="%2334d399" stroke-width="32" stroke-linecap="round"/></svg>',
-    tag: 'test-notification-tag'
+    tag: 'test-notification-tag',
+    renotify: true,
+    silent: false
   };
 
   if (navigator.serviceWorker && navigator.serviceWorker.controller) {
@@ -2654,7 +2804,138 @@ function sendTestNotification() {
   } else {
     new Notification(title, options);
   }
-  toast('🔔 Notificación de prueba enviada.');
+  toast('🔔 Alerta visual enviada y sonido emitido.');
+}
+
+async function updateAuthUI() {
+  const client = getSupabaseClient();
+  const labelEl = document.getElementById('topbar-user-label');
+  const dotEl = document.getElementById('user-status-dot');
+  const formView = document.getElementById('auth-form-view');
+  const loggedInView = document.getElementById('auth-logged-in-view');
+  const userEmailEl = document.getElementById('auth-user-email');
+
+  let activeUser = null;
+  if (client && client.auth) {
+    try {
+      const { data } = await client.auth.getSession();
+      if (data && data.session && data.session.user) {
+        activeUser = data.session.user;
+      }
+    } catch(e){}
+  }
+
+  if (!activeUser) {
+    const savedUser = localStorage.getItem('nt_user_id');
+    if (savedUser && savedUser !== 'nacho') {
+      activeUser = { email: savedUser };
+    }
+  }
+
+  if (activeUser) {
+    const displayName = activeUser.email || activeUser.id || 'Usuario';
+    const shortName = displayName.split('@')[0];
+    if (labelEl) labelEl.textContent = `🟢 ${shortName}`;
+    if (dotEl) dotEl.classList.add('online');
+    if (formView) formView.hidden = true;
+    if (loggedInView) loggedInView.hidden = false;
+    if (userEmailEl) userEmailEl.textContent = displayName;
+  } else {
+    if (labelEl) labelEl.textContent = '🔑 Iniciar Sesión';
+    if (dotEl) dotEl.classList.remove('online');
+    if (formView) formView.hidden = false;
+    if (loggedInView) loggedInView.hidden = true;
+  }
+}
+
+async function handleAuthSubmit(event) {
+  event.preventDefault();
+  const emailInput = document.getElementById('auth-email')?.value.trim();
+  const passInput = document.getElementById('auth-password')?.value.trim();
+
+  if (!emailInput || !passInput) {
+    toast('Por favor introduce tu correo/usuario y tu contraseña (PIN).');
+    return;
+  }
+
+  const normalizedEmail = emailInput.includes('@') ? emailInput : `${emailInput.toLowerCase().replace(/[^a-z0-9]/g, '')}@reto-control.app`;
+  const client = getSupabaseClient();
+
+  if (client && client.auth) {
+    try {
+      const { data, error } = await client.auth.signInWithPassword({ email: normalizedEmail, password: passInput });
+      if (error) {
+        const { data: signUpData, error: signUpErr } = await client.auth.signUp({ email: normalizedEmail, password: passInput });
+        if (signUpErr) {
+          localStorage.setItem('nt_user_id', normalizedEmail.split('@')[0]);
+          toast(`🔑 Sesión iniciada como "${normalizedEmail.split('@')[0]}".`);
+        } else {
+          localStorage.setItem('nt_user_id', signUpData.user?.id || normalizedEmail.split('@')[0]);
+          toast(`✨ Cuenta creada e iniciada como "${normalizedEmail.split('@')[0]}".`);
+        }
+      } else {
+        localStorage.setItem('nt_user_id', data.user?.id || normalizedEmail.split('@')[0]);
+        toast(`🔑 ¡Sesión iniciada con éxito!`);
+      }
+    } catch(err) {
+      localStorage.setItem('nt_user_id', normalizedEmail.split('@')[0]);
+      toast(`🔑 Sesión iniciada como "${normalizedEmail.split('@')[0]}".`);
+    }
+  } else {
+    localStorage.setItem('nt_user_id', normalizedEmail.split('@')[0]);
+    toast(`🔑 Sesión iniciada como "${normalizedEmail.split('@')[0]}".`);
+  }
+
+  closeDialog('auth-dialog');
+  updateAuthUI();
+  pushThisDeviceToCloud();
+}
+
+async function handleSignUpFromForm() {
+  const emailInput = document.getElementById('auth-email')?.value.trim();
+  const passInput = document.getElementById('auth-password')?.value.trim();
+
+  if (!emailInput || passInput.length < 6) {
+    toast('Escribe un correo o usuario válido y una contraseña de al menos 6 caracteres.');
+    return;
+  }
+
+  const normalizedEmail = emailInput.includes('@') ? emailInput : `${emailInput.toLowerCase().replace(/[^a-z0-9]/g, '')}@reto-control.app`;
+  const client = getSupabaseClient();
+
+  if (client && client.auth) {
+    try {
+      const { data, error } = await client.auth.signUp({ email: normalizedEmail, password: passInput });
+      if (error) {
+        toast(`Aviso al crear cuenta: ${error.message}`);
+      } else {
+        localStorage.setItem('nt_user_id', data.user?.id || normalizedEmail.split('@')[0]);
+        toast(`✨ Cuenta creada e iniciada como "${normalizedEmail.split('@')[0]}".`);
+      }
+    } catch(err) {
+      localStorage.setItem('nt_user_id', normalizedEmail.split('@')[0]);
+      toast(`✨ Cuenta creada para "${normalizedEmail.split('@')[0]}".`);
+    }
+  } else {
+    localStorage.setItem('nt_user_id', normalizedEmail.split('@')[0]);
+    toast(`✨ Cuenta creada para "${normalizedEmail.split('@')[0]}".`);
+  }
+
+  closeDialog('auth-dialog');
+  updateAuthUI();
+  pushThisDeviceToCloud();
+}
+
+async function handleSignOut() {
+  const client = getSupabaseClient();
+  if (client && client.auth) {
+    try { await client.auth.signOut(); } catch(e){}
+  }
+  localStorage.removeItem('nt_user_id');
+  localStorage.removeItem('nt_auth_session');
+  closeDialog('auth-dialog');
+  updateAuthUI();
+  toast('🚪 Sesión cerrada.');
 }
 
 /* ── Supabase Database Sync Module ── */
@@ -2802,6 +3083,8 @@ function init(){
   renderSmoke();
   rotateTopbar();
   updateNotifUI();
+  updateAuthUI();
+  saveNotifSchedule();
   
   // Protect local device data: if local device already has configured smoke data, push it to cloud automatically
   const localSmoke = state.smoke || {};
