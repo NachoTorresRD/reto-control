@@ -1242,6 +1242,8 @@ dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur
   .button-row .btn { flex: 1; }
   .smoke-clock-nums { flex-wrap: wrap; }
   .smoke-unit { padding: 0 8px; }
+}
+
 /* ── Mobile App-Style Quick Action Bar ── */
 .quick-app-toolbar {
   display: flex;
@@ -1258,7 +1260,7 @@ dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur
   align-items: center;
   gap: 6px;
   padding: 8px 14px;
-  background: rgba(16, 27, 46, 0.7);
+  background: rgba(16, 27, 46, 0.8);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-pill);
   color: var(--text);
@@ -1270,7 +1272,7 @@ dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur
 }
 .quick-pill-btn:hover, .quick-pill-btn:focus-visible {
   border-color: var(--cyan);
-  background: rgba(34, 211, 238, 0.12);
+  background: rgba(34, 211, 238, 0.15);
   transform: translateY(-1px);
 }
 .qpb-icon { font-size: 14px; }
@@ -1288,6 +1290,10 @@ dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur
 .qpb-badge.violet { background: rgba(139, 92, 246, 0.2); color: var(--violet); }
 
 /* ── Interactive Calendar & Agenda Module ── */
+dialog.nt-dialog.calendar-dialog-wide {
+  width: min(700px, calc(100% - 24px)) !important;
+  max-width: 700px !important;
+}
 .calendar-view-wrapper {
   display: grid;
   gap: 14px;
@@ -1304,10 +1310,11 @@ dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur
   color: var(--text);
 }
 .calendar-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 6px;
+  display: grid !important;
+  grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+  gap: 4px;
   text-align: center;
+  width: 100%;
 }
 .calendar-weekday {
   font-size: 10px;
@@ -1317,20 +1324,21 @@ dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur
   padding: 4px 0;
 }
 .calendar-day-cell {
-  aspect-ratio: 1;
+  min-height: 38px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: rgba(6, 10, 18, 0.5);
+  background: rgba(6, 10, 18, 0.6);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-sm);
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 600;
   cursor: pointer;
   position: relative;
   transition: all 0.15s ease;
   user-select: none;
+  padding: 4px;
 }
 .calendar-day-cell:hover {
   border-color: var(--cyan);
@@ -1365,7 +1373,6 @@ dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur
   background: rgba(6, 10, 18, 0.7);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-}
 }
 </style>
 </head>
@@ -1936,7 +1943,7 @@ dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur
 </dialog>
 
 <!-- Modal de Calendario Interactivo y Agenda de Trabajo -->
-<dialog class="nt-dialog" id="calendar-dialog" style="max-width: 680px; width: 94vw;">
+<dialog class="nt-dialog calendar-dialog-wide" id="calendar-dialog">
   <div class="dialog-body">
     <div class="dialog-head">
       <div>
