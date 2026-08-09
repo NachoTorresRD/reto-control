@@ -1515,25 +1515,25 @@ dialog.nt-dialog.calendar-dialog-wide {
           </div>
 
           <!-- Personalized Reward & Motivational Goal Card -->
-          <div class="rc-reward-card" id="rc-reward-card" style="margin-top:12px; padding:14px; background:rgba(139,92,246,0.08); border:1px solid rgba(139,92,246,0.25); border-radius:var(--radius-md);">
-            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+          <div class="rc-reward-card" id="rc-reward-card" style="margin-top:14px; padding:14px; background:linear-gradient(135deg, rgba(139,92,246,0.12) 0%, rgba(34,211,238,0.06) 100%); border:1px solid rgba(139,92,246,0.3); border-radius:var(--radius-lg);">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
               <div style="display:flex; align-items:center; gap:10px;">
-                <span style="font-size:24px;">🎁</span>
+                <span style="font-size:26px;">🎁</span>
                 <div>
-                  <span style="font-size:9px; color:var(--violet); font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">TU RECOMPENSA AL CUMPLIR LA META</span>
-                  <h4 id="reward-title-display" style="font-size:14px; font-weight:700; color:var(--text); margin-top:1px;">Tenis nuevos</h4>
+                  <span style="font-size:9px; color:var(--violet); font-weight:800; text-transform:uppercase; letter-spacing:0.06em;">RECOMPENSA AL CUMPLIR LA META</span>
+                  <h4 id="reward-title-display" style="font-size:15px; font-weight:700; color:var(--text); margin-top:2px;">Tenis nuevos</h4>
                 </div>
               </div>
-              <button class="btn btn-secondary btn-small" onclick="openSmokeSetup()">⚙️ Modificar Premio / Meta</button>
+              <button class="btn btn-secondary btn-small" onclick="openSmokeSetup()" style="font-size:11px; padding:4px 10px;">⚙️ Configurar Meta</button>
             </div>
             
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px;">
-              <div style="padding:8px 10px; background:rgba(6,10,18,0.5); border:1px solid var(--border-subtle); border-radius:var(--radius-sm);">
-                <span style="font-size:9.5px; color:var(--muted-2); display:block;">⏳ Tiempo Faltante para la Meta</span>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px;">
+              <div style="padding:8px 10px; background:rgba(6,10,18,0.6); border:1px solid var(--border-subtle); border-radius:var(--radius-md);">
+                <span style="font-size:9.5px; color:var(--muted-2); display:block;">⏳ Tiempo Faltante</span>
                 <strong id="reward-time-left" style="font-size:12px; color:var(--cyan);">0 días, 0h faltan</strong>
               </div>
-              <div style="padding:8px 10px; background:rgba(6,10,18,0.5); border:1px solid var(--border-subtle); border-radius:var(--radius-sm);">
-                <span style="font-size:9.5px; color:var(--muted-2); display:block;">💰 Fondo del Premio Ahorrado</span>
+              <div style="padding:8px 10px; background:rgba(6,10,18,0.6); border:1px solid var(--border-subtle); border-radius:var(--radius-md);">
+                <span style="font-size:9.5px; color:var(--muted-2); display:block;">💰 Fondo del Premio</span>
                 <strong id="reward-fund-progress" style="font-size:12px; color:var(--green);">RD$0 / RD$3,000</strong>
               </div>
             </div>
@@ -1541,14 +1541,14 @@ dialog.nt-dialog.calendar-dialog-wide {
             <div class="smoke-progress-section" style="margin-top:10px;">
               <div class="spb-track"><span id="reward-progress-bar" style="background:linear-gradient(90deg,var(--violet),var(--cyan)); width:0%;"></span></div>
               <div class="spb-labels">
-                <span id="reward-pct-text" style="font-size:10px; color:var(--muted-2);">0% del valor del premio ahorrado</span>
+                <span id="reward-pct-text" style="font-size:10px; color:var(--muted-2);">0% del premio cubierto</span>
                 <span id="reward-days-pct" class="spb-pct">0% meta</span>
               </div>
             </div>
           </div>
 
           <!-- Interactive Health Banner -->
-          <button class="rc-health-banner" type="button" onclick="openDialog('health-modal')">
+          <button class="rc-health-banner" type="button" onclick="openDialog('health-modal')" style="margin-top:10px;">
             <div class="hb-icon">💪</div>
             <div class="hb-body">
               <strong>BENEFICIOS REALES EN TU ORGANISMO</strong>
@@ -1556,43 +1556,54 @@ dialog.nt-dialog.calendar-dialog-wide {
             </div>
           </button>
 
-          <div class="smoke-footer">
-            <details class="smoke-log"><summary>Ver mi registro de control</summary><div class="smoke-log-list" id="smoke-log-list"></div></details>
-            <button class="btn btn-secondary btn-small" onclick="openSmokeSetup()">⚙ Ajustes de Meta</button>
+          <div class="smoke-footer" style="margin-top:8px;">
+            <details class="smoke-log"><summary>📋 Registro de eventos de control</summary><div class="smoke-log-list" id="smoke-log-list"></div></details>
           </div>
         </div>
       </section>
-      <details class="work-area" id="work-area">
-        <summary>
-          <span class="work-summary-icon" aria-hidden="true">→</span>
-          <span class="work-summary-copy"><strong>🎯 Ejecución Diaria de Proyectos · 4 Movimientos Clave</strong><span>Completa tu plan de trabajo y tracción comercial del día.</span></span>
-          <span class="work-summary-arrow" aria-hidden="true">⌄</span>
-        </summary>
-        <div class="work-area-content">
-      <div class="card today-hero">
-        <div class="hero-row">
-          <div><div class="eyebrow">Foco activo</div><h3 id="focus-heading">WHABOT Pro</h3><p id="focus-description"></p></div>
-          <div class="field focus-control"><label for="today-project">Sistema que vas a mover</label><select id="today-project" onchange="changeFocus(this.value)"></select></div>
+
+      <!-- MISIONES Y EJECUCIÓN DIARIA -->
+      <section class="card daily-missions-card" style="margin-top:16px; padding:18px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px; border-bottom:1px solid var(--border-subtle); padding-bottom:12px;">
+          <div>
+            <div class="eyebrow" style="color:var(--cyan);">EJECUCIÓN DIARIA DE PROYECTOS</div>
+            <h3 style="font-size:16px; font-weight:700;">🎯 Misiones de Hoy <span id="missions-count-badge" style="font-size:11px; padding:2px 8px; background:rgba(34,211,238,0.15); color:var(--cyan); border-radius:99px; font-weight:700; margin-left:6px;">0 / 4 Listas</span></h3>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <select id="today-project" class="input" style="font-size:12px; padding:6px 10px; width:auto;" onchange="changeFocus(this.value)"></select>
+          </div>
         </div>
-        <div class="goal-row">
-          <div class="field"><label for="today-goal">Resultado que quieres dejar listo hoy</label><input id="today-goal" maxlength="140" placeholder="Ej.: agendar una demo y publicar un caso" oninput="saveTodayGoal(this.value)"></div>
-          <div class="field"><label for="today-ai-focus">🎯 Enfoque para la IA (Opcional)</label><input id="today-ai-focus" maxlength="140" placeholder="Ej.: Captar clientes B2B / Día suave por baja energía / Lanzar Reel" oninput="saveTodayAIFocus(this.value)"></div>
-          <button class="btn btn-primary" onclick="focusFirstPending()">Empezar siguiente acción</button>
+
+        <!-- AI Assistant & Goal Input Bar -->
+        <div style="background:rgba(6,10,18,0.5); border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:12px; margin-bottom:14px;">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px;">
+            <div class="field" style="margin:0;">
+              <label style="font-size:10.5px;">Meta principal de hoy</label>
+              <input class="input" id="today-goal" maxlength="140" placeholder="Ej.: agendar 1 demo y publicar historia" oninput="saveTodayGoal(this.value)" style="font-size:11.5px;">
+            </div>
+            <div class="field" style="margin:0;">
+              <label style="font-size:10.5px;">🎯 Enfoque opcional para la IA</label>
+              <input class="input" id="today-ai-focus" maxlength="140" placeholder="Ej.: Captar B2B / Día suave" oninput="saveTodayAIFocus(this.value)" style="font-size:11.5px;">
+            </div>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; border-top:1px solid var(--border-subtle); padding-top:10px;">
+            <div id="ai-status" style="font-size:11px; color:var(--muted-2);">Plan base activo.</div>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+              <button class="btn btn-secondary btn-small" id="ai-generate" onclick="generateAIPlan(this)">✨ Generar con IA</button>
+              <button class="btn btn-secondary btn-small" id="ai-view-history" onclick="openAIHistoryModal()">📜 Historial</button>
+              <button class="btn btn-secondary btn-small" onclick="restoreBasePlan()">↻ Plan Base</button>
+            </div>
+          </div>
         </div>
-        <div class="ai-bar">
-          <div class="ai-status" id="ai-status"><strong>Plan base activo.</strong> Haz clic en "Generar con IA" para personalizar tus tareas y contenido.</div>
-          <button class="btn btn-secondary btn-small" id="ai-generate" onclick="generateAIPlan(this)">✨ Generar con IA</button>
-          <button class="btn btn-secondary btn-small" id="ai-view-history" onclick="openAIHistoryModal()">📜 Ver Consejos e Historial</button>
-          <button class="btn btn-secondary btn-small" onclick="openAIConfigModal()">⚙️ Ajustes de IA</button>
-          <button class="btn btn-secondary btn-small" onclick="openDialog('sync-dialog')">☁️ Sincronizar Nube</button>
-          <button class="btn btn-secondary btn-small" onclick="restoreBasePlan()">Restaurar plan base</button>
+
+        <!-- 4 Daily Mission Cards -->
+        <div class="moves-grid" id="daily-moves" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;"></div>
+
+        <div class="day-note" style="margin-top:12px; font-size:10.5px;">
+          <div class="compact-note"><strong>💡 Consejo:</strong> si hoy tienes poca energía, completar 1 sola misión de 5 minutos mantiene tu inercia intacta.</div>
         </div>
-      </div>
-      <div class="next-action" id="next-action"><div><small>Siguiente acción</small><strong id="next-action-text"></strong></div><button class="btn btn-secondary btn-small" onclick="focusFirstPending()">Abrir</button></div>
-      <div class="moves" id="daily-moves"></div>
-      <div class="day-note"><div class="compact-note"><strong>Modo suave:</strong> si hoy tienes poca energía, una acción de 5 minutos es suficiente. Puedes volver mañana.</div><div class="compact-note" id="pause-note"><strong>Protege el foco:</strong> los proyectos pausados no reciben mejoras hoy.</div></div>
-        </div>
-      </details>
+      </section>
     </section>
 
     <section class="view" id="view-sell">
@@ -2521,6 +2532,7 @@ function updateProgress(){
   const sp=document.getElementById('side-progress'), spl=document.getElementById('side-progress-label');
   if(sp) sp.style.width=`${pct}%`; 
   if(spl) spl.textContent=`${done} / 4`; 
+  safeSetText('missions-count-badge', `${done} / 4 Listas`);
 }
 
 function getAIConfig(){
