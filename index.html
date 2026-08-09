@@ -1994,47 +1994,76 @@ dialog.nt-dialog.calendar-dialog-wide {
         La clave se guarda localmente en tu navegador (`localStorage`). Obtén tu clave en <a href="https://openrouter.ai/keys" target="_blank" rel="noreferrer" style="color:var(--cyan)">OpenRouter →</a>, <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noreferrer" style="color:var(--cyan)">Google Gemini →</a>, o <a href="https://build.nvidia.com/" target="_blank" rel="noreferrer" style="color:var(--cyan)">Nvidia NIM →</a>
       </div>
     </div>
-<!-- Modal de Widget para iPhone (iOS Shortcuts & Live View) -->
-<dialog class="nt-dialog" id="widget-dialog" aria-labelledby="widget-dialog-title">
+<!-- Modal de Widget para iPhone (iOS Shortcuts & Live Simulator) -->
+<dialog class="nt-dialog" id="widget-dialog" aria-labelledby="widget-dialog-title" style="width:min(600px, calc(100% - 24px));">
   <div class="dialog-body">
     <div class="dialog-head">
       <div>
-        <h3 id="widget-dialog-title">📱 Widget para iPhone (iOS Shortcuts)</h3>
-        <p>Visualiza tu racha sin fumar, dinero ahorrado y tiempo para tu meta directo en tu pantalla de inicio.</p>
+        <h3 id="widget-dialog-title">📱 Widget para iPhone (iOS 18 Dark Mode)</h3>
+        <p>Visualiza tu racha sin fumar, dinero ahorrado y tiempo para tu meta directo en tu pantalla de inicio o bloqueo.</p>
       </div>
       <button class="dialog-close" type="button" onclick="closeDialog('widget-dialog')" aria-label="Cerrar">×</button>
     </div>
 
-    <!-- Live Widget Card Preview -->
+    <!-- Widget Selector Tabs -->
+    <div style="display:flex; gap:6px; margin-bottom:12px; overflow-x:auto;">
+      <button class="btn btn-secondary btn-small active" id="wtab-btn-med" onclick="switchWidgetTab('med')">📱 Mediano (Banner 4x2)</button>
+      <button class="btn btn-secondary btn-small" id="wtab-btn-small" onclick="switchWidgetTab('small')">🔳 Pequeño (2x2)</button>
+      <button class="btn btn-secondary btn-small" id="wtab-btn-lock" onclick="switchWidgetTab('lock')">🔒 Pantalla Bloqueo</button>
+    </div>
+
+    <!-- Live Widget Card Preview (Interactive iOS 18 Design) -->
     <div style="margin-bottom:14px;">
-      <span style="font-size:10px; color:var(--cyan); font-weight:700; text-transform:uppercase; display:block; margin-bottom:6px;">Vista Previa del Widget iOS (Modo Oscuro)</span>
-      
-      <div style="padding:16px; background:linear-gradient(135deg, #0c1422 0%, #152036 100%); border:1px solid rgba(34,211,238,0.3); border-radius:22px; box-shadow:0 8px 24px rgba(0,0,0,0.5);">
+      <div id="widget-view-med" style="padding:16px; background:linear-gradient(135deg, #0c1422 0%, #152036 100%); border:1px solid rgba(34,211,238,0.3); border-radius:24px; box-shadow:0 10px 30px rgba(0,0,0,0.6); position:relative; overflow:hidden;">
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <div style="display:flex; align-items:center; gap:6px;">
             <span style="font-size:16px;">🔥</span>
-            <strong style="font-size:13px; color:var(--cyan);">RETO CONTROL</strong>
+            <strong style="font-size:13px; color:var(--cyan); letter-spacing:-0.02em;">RETO CONTROL</strong>
           </div>
-          <span style="font-size:10px; padding:2px 6px; background:rgba(52,211,153,0.2); color:var(--green); border-radius:99px; font-weight:700;">EN VIVO</span>
+          <span style="font-size:9.5px; padding:2px 8px; background:rgba(52,211,153,0.25); color:var(--green); border-radius:99px; font-weight:800; border:1px solid rgba(52,211,153,0.4);">✓ FIRME EN VIVO</span>
         </div>
 
-        <div style="margin-top:10px; display:flex; justify-content:space-between; align-items:baseline;">
+        <div style="margin-top:12px; display:grid; grid-template-columns:1.2fr 1fr; gap:10px; align-items:center;">
           <div>
-            <span style="font-size:28px; font-weight:800; color:var(--text);" id="widget-preview-days">0</span>
-            <span style="font-size:12px; color:var(--muted-2); margin-left:4px;">días sin fumar</span>
+            <div style="display:flex; align-items:baseline; gap:4px;">
+              <span style="font-size:32px; font-weight:900; color:var(--text); line-height:1;" id="widget-preview-days">0</span>
+              <span style="font-size:12px; color:var(--cyan); font-weight:700;">DÍAS SIN FUMAR</span>
+            </div>
+            <span style="font-size:10.5px; color:var(--muted-2); display:block; margin-top:4px;" id="widget-preview-hours">0 horas de autocontrol</span>
           </div>
-          <div style="text-align:right;">
-            <span style="font-size:14px; font-weight:700; color:var(--green);" id="widget-preview-money">RD$0</span>
-            <span style="font-size:9.5px; color:var(--muted-2); display:block;">ahorrado</span>
+
+          <div style="text-align:right; padding:8px 10px; background:rgba(6,10,18,0.6); border-radius:14px; border:1px solid rgba(52,211,153,0.2);">
+            <span style="font-size:9px; color:var(--muted-2); display:block; text-transform:uppercase; font-weight:700;">Ahorro Acumulado</span>
+            <strong style="font-size:15px; font-weight:800; color:var(--green);" id="widget-preview-money">RD$0</strong>
           </div>
         </div>
 
-        <div style="margin-top:10px; padding:8px; background:rgba(6,10,18,0.6); border-radius:10px; font-size:10.5px;">
-          <div style="display:flex; justify-content:space-between;">
-            <span style="color:var(--muted-2);" id="widget-preview-reward-name">🎁 Premio: Tenis nuevos</span>
-            <strong style="color:var(--amber);" id="widget-preview-days-left">Faltan 0 días</strong>
+        <div style="margin-top:12px; padding:10px; background:rgba(6,10,18,0.6); border-radius:14px; border:1px solid var(--border-subtle);">
+          <div style="display:flex; justify-content:space-between; align-items:center; font-size:11px; margin-bottom:4px;">
+            <strong style="color:var(--text);" id="widget-preview-reward-name">🎁 Premio: Tenis nuevos</strong>
+            <span style="color:var(--cyan); font-weight:700;" id="widget-preview-days-left">Faltan 0 días</span>
           </div>
+          <div class="spb-track" style="height:5px;"><span id="widget-preview-progress-bar" style="background:linear-gradient(90deg,var(--violet),var(--cyan)); width:0%;"></span></div>
         </div>
+      </div>
+
+      <!-- Small Widget Preview -->
+      <div id="widget-view-small" hidden style="width:170px; height:170px; padding:14px; background:linear-gradient(135deg, #0c1422 0%, #152036 100%); border:1px solid rgba(34,211,238,0.3); border-radius:24px; box-shadow:0 10px 30px rgba(0,0,0,0.6); display:flex; flex-direction:column; justify-content:space-between; margin:auto;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-size:16px;">🔥</span>
+          <span style="font-size:8px; padding:2px 5px; background:rgba(52,211,153,0.2); color:var(--green); border-radius:99px; font-weight:800;">EN VIVO</span>
+        </div>
+        <div>
+          <span style="font-size:30px; font-weight:900; color:var(--text); line-height:1;" id="wsmall-days">0</span>
+          <span style="font-size:10px; color:var(--cyan); display:block; font-weight:700; margin-top:2px;">DÍAS SIN FUMAR</span>
+        </div>
+        <div style="font-size:10px; color:var(--green); font-weight:700;" id="wsmall-money">RD$0 ahorrados</div>
+      </div>
+
+      <!-- Lock Screen Widget Preview -->
+      <div id="widget-view-lock" hidden style="padding:12px; background:rgba(255,255,255,0.06); border:1px dashed rgba(255,255,255,0.2); border-radius:18px; text-align:center; margin:auto; max-width:320px;">
+        <div style="font-size:13px; font-weight:700; color:#fff;" id="wlock-text">🔥 0 Días Sin Fumar · RD$0 Ahorrados</div>
+        <span style="font-size:10px; color:var(--muted-2); display:block; margin-top:4px;">Vista Inline de Pantalla de Bloqueo iOS</span>
       </div>
     </div>
 
@@ -2047,8 +2076,9 @@ dialog.nt-dialog.calendar-dialog-wide {
         <li>Añade la acción <b>"Abrir URL"</b> y pega este enlace.</li>
         <li>Añade el widget de <b>Atajos (Shortcuts)</b> a tu pantalla de inicio o de bloqueo.</li>
       </ol>
-      <div style="margin-top:10px;">
-        <button class="btn btn-primary wide" onclick="copyWidgetLink(this)">📱 Copiar Enlace para Widget iOS</button>
+      <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="btn btn-primary" style="flex:1;" onclick="copyWidgetLink(this)">📱 Copiar Enlace para Widget iOS</button>
+        <button class="btn btn-secondary" onclick="sendTestNotification()">🔔 Probar Alerta Humana</button>
       </div>
     </div>
 
@@ -2382,11 +2412,18 @@ function renderSmoke(){
   safeSetText('reward-pct-text', `${rewardFundPct}% del premio cubierto con ahorro`);
   safeSetText('reward-days-pct', `${daysPct}% meta cumplida`);
 
-  // Widget Live Preview DOM
+  // Widget Live Preview DOM (Medium, Small & Lockscreen)
   safeSetText('widget-preview-days', days);
+  safeSetText('widget-preview-hours', `${hours} horas de autocontrol`);
   safeSetText('widget-preview-money', formatDOPFlat(savedExact));
   safeSetText('widget-preview-reward-name', `🎁 Premio: ${rewardName}`);
   safeSetText('widget-preview-days-left', `Faltan ${remainingDays}d`);
+  const wPrevBar = document.getElementById('widget-preview-progress-bar');
+  if(wPrevBar) wPrevBar.style.width = `${rewardFundPct}%`;
+
+  safeSetText('wsmall-days', days);
+  safeSetText('wsmall-money', `${formatDOPFlat(savedExact)} ahorrados`);
+  safeSetText('wlock-text', `🔥 ${days} Días Sin Fumar · ${formatDOPFlat(savedExact)} Ahorrados`);
 
   const smokeCheckLabelEl = document.getElementById('smoke-check-label');
   if(smokeCheckLabelEl) smokeCheckLabelEl.textContent=confirmed?'confirmado':lapse?'reiniciado':'confirma hoy';
@@ -3260,33 +3297,70 @@ function openGoogleCalendarReminder(){
   toast('🌐 Abriendo Google Calendar...');
 }
 
-function sendTestNotification() {
-  playNotificationChime();
-  if (!('Notification' in window) || Notification.permission !== 'granted') {
-    toast('🔊 Sonido emitido. Activa los permisos para mostrar la alerta visual.');
-    requestNotificationPermission();
-    return;
-  }
+function switchWidgetTab(type){
+  ['med', 'small', 'lock'].forEach(t => {
+    const v = document.getElementById(`widget-view-${t}`);
+    const b = document.getElementById(`wtab-btn-${t}`);
+    if(v) v.hidden = (t !== type);
+    if(b) b.classList.toggle('active', t === type);
+  });
+}
 
+function getHumanMotivationalNotification() {
   const elapsed = smokeElapsed();
   const days = Math.floor(elapsed / 86400000);
   const cigsPerDay = state.smoke.cigarettesPerDay || 10;
   const packSize = state.smoke.packSize || 20;
   const packPrice = state.smoke.packPrice || 300;
   const savedExact = Math.floor((elapsed / 86400000) * cigsPerDay * (packPrice / packSize));
+  
+  const rewardName = state.smoke.rewardName || 'tu recompensa';
+  const rewardCost = state.smoke.rewardCost || 3000;
+  const rewardFundPct = Math.min(100, Math.floor((savedExact / rewardCost) * 100));
 
-  const day = todayState();
-  const goalText = day.goal ? ` | Meta hoy: ${day.goal}` : '';
+  const userName = (localStorage.getItem('nt_user_email') || 'Campeón').split('@')[0];
+  const capitalizedUser = userName.charAt(0).toUpperCase() + userName.slice(1);
 
-  const title = `🔥 Reto Control — ¡${days} Días Sin Fumar!`;
-  const body = `Has ahorrado aprox. RD$${savedExact}. Mantén tu firmeza y disciplina intactas.${goalText}`;
+  const hour = new Date().getHours();
 
+  const morningPhrases = [
+    { title: `🌅 ¡Buenos días ${capitalizedUser}! · Día ${days} Firme`, body: `Has liberado RD$${savedExact.toLocaleString()} para ${rewardName} (${rewardFundPct}% acumulado). Hoy nada rompe tu enfoque.` },
+    { title: `⚡ ${days} Días de Libertad y Control`, body: `Tu cuerpo amaneció más limpio hoy. Mantén la inercia positiva y completa tus 4 misiones del día.` }
+  ];
+
+  const afternoonPhrases = [
+    { title: `💪 ¡${capitalizedUser}, mantén la posición! (${days} Días)`, body: `Llevas RD$${savedExact.toLocaleString()} ahorrados. Si sientes ansiedad, recuerda: dura solo 3 minutos.` },
+    { title: `🎁 ${rewardFundPct}% para tu ${rewardName}`, body: `Cada hora sin fumar es más salud y más presupuesto para tu meta. ¡Sigue firme!` }
+  ];
+
+  const eveningPhrases = [
+    { title: `🔥 ¡Día ${days} conquistado ${capitalizedUser}!`, body: `Un día más en victoria. RD$${savedExact.toLocaleString()} ganados para ti y 0 cigarrillos. Descansa orgulloso.` },
+    { title: `🌙 Firmeza intacta · ${days} Días Sin Fumar`, body: `Tu autocontrol hoy fue implacable. Mañana despertaremos aún más fuertes.` }
+  ];
+
+  let pool = afternoonPhrases;
+  if (hour >= 6 && hour < 12) pool = morningPhrases;
+  else if (hour >= 19 || hour < 6) pool = eveningPhrases;
+
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+function sendTestNotification() {
+  playNotificationChime();
+  if (navigator.vibrate) navigator.vibrate([150, 80, 150]);
+  if (!('Notification' in window) || Notification.permission !== 'granted') {
+    toast('🔊 Sonido y vibración emitidos. Activa los permisos para mostrar la alerta visual.');
+    requestNotificationPermission();
+    return;
+  }
+
+  const notif = getHumanMotivationalNotification();
   const options = {
-    body,
+    body: notif.body,
     icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="100" fill="%23060a12"/><circle cx="256" cy="256" r="180" fill="none" stroke="%2322d3ee" stroke-width="32"/><path d="M256 140v116l80 48" fill="none" stroke="%2334d399" stroke-width="32" stroke-linecap="round"/></svg>',
     badge: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="100" fill="%23060a12"/><circle cx="256" cy="256" r="180" fill="none" stroke="%2322d3ee" stroke-width="32"/></svg>',
     vibrate: [200, 100, 200, 100, 200],
-    tag: 'reto-control-live-alert',
+    tag: 'reto-control-human-alert',
     renotify: true,
     silent: false,
     actions: [
@@ -3297,12 +3371,12 @@ function sendTestNotification() {
 
   if (navigator.serviceWorker && navigator.serviceWorker.controller) {
     navigator.serviceWorker.ready.then(reg => {
-      reg.showNotification(title, options);
+      reg.showNotification(notif.title, options);
     });
   } else {
-    new Notification(title, options);
+    new Notification(notif.title, options);
   }
-  toast('🔔 Notificación personalizada enviada con sonido y acciones.');
+  toast(`💬 Alerta humana enviada: "${notif.title}"`);
 }
 
 /* ── Interactive Calendar & Agenda Module ── */
