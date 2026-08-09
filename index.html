@@ -1419,15 +1419,24 @@ dialog.nt-dialog.calendar-dialog-wide {
           <span>Avisos & Siri</span>
           <span class="qpb-badge green" id="quick-notif-status">OK</span>
         </button>
+
+        <button class="quick-pill-btn" onclick="openDialog('widget-dialog')">
+          <span class="qpb-icon">📱</span>
+          <span>Widget iPhone</span>
+          <span class="qpb-badge violet">iOS</span>
+        </button>
+
         <button class="quick-pill-btn" onclick="openCalendarModal()">
           <span class="qpb-icon">📅</span>
           <span>Calendario & Agenda</span>
         </button>
+
         <button class="quick-pill-btn" onclick="openDialog('sync-dialog')">
           <span class="qpb-icon">☁️</span>
           <span>Nube</span>
           <span class="qpb-badge cyan">Sincronizar</span>
         </button>
+
         <button class="quick-pill-btn" onclick="openAIConfigModal()">
           <span class="qpb-icon">✨</span>
           <span>Ajustes IA</span>
@@ -1502,6 +1511,39 @@ dialog.nt-dialog.calendar-dialog-wide {
               <div class="rc-card-top"><span class="rc-icon icon-yellow">↗</span><span class="rc-title">MEJOR RECORRIDO</span></div>
               <div class="rc-val" id="smoke-best">0 días</div>
               <div class="rc-sub">tu avance cuenta</div>
+            </div>
+          </div>
+
+          <!-- Personalized Reward & Motivational Goal Card -->
+          <div class="rc-reward-card" id="rc-reward-card" style="margin-top:12px; padding:14px; background:rgba(139,92,246,0.08); border:1px solid rgba(139,92,246,0.25); border-radius:var(--radius-md);">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+              <div style="display:flex; align-items:center; gap:10px;">
+                <span style="font-size:24px;">🎁</span>
+                <div>
+                  <span style="font-size:9px; color:var(--violet); font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">TU RECOMPENSA AL CUMPLIR LA META</span>
+                  <h4 id="reward-title-display" style="font-size:14px; font-weight:700; color:var(--text); margin-top:1px;">Tenis nuevos</h4>
+                </div>
+              </div>
+              <button class="btn btn-secondary btn-small" onclick="openSmokeSetup()">⚙️ Modificar Premio / Meta</button>
+            </div>
+            
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px;">
+              <div style="padding:8px 10px; background:rgba(6,10,18,0.5); border:1px solid var(--border-subtle); border-radius:var(--radius-sm);">
+                <span style="font-size:9.5px; color:var(--muted-2); display:block;">⏳ Tiempo Faltante para la Meta</span>
+                <strong id="reward-time-left" style="font-size:12px; color:var(--cyan);">0 días, 0h faltan</strong>
+              </div>
+              <div style="padding:8px 10px; background:rgba(6,10,18,0.5); border:1px solid var(--border-subtle); border-radius:var(--radius-sm);">
+                <span style="font-size:9.5px; color:var(--muted-2); display:block;">💰 Fondo del Premio Ahorrado</span>
+                <strong id="reward-fund-progress" style="font-size:12px; color:var(--green);">RD$0 / RD$3,000</strong>
+              </div>
+            </div>
+
+            <div class="smoke-progress-section" style="margin-top:10px;">
+              <div class="spb-track"><span id="reward-progress-bar" style="background:linear-gradient(90deg,var(--violet),var(--cyan)); width:0%;"></span></div>
+              <div class="spb-labels">
+                <span id="reward-pct-text" style="font-size:10px; color:var(--muted-2);">0% del valor del premio ahorrado</span>
+                <span id="reward-days-pct" class="spb-pct">0% meta</span>
+              </div>
             </div>
           </div>
 
@@ -1708,7 +1750,9 @@ dialog.nt-dialog.calendar-dialog-wide {
       <div class="field"><label for="cigs-day">Cigarrillos por día</label><input id="cigs-day" type="number" min="1" max="100" step="1" value="10" required></div>
       <div class="field"><label for="pack-size">Cigarrillos por paquete</label><input id="pack-size" type="number" min="1" max="100" step="1" value="20" required></div>
       <div class="field"><label for="pack-price">Precio del paquete (RD$)</label><input id="pack-price" type="number" min="0" max="100000" step="1" value="300" required></div>
-      <div class="field"><label for="quit-goal">Meta inicial en días</label><input id="quit-goal" type="number" min="1" max="3650" step="1" value="30" required></div>
+      <div class="field"><label for="quit-goal">Meta en días (ej. 30 días)</label><input id="quit-goal" type="number" min="1" max="3650" step="1" value="30" required></div>
+      <div class="field wide"><label for="reward-name">🎁 Recompensa al cumplir la meta</label><input id="reward-name" placeholder="Ej. Tenis nuevos, Viaje de fin de semana, Cena especial" value="Tenis nuevos"></div>
+      <div class="field wide"><label for="reward-cost">Precio estimado de la recompensa (RD$)</label><input id="reward-cost" type="number" min="0" max="1000000" step="50" value="3000"></div>
     </div>
     <div class="button-row" style="flex-wrap:wrap; gap:6px;">
       <button class="btn btn-success" type="submit">Guardar mi punto de partida</button>
@@ -1939,6 +1983,67 @@ dialog.nt-dialog.calendar-dialog-wide {
         La clave se guarda localmente en tu navegador (`localStorage`). Obtén tu clave en <a href="https://openrouter.ai/keys" target="_blank" rel="noreferrer" style="color:var(--cyan)">OpenRouter →</a>, <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noreferrer" style="color:var(--cyan)">Google Gemini →</a>, o <a href="https://build.nvidia.com/" target="_blank" rel="noreferrer" style="color:var(--cyan)">Nvidia NIM →</a>
       </div>
     </div>
+<!-- Modal de Widget para iPhone (iOS Shortcuts & Live View) -->
+<dialog class="nt-dialog" id="widget-dialog" aria-labelledby="widget-dialog-title">
+  <div class="dialog-body">
+    <div class="dialog-head">
+      <div>
+        <h3 id="widget-dialog-title">📱 Widget para iPhone (iOS Shortcuts)</h3>
+        <p>Visualiza tu racha sin fumar, dinero ahorrado y tiempo para tu meta directo en tu pantalla de inicio.</p>
+      </div>
+      <button class="dialog-close" type="button" onclick="closeDialog('widget-dialog')" aria-label="Cerrar">×</button>
+    </div>
+
+    <!-- Live Widget Card Preview -->
+    <div style="margin-bottom:14px;">
+      <span style="font-size:10px; color:var(--cyan); font-weight:700; text-transform:uppercase; display:block; margin-bottom:6px;">Vista Previa del Widget iOS (Modo Oscuro)</span>
+      
+      <div style="padding:16px; background:linear-gradient(135deg, #0c1422 0%, #152036 100%); border:1px solid rgba(34,211,238,0.3); border-radius:22px; box-shadow:0 8px 24px rgba(0,0,0,0.5);">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div style="display:flex; align-items:center; gap:6px;">
+            <span style="font-size:16px;">🔥</span>
+            <strong style="font-size:13px; color:var(--cyan);">RETO CONTROL</strong>
+          </div>
+          <span style="font-size:10px; padding:2px 6px; background:rgba(52,211,153,0.2); color:var(--green); border-radius:99px; font-weight:700;">EN VIVO</span>
+        </div>
+
+        <div style="margin-top:10px; display:flex; justify-content:space-between; align-items:baseline;">
+          <div>
+            <span style="font-size:28px; font-weight:800; color:var(--text);" id="widget-preview-days">0</span>
+            <span style="font-size:12px; color:var(--muted-2); margin-left:4px;">días sin fumar</span>
+          </div>
+          <div style="text-align:right;">
+            <span style="font-size:14px; font-weight:700; color:var(--green);" id="widget-preview-money">RD$0</span>
+            <span style="font-size:9.5px; color:var(--muted-2); display:block;">ahorrado</span>
+          </div>
+        </div>
+
+        <div style="margin-top:10px; padding:8px; background:rgba(6,10,18,0.6); border-radius:10px; font-size:10.5px;">
+          <div style="display:flex; justify-content:space-between;">
+            <span style="color:var(--muted-2);" id="widget-preview-reward-name">🎁 Premio: Tenis nuevos</span>
+            <strong style="color:var(--amber);" id="widget-preview-days-left">Faltan 0 días</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Shortcut Copy & Guide -->
+    <div style="padding:12px; background:rgba(6,10,18,0.6); border:1px solid var(--border-subtle); border-radius:var(--radius-md); margin-bottom:12px;">
+      <strong style="font-size:12px; color:var(--text); display:block;">📲 ¿Cómo poner este Widget en tu iPhone?</strong>
+      <ol style="font-size:11px; color:var(--muted-2); margin-top:6px; padding-left:18px; line-height:1.6;">
+        <li>Presiona el botón de abajo para <b>copiar el enlace del Widget</b>.</li>
+        <li>Abre la app <b>Atajos (Shortcuts)</b> en tu iPhone y crea un nuevo atajo.</li>
+        <li>Añade la acción <b>"Abrir URL"</b> y pega este enlace.</li>
+        <li>Añade el widget de <b>Atajos (Shortcuts)</b> a tu pantalla de inicio o de bloqueo.</li>
+      </ol>
+      <div style="margin-top:10px;">
+        <button class="btn btn-primary wide" onclick="copyWidgetLink(this)">📱 Copiar Enlace para Widget iOS</button>
+      </div>
+    </div>
+
+    <div class="button-row">
+      <button class="btn btn-secondary" onclick="closeDialog('widget-dialog')">Cerrar</button>
+    </div>
   </div>
 </dialog>
 
@@ -2107,7 +2212,6 @@ if(!Array.isArray(state.smoke.history)) state.smoke.history=[];
 function saveState(){
   localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
   try { const legacy=JSON.parse(localStorage.getItem(LEGACY_KEY)||'{}'); legacy.crm=state.crm; localStorage.setItem(LEGACY_KEY,JSON.stringify(legacy)); } catch(e){}
-  syncWithSupabase(false);
 }
 function todayState(){
   const key=dateKey();
@@ -2147,6 +2251,8 @@ function openSmokeSetup(){
   document.getElementById('pack-size').value=smoke.packSize||20;
   document.getElementById('pack-price').value=smoke.packPrice??300;
   document.getElementById('quit-goal').value=smoke.targetDays||30;
+  safeSetValue('reward-name', smoke.rewardName || 'Tenis nuevos');
+  safeSetValue('reward-cost', smoke.rewardCost ?? 3000);
   openDialog('smoke-setup-dialog');
 }
 function saveSmokeSetup(event){
@@ -2158,9 +2264,21 @@ function saveSmokeSetup(event){
   state.smoke.packSize=Math.max(1,Number(document.getElementById('pack-size').value)||20);
   state.smoke.packPrice=Math.max(0,Number(document.getElementById('pack-price').value)||0);
   state.smoke.targetDays=Math.max(1,Number(document.getElementById('quit-goal').value)||30);
-  saveState(); closeDialog('smoke-setup-dialog'); renderSmoke(); toast('Tu punto de partida quedó guardado.');
+
+  const rName = document.getElementById('reward-name')?.value.trim();
+  const rCost = Number(document.getElementById('reward-cost')?.value) || 0;
+  state.smoke.rewardName = rName || 'Tenis nuevos';
+  state.smoke.rewardCost = rCost > 0 ? rCost : 3000;
+
+  saveState(); closeDialog('smoke-setup-dialog'); renderSmoke(); pushThisDeviceToCloud(); toast('✓ Meta y recompensa guardadas en la Nube.');
 }
 function smokeElapsed(){ return smokeConfigured()?Math.max(0,Date.now()-new Date(state.smoke.quitAt).getTime()):0; }
+
+function copyWidgetLink(button) {
+  const shortcutUrl = `${window.location.origin}${window.location.pathname}#widget`;
+  copyText(shortcutUrl, button);
+  toast('📱 Enlace para Widget iOS copiado. Pégalo en la app "Atajos" de tu iPhone.');
+}
 
 function smokeEvent(type,details={}){
   state.smoke.history.unshift({id:uid(),type,date:new Date().toISOString(),...details});
@@ -2232,6 +2350,32 @@ function renderSmoke(){
   
   const smokeProgressEl = document.getElementById('smoke-progress');
   if(smokeProgressEl) smokeProgressEl.style.width=`${progress}%`;
+
+  // Motivational Reward & Widget calculations
+  const rewardName = state.smoke.rewardName || 'Tenis nuevos';
+  const rewardCost = state.smoke.rewardCost || 3000;
+  const remainingMs = Math.max(0, goalMs - elapsed);
+  const remainingDays = Math.floor(remainingMs / day);
+  const remainingHours = Math.floor((remainingMs % day) / hour);
+
+  const rewardFundPct = Math.min(100, Math.floor((savedExact / rewardCost) * 100));
+  const daysPct = Math.min(100, Math.floor((elapsed / goalMs) * 100));
+
+  safeSetText('reward-title-display', rewardName);
+  safeSetText('reward-time-left', `${remainingDays}d, ${remainingHours}h faltan`);
+  safeSetText('reward-fund-progress', `${formatDOPFlat(savedExact)} / ${formatDOPFlat(rewardCost)}`);
+  
+  const rewardBar = document.getElementById('reward-progress-bar');
+  if(rewardBar) rewardBar.style.width = `${rewardFundPct}%`;
+
+  safeSetText('reward-pct-text', `${rewardFundPct}% del premio cubierto con ahorro`);
+  safeSetText('reward-days-pct', `${daysPct}% meta cumplida`);
+
+  // Widget Live Preview DOM
+  safeSetText('widget-preview-days', days);
+  safeSetText('widget-preview-money', formatDOPFlat(savedExact));
+  safeSetText('widget-preview-reward-name', `🎁 Premio: ${rewardName}`);
+  safeSetText('widget-preview-days-left', `Faltan ${remainingDays}d`);
 
   const smokeCheckLabelEl = document.getElementById('smoke-check-label');
   if(smokeCheckLabelEl) smokeCheckLabelEl.textContent=confirmed?'confirmado':lapse?'reiniciado':'confirma hoy';
@@ -3405,37 +3549,32 @@ async function handleAuthSubmit(event) {
     return;
   }
 
-  const normalizedEmail = emailInput.includes('@') ? emailInput : `${emailInput.toLowerCase().replace(/[^a-z0-9]/g, '')}@reto-control.app`;
-  const client = getSupabaseClient();
+  const normalizedEmail = emailInput.includes('@') ? emailInput.toLowerCase() : `${emailInput.toLowerCase().replace(/[^a-z0-9]/g, '')}@reto-control.app`;
+  const canonicalUserId = normalizedEmail;
 
+  localStorage.setItem('nt_user_email', normalizedEmail);
+  localStorage.setItem('nt_user_id', canonicalUserId);
+
+  const client = getSupabaseClient();
   if (client && client.auth) {
     try {
       const { data, error } = await client.auth.signInWithPassword({ email: normalizedEmail, password: passInput });
       if (error) {
-        const { data: signUpData, error: signUpErr } = await client.auth.signUp({ email: normalizedEmail, password: passInput });
-        if (signUpErr) {
-          localStorage.setItem('nt_user_id', normalizedEmail.split('@')[0]);
-          toast(`🔑 Sesión iniciada como "${normalizedEmail.split('@')[0]}".`);
-        } else {
-          localStorage.setItem('nt_user_id', signUpData.user?.id || normalizedEmail.split('@')[0]);
-          toast(`✨ Cuenta creada e iniciada como "${normalizedEmail.split('@')[0]}".`);
-        }
-      } else {
-        localStorage.setItem('nt_user_id', data.user?.id || normalizedEmail.split('@')[0]);
-        toast(`🔑 ¡Sesión iniciada con éxito!`);
+        await client.auth.signUp({ email: normalizedEmail, password: passInput });
       }
-    } catch(err) {
-      localStorage.setItem('nt_user_id', normalizedEmail.split('@')[0]);
-      toast(`🔑 Sesión iniciada como "${normalizedEmail.split('@')[0]}".`);
-    }
-  } else {
-    localStorage.setItem('nt_user_id', normalizedEmail.split('@')[0]);
-    toast(`🔑 Sesión iniciada como "${normalizedEmail.split('@')[0]}".`);
+    } catch(err){}
   }
 
   closeDialog('auth-dialog');
   updateAuthUI();
-  migrateNachoStateToCurrentUser();
+
+  toast(`🔑 Sesión iniciada como "${normalizedEmail.split('@')[0]}". Sincronizando Nube...`);
+  await pullCloudToThisDevice();
+
+  // If after pulling cloud data, user still has no streak, push local state to initialize cloud
+  if (!state.smoke || !state.smoke.quitAt) {
+    await pushThisDeviceToCloud();
+  }
 }
 
 async function handleSignUpFromForm() {
@@ -3447,30 +3586,27 @@ async function handleSignUpFromForm() {
     return;
   }
 
-  const normalizedEmail = emailInput.includes('@') ? emailInput : `${emailInput.toLowerCase().replace(/[^a-z0-9]/g, '')}@reto-control.app`;
-  const client = getSupabaseClient();
+  const normalizedEmail = emailInput.includes('@') ? emailInput.toLowerCase() : `${emailInput.toLowerCase().replace(/[^a-z0-9]/g, '')}@reto-control.app`;
+  const canonicalUserId = normalizedEmail;
 
+  localStorage.setItem('nt_user_email', normalizedEmail);
+  localStorage.setItem('nt_user_id', canonicalUserId);
+
+  const client = getSupabaseClient();
   if (client && client.auth) {
     try {
-      const { data, error } = await client.auth.signUp({ email: normalizedEmail, password: passInput });
-      if (error) {
-        toast(`Aviso al crear cuenta: ${error.message}`);
-      } else {
-        localStorage.setItem('nt_user_id', data.user?.id || normalizedEmail.split('@')[0]);
-        toast(`✨ Cuenta creada e iniciada como "${normalizedEmail.split('@')[0]}".`);
-      }
-    } catch(err) {
-      localStorage.setItem('nt_user_id', normalizedEmail.split('@')[0]);
-      toast(`✨ Cuenta creada para "${normalizedEmail.split('@')[0]}".`);
-    }
-  } else {
-    localStorage.setItem('nt_user_id', normalizedEmail.split('@')[0]);
-    toast(`✨ Cuenta creada para "${normalizedEmail.split('@')[0]}".`);
+      await client.auth.signUp({ email: normalizedEmail, password: passInput });
+    } catch(err){}
   }
 
   closeDialog('auth-dialog');
   updateAuthUI();
-  migrateNachoStateToCurrentUser();
+
+  toast(`✨ Cuenta activada para "${normalizedEmail.split('@')[0]}". Sincronizando Nube...`);
+  await pullCloudToThisDevice();
+  if (!state.smoke || !state.smoke.quitAt) {
+    await pushThisDeviceToCloud();
+  }
 }
 
 async function handleSignOut() {
@@ -3478,6 +3614,7 @@ async function handleSignOut() {
   if (client && client.auth) {
     try { await client.auth.signOut(); } catch(e){}
   }
+  localStorage.removeItem('nt_user_email');
   localStorage.removeItem('nt_user_id');
   localStorage.removeItem('nt_auth_session');
   closeDialog('auth-dialog');
@@ -3490,9 +3627,23 @@ function getUserId() {
   const urlParams = new URLSearchParams(window.location.search);
   const paramUser = urlParams.get('user') || urlParams.get('u');
   if (paramUser) {
-    localStorage.setItem('nt_user_id', paramUser.trim());
+    const cleanParam = paramUser.trim().toLowerCase();
+    const normalizedParam = cleanParam.includes('@') ? cleanParam : `${cleanParam.replace(/[^a-z0-9]/g, '')}@reto-control.app`;
+    localStorage.setItem('nt_user_id', normalizedParam);
+    localStorage.setItem('nt_user_email', normalizedParam);
+    return normalizedParam;
   }
-  return localStorage.getItem('nt_user_id') || 'nacho';
+  const savedEmail = localStorage.getItem('nt_user_email');
+  const savedUser = localStorage.getItem('nt_user_id');
+
+  if (savedEmail && savedEmail.trim()) {
+    return savedEmail.trim().toLowerCase();
+  }
+  if (savedUser && savedUser.trim()) {
+    const raw = savedUser.trim().toLowerCase();
+    return raw.includes('@') ? raw : `${raw.replace(/[^a-z0-9]/g, '')}@reto-control.app`;
+  }
+  return 'nacho@reto-control.app';
 }
 
 const DEFAULT_SUPABASE_URL = 'https://oberzwgvbrgqokoynqpm.supabase.co';
@@ -3513,30 +3664,34 @@ function getSupabaseConfig(){
 function saveSupabaseConfig(){
   const urlEl = document.getElementById('supabase-url');
   const keyEl = document.getElementById('supabase-key');
-  const userIdEl = document.getElementById('supabase-user-id');
   const syncUserIdEl = document.getElementById('sync-user-id');
 
-  const userId = (syncUserIdEl && syncUserIdEl.value.trim()) ? syncUserIdEl.value.trim() : ((userIdEl && userIdEl.value.trim()) ? userIdEl.value.trim() : getUserId());
+  let inputUser = syncUserIdEl ? syncUserIdEl.value.trim() : '';
+  if (inputUser) {
+    const normalized = inputUser.includes('@') ? inputUser.toLowerCase() : `${inputUser.toLowerCase().replace(/[^a-z0-9]/g, '')}@reto-control.app`;
+    localStorage.setItem('nt_user_email', normalized);
+    localStorage.setItem('nt_user_id', normalized);
+  }
+
+  const userId = getUserId();
   const url = (urlEl && urlEl.value.trim()) ? urlEl.value.trim() : DEFAULT_SUPABASE_URL;
   const key = (keyEl && keyEl.value.trim()) ? keyEl.value.trim() : DEFAULT_SUPABASE_KEY;
 
-  localStorage.setItem('nt_user_id', userId);
   localStorage.setItem('nt_supabase_url', url);
   localStorage.setItem('nt_supabase_key', key);
   _supabaseClient = null;
 
-  const setupEl = document.getElementById('supabase-setup');
-  if(setupEl) setupEl.open = false;
-  toast(`✓ Supabase DB conectado para el usuario "${userId}".`);
-  pushThisDeviceToCloud();
+  toast(`✓ Conectado a Supabase DB para "${userId.split('@')[0]}".`);
+  pullCloudToThisDevice();
   renderToday();
 }
 
 function copySyncLink(button) {
   const userId = getUserId();
-  const syncUrl = `${window.location.origin}${window.location.pathname}?user=${encodeURIComponent(userId)}`;
+  const shortId = userId.split('@')[0];
+  const syncUrl = `${window.location.origin}${window.location.pathname}?user=${encodeURIComponent(shortId)}`;
   copyText(syncUrl, button);
-  toast(`📱 Enlace copiado para tu celular: ?user=${userId}`);
+  toast(`📱 Enlace de sincronización copiado: ?user=${shortId}`);
 }
 
 let _supabaseClient = null;
@@ -3559,7 +3714,7 @@ async function pushThisDeviceToCloud(){
       toast(`Error al subir datos a la nube: ${error.message}`);
     } else {
       console.log(`✓ Datos de este dispositivo subidos a Supabase (ID: ${userId})`);
-      toast(`⬆️ ¡Datos de este dispositivo guardados en la Nube! (ID: ${userId})`);
+      toast(`⬆️ ¡Datos guardados en la Nube! (${userId.split('@')[0]})`);
     }
   } catch(err){
     console.error(err);
@@ -3574,15 +3729,11 @@ function restoreDaysStreak(days = 19){
   closeDialog('smoke-setup-dialog');
   renderSmoke();
   pushThisDeviceToCloud();
-  toast(`⚡ Racha fijada en ${days} días sin fumar y respaldada.`);
+  toast(`⚡ Racha fijada en ${days} días sin fumar y guardada en la Nube.`);
 }
 
 async function pullCloudToThisDevice(){
   await loadStateFromSupabase(true);
-}
-
-async function syncWithSupabase(notify = false){
-  return pushThisDeviceToCloud();
 }
 
 async function loadStateFromSupabase(force = false){
@@ -3592,37 +3743,29 @@ async function loadStateFromSupabase(force = false){
   try {
     const { data, error } = await client.from('app_state').select('state').eq('id', userId).single();
     if(data && data.state){
-      const localSmoke = state.smoke || {};
-      const cloudSmoke = data.state.smoke || {};
-
-      const localTime = localSmoke.quitAt ? new Date(localSmoke.quitAt).getTime() : Infinity;
-      const cloudTime = cloudSmoke.quitAt ? new Date(cloudSmoke.quitAt).getTime() : Infinity;
-
-      // Protection: If local device has an older quitAt (larger streak), preserve local data and push to cloud!
-      if(!force && localTime < cloudTime){
-        console.log('El dispositivo local tiene una racha mayor. Preservando datos y subiendo a la Nube...');
-        pushThisDeviceToCloud();
-        return;
-      }
-
       state = { ...state, ...data.state };
-      saveState();
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
       renderToday();
       renderSmoke();
       renderSell();
       renderPublish();
       renderProjects();
-      console.log(`✓ Estado cargado desde Supabase DB (ID: ${userId})`);
-      if(force) toast('⬇️ ¡Datos de la Nube descargados con éxito en este dispositivo!');
+      console.log(`✓ Estado cargado desde Supabase DB para (${userId})`);
+      if(force) {
+        toast(`⬇️ Datos sincronizados desde la Nube para "${userId.split('@')[0]}".`);
+      }
+    } else if(force) {
+      toast(`ℹ️ Creando primer respaldo en la Nube para "${userId.split('@')[0]}"...`);
+      await pushThisDeviceToCloud();
     }
-  } catch(e){}
+  } catch(e){
+    console.warn('Load state from Supabase error:', e);
+  }
 }
 
 function init(){
-  const userIdInput = document.getElementById('supabase-user-id');
-  if (userIdInput) userIdInput.value = getUserId();
   const syncUserIdInput = document.getElementById('sync-user-id');
-  if (syncUserIdInput) syncUserIdInput.value = getUserId();
+  if (syncUserIdInput) syncUserIdInput.value = getUserId().split('@')[0];
 
   populateProjectSelects(); renderToday(); renderSell(); renderPublish(); renderProjects();
   document.getElementById('craving-dialog')?.addEventListener('close',resetBreathing);
@@ -3632,14 +3775,9 @@ function init(){
   updateNotifUI();
   updateAuthUI();
   saveNotifSchedule();
-  
-  // Protect local device data: if local device already has configured smoke data, push it to cloud automatically
-  const localSmoke = state.smoke || {};
-  if(Boolean(localSmoke.quitAt) || (localSmoke.history && localSmoke.history.length > 0)){
-    pushThisDeviceToCloud();
-  } else {
-    loadStateFromSupabase();
-  }
+
+  // Load state from cloud on app startup
+  loadStateFromSupabase();
 
   setInterval(renderSmoke, 1000);
   setInterval(rotateTopbar, 4000);
