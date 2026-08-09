@@ -1242,7 +1242,130 @@ dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur
   .button-row .btn { flex: 1; }
   .smoke-clock-nums { flex-wrap: wrap; }
   .smoke-unit { padding: 0 8px; }
-  .smoke-unit-val { font-size: clamp(26px,8vw,38px); }
+/* ── Mobile App-Style Quick Action Bar ── */
+.quick-app-toolbar {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  margin-bottom: 16px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.quick-app-toolbar::-webkit-scrollbar { display: none; }
+.quick-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: rgba(16, 27, 46, 0.7);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-pill);
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
+}
+.quick-pill-btn:hover, .quick-pill-btn:focus-visible {
+  border-color: var(--cyan);
+  background: rgba(34, 211, 238, 0.12);
+  transform: translateY(-1px);
+}
+.qpb-icon { font-size: 14px; }
+.qpb-badge {
+  font-size: 9px;
+  padding: 2px 6px;
+  border-radius: var(--radius-pill);
+  background: rgba(100, 116, 139, 0.3);
+  color: var(--muted-2);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.qpb-badge.green { background: rgba(52, 211, 153, 0.2); color: var(--green); }
+.qpb-badge.cyan { background: rgba(34, 211, 238, 0.2); color: var(--cyan); }
+.qpb-badge.violet { background: rgba(139, 92, 246, 0.2); color: var(--violet); }
+
+/* ── Interactive Calendar & Agenda Module ── */
+.calendar-view-wrapper {
+  display: grid;
+  gap: 14px;
+}
+.calendar-header-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.calendar-month-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+}
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  text-align: center;
+}
+.calendar-weekday {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  padding: 4px 0;
+}
+.calendar-day-cell {
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(6, 10, 18, 0.5);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+.calendar-day-cell:hover {
+  border-color: var(--cyan);
+  background: rgba(34, 211, 238, 0.08);
+}
+.calendar-day-cell.other-month { opacity: 0.3; }
+.calendar-day-cell.today {
+  border-color: var(--cyan);
+  background: rgba(34, 211, 238, 0.18);
+  box-shadow: 0 0 10px rgba(34, 211, 238, 0.2);
+}
+.calendar-day-cell.smoke-free {
+  border-color: rgba(52, 211, 153, 0.5);
+  background: rgba(52, 211, 153, 0.12);
+}
+.calendar-day-cell.selected {
+  outline: 2px solid var(--violet);
+  background: rgba(139, 92, 246, 0.25);
+}
+.cal-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  position: absolute;
+  bottom: 4px;
+}
+.cal-dot.green { background: var(--green); }
+.cal-dot.violet { background: var(--violet); }
+.cal-dot.cyan { background: var(--cyan); }
+
+.calendar-agenda-panel {
+  padding: 14px;
+  background: rgba(6, 10, 18, 0.7);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
 }
 </style>
 </head>
@@ -1281,6 +1404,30 @@ dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur
 
     <section class="view active" id="view-today">
       <div class="section-head"><div class="eyebrow">RETOMAR EL CONTROL</div><h2>Panel de Resistencia y Progreso</h2><p>Seguimiento firme de tu tiempo sin fumar, ahorro acumulado y ejecución diaria.</p></div>
+
+      <!-- App Mobile-Style Quick Action Bar -->
+      <div class="quick-app-toolbar">
+        <button class="quick-pill-btn" onclick="openDialog('notif-dialog')">
+          <span class="qpb-icon">🔔</span>
+          <span>Avisos & Siri</span>
+          <span class="qpb-badge green" id="quick-notif-status">OK</span>
+        </button>
+        <button class="quick-pill-btn" onclick="openCalendarModal()">
+          <span class="qpb-icon">📅</span>
+          <span>Calendario & Agenda</span>
+        </button>
+        <button class="quick-pill-btn" onclick="openDialog('sync-dialog')">
+          <span class="qpb-icon">☁️</span>
+          <span>Nube</span>
+          <span class="qpb-badge cyan">Sincronizar</span>
+        </button>
+        <button class="quick-pill-btn" onclick="openAIConfigModal()">
+          <span class="qpb-icon">✨</span>
+          <span>Ajustes IA</span>
+          <span class="qpb-badge violet" id="quick-ai-status">Config</span>
+        </button>
+      </div>
+
       <section class="discipline-card" aria-labelledby="discipline-title">
         <div class="smoke-empty" id="smoke-empty">
           <div class="smoke-empty-copy">
@@ -1360,77 +1507,6 @@ dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur
             </div>
           </button>
 
-          <!-- iPhone & Web Notification & Siri Shortcuts Control Card -->
-          <div class="notif-card" id="notif-card">
-            <div class="notif-head">
-              <div class="notif-title-group">
-                <span class="notif-badge">🔔 NOTIFICACIONES Y ATAJOS DE SIRI (IPHONE & WEB)</span>
-                <h3>Alertas Automáticas & Control por Voz</h3>
-                <p>Programa avisos por hora/fecha y activa el control por voz con Siri en tu iPhone.</p>
-              </div>
-              <button class="btn btn-primary btn-small" id="btn-request-notif" onclick="requestNotificationPermission()">🔔 Activar Notificaciones</button>
-            </div>
-
-            <!-- iOS Safari Install Guide Banner -->
-            <div class="ios-install-banner" id="ios-install-banner" hidden>
-              <div class="ios-banner-icon">📱</div>
-              <div class="ios-banner-text">
-                <strong>Para activar notificaciones con sonido en tu iPhone (iOS):</strong>
-                <span>1. En Safari, toca <b>Compartir</b> ➔ <b>"Añadir a pantalla de inicio"</b>.<br>
-                2. Abre la App desde la pantalla de inicio y activa las notificaciones.<br>
-                3. Asegúrate de tener el interruptor lateral de silencio del iPhone en modo timbre.</span>
-              </div>
-            </div>
-
-            <!-- Time & Date Schedule Box -->
-            <div style="margin-top:12px; padding:12px; background:rgba(6,10,18,0.6); border:1px solid var(--border-subtle); border-radius:var(--radius-md);">
-              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-                <div>
-                  <strong style="font-size:12px; color:var(--text); display:block;">⏰ Programación por Hora y Fecha</strong>
-                  <span style="font-size:10px; color:var(--muted-2);">Elige a qué hora deseas recibir tus avisos de firmeza.</span>
-                </div>
-                <div style="display:flex; gap:8px; align-items:center;">
-                  <input type="time" id="notif-time-picker" class="input" style="padding:4px 8px; font-size:12px; width:110px;" value="09:00" onchange="saveNotifSchedule()">
-                  <button class="btn btn-secondary btn-small" onclick="saveNotifSchedule()">Guardar Hora</button>
-                </div>
-              </div>
-              <div id="notif-schedule-status" style="margin-top:8px; font-size:10.5px; color:var(--cyan); font-weight:600;">
-                ⏰ Próximo aviso diario programado para las 09:00 AM
-              </div>
-            </div>
-
-            <!-- Siri Shortcuts Integration Box -->
-            <div style="margin-top:10px; padding:12px; background:rgba(147,51,234,.08); border:1px solid rgba(147,51,234,.3); border-radius:var(--radius-md);">
-              <strong style="font-size:12px; color:var(--purple); display:block;">🎙️ Atajos de Siri (iPhone / iOS Shortcuts)</strong>
-              <p style="font-size:10.5px; color:var(--muted-2); margin-top:2px;">Usa Siri para abrir el plan de emergencia o consultar tu racha en 1 segundo:</p>
-              <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;">
-                <button class="btn btn-secondary btn-small" onclick="openCravingDialog()">🎙️ "Oye Siri, Antojo de Fumar"</button>
-                <button class="btn btn-secondary btn-small" onclick="copySiriShortcutLink(this)">📱 Copiar Enlace para Atajos iOS</button>
-              </div>
-            </div>
-
-            <div class="notif-actions" style="margin-top:12px;">
-              <button class="btn btn-secondary btn-small" onclick="sendTestNotification()">⚡ Probar Notificación con Sonido</button>
-              <div class="notif-status-pill" id="notif-status-pill">Estado: Verificando...</div>
-            </div>
-          </div>
-
-          <!-- Mobile Sync Card (Visible directamente en móvil y PC) -->
-          <div class="mobile-sync-card">
-            <div class="msc-top">
-              <div class="msc-title">
-                <span class="msc-badge">☁️ SINCRONIZACIÓN NUBE (CELULAR ↔ PC)</span>
-                <strong>Pasa o respalda tu información en 1 toque</strong>
-                <span>Guarda tu racha sin fumar, dinero ahorrado y proyectos en la nube.</span>
-              </div>
-            </div>
-            <div class="msc-buttons">
-              <button class="btn btn-success btn-small" onclick="pushThisDeviceToCloud()">⬆️ Subir datos de ESTE Celular a la Nube</button>
-              <button class="btn btn-secondary btn-small" onclick="pullCloudToThisDevice()">⬇️ Descargar datos de la Nube a la PC</button>
-              <button class="btn btn-secondary btn-small" onclick="openDialog('sync-dialog')">⚙️ Ajustes Cuenta / Link</button>
-            </div>
-          </div>
-
           <div class="smoke-footer">
             <details class="smoke-log"><summary>Ver mi registro de control</summary><div class="smoke-log-list" id="smoke-log-list"></div></details>
             <button class="btn btn-secondary btn-small" onclick="openSmokeSetup()">⚙ Ajustes de Meta</button>
@@ -1458,62 +1534,9 @@ dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur
           <div class="ai-status" id="ai-status"><strong>Plan base activo.</strong> Haz clic en "Generar con IA" para personalizar tus tareas y contenido.</div>
           <button class="btn btn-secondary btn-small" id="ai-generate" onclick="generateAIPlan(this)">✨ Generar con IA</button>
           <button class="btn btn-secondary btn-small" id="ai-view-history" onclick="openAIHistoryModal()">📜 Ver Consejos e Historial</button>
+          <button class="btn btn-secondary btn-small" onclick="openAIConfigModal()">⚙️ Ajustes de IA</button>
+          <button class="btn btn-secondary btn-small" onclick="openDialog('sync-dialog')">☁️ Sincronizar Nube</button>
           <button class="btn btn-secondary btn-small" onclick="restoreBasePlan()">Restaurar plan base</button>
-          <details class="ai-setup" id="ai-setup">
-            <summary id="ai-setup-summary">⚙️ Configurar Proveedor de IA (OpenRouter, Nvidia, HuggingFace, Gemini)</summary>
-            <div class="ai-provider-form">
-              <div class="field" style="margin-top:10px;">
-                <label for="ai-provider-select">Proveedor de IA</label>
-                <select class="input" id="ai-provider-select">
-                  <option value="openrouter">OpenRouter (DeepSeek R1, Llama 3.3, Qwen - Gratis/Pago)</option>
-                  <option value="nvidia">Nvidia NIM API (Llama 3.3 70B, Mistral)</option>
-                  <option value="huggingface">Hugging Face (Inference API / Serverless)</option>
-                  <option value="gemini">Google Gemini API</option>
-                </select>
-              </div>
-              <div class="field" style="margin-top:8px;">
-                <label for="ai-api-key">API Key del Proveedor</label>
-                <input class="input" id="ai-api-key" type="password" autocomplete="off" placeholder="Pega tu API Key de tu proveedor aquí">
-              </div>
-              <div class="field" style="margin-top:8px;">
-                <label for="ai-model-name">Nombre de Modelo (Opcional)</label>
-                <input class="input" id="ai-model-name" placeholder="Ej.: openrouter/auto, deepseek/deepseek-r1 ó qwen/qwen-2.5-coder-32b-instruct">
-              </div>
-              <div class="button-row" style="margin-top:10px;">
-                <button class="btn btn-primary" onclick="saveAIProviderConfig()">Guardar Proveedor y API Key</button>
-              </div>
-              <div class="ai-help" id="ai-provider-help" style="margin-top:8px;">
-                La clave se guarda localmente en tu navegador (`localStorage`). Obtén tu clave en <a href="https://openrouter.ai/keys" target="_blank" rel="noreferrer" style="color:var(--cyan)">OpenRouter →</a>, <a href="https://build.nvidia.com/" target="_blank" rel="noreferrer" style="color:var(--cyan)">Nvidia NIM →</a>, o <a href="https://huggingface.co/settings/tokens" target="_blank" rel="noreferrer" style="color:var(--cyan)">HuggingFace →</a>
-              </div>
-            </div>
-          </details>
-          <details class="ai-setup" id="supabase-setup" style="margin-top:8px;">
-            <summary id="supabase-setup-summary">🗄️ Base de Datos Supabase (Sincronización Multi-Dispositivo y Nube)</summary>
-            <div class="ai-provider-form">
-              <div class="field" style="margin-top:10px;">
-                <label for="supabase-user-id">👤 Tu ID de Usuario / PIN (para sincronizar Celular y PC)</label>
-                <input class="input" id="supabase-user-id" value="nacho" placeholder="Ej. nacho (tu ID de cuenta para ver tus mismos datos)">
-              </div>
-              <div class="field" style="margin-top:8px;">
-                <label for="supabase-url">URL de Supabase Project</label>
-                <input class="input" id="supabase-url" value="https://oberzwgvbrgqokoynqpm.supabase.co" placeholder="https://xyz.supabase.co">
-              </div>
-              <div class="field" style="margin-top:8px;">
-                <label for="supabase-key">Supabase Anon Public Key</label>
-                <input class="input" id="supabase-key" type="password" autocomplete="off" value="sb_publishable_YWhPwuwfVoORAsW_Wa98IA_b2kb5U3c" placeholder="Clave anon public de Supabase">
-              </div>
-              <div class="button-row" style="margin-top:10px; flex-wrap:wrap; gap:6px;">
-                <button class="btn btn-success" onclick="pushThisDeviceToCloud()">⬆️ Subir datos de ESTE dispositivo a la Nube</button>
-                <button class="btn btn-secondary" onclick="pullCloudToThisDevice()">⬇️ Traer datos de la Nube a este dispositivo</button>
-                <button class="btn btn-secondary" onclick="copySyncLink(this)">📱 Copiar Enlace para Celular</button>
-              </div>
-              <div class="ai-help" style="margin-top:8px;">
-                <b>¿Cómo pasar tus datos del iPhone a la PC?</b><br>
-                1. En tu <b>iPhone</b>: Presiona <b style="color:var(--green)">"⬆️ Subir datos de ESTE dispositivo a la Nube"</b>.<br>
-                2. En tu <b>PC</b>: Presiona <b style="color:var(--cyan)">"⬇️ Traer datos de la Nube a este dispositivo"</b>.
-              </div>
-            </div>
-          </details>
         </div>
       </div>
       <div class="next-action" id="next-action"><div><small>Siguiente acción</small><strong id="next-action-text"></strong></div><button class="btn btn-secondary btn-small" onclick="focusFirstPending()">Abrir</button></div>
@@ -1788,6 +1811,184 @@ dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur
 
     <div class="button-row" style="margin-top:16px;">
       <button class="btn btn-secondary" onclick="closeDialog('ai-history-dialog')">Cerrar</button>
+    </div>
+  </div>
+</dialog>
+
+<!-- Modal de Notificaciones y Atajos de Siri -->
+<dialog class="nt-dialog" id="notif-dialog" aria-labelledby="notif-dialog-title">
+  <div class="dialog-body">
+    <div class="dialog-head">
+      <div>
+        <h3 id="notif-dialog-title">🔔 Notificaciones & Atajos de Siri</h3>
+        <p>Alertas automáticas, aviso de racha y recordatorios al celular.</p>
+      </div>
+      <button class="dialog-close" type="button" onclick="closeDialog('notif-dialog')" aria-label="Cerrar">×</button>
+    </div>
+
+    <!-- iOS Safari Banner Guide -->
+    <div class="ios-install-banner" id="ios-install-banner" hidden style="margin-bottom:12px;">
+      <div class="ios-banner-icon">📱</div>
+      <div class="ios-banner-text">
+        <strong>Notificaciones en iPhone (iOS Safari):</strong>
+        <span>1. Toca <b>Compartir</b> ➔ <b>"Añadir a pantalla de inicio"</b>.<br>
+        2. Abre la App desde la pantalla de inicio y activa las notificaciones.</span>
+      </div>
+    </div>
+
+    <!-- Web Push Permission Button -->
+    <div style="display:flex; justify-content:space-between; align-items:center; padding:12px; background:rgba(6,10,18,0.6); border:1px solid var(--border-subtle); border-radius:var(--radius-md); margin-bottom:12px;">
+      <div>
+        <strong style="font-size:12px; color:var(--text); display:block;">Permisos de Notificación Web</strong>
+        <span style="font-size:10px; color:var(--muted-2);" id="notif-status-pill">Estado: Verificando...</span>
+      </div>
+      <button class="btn btn-primary btn-small" id="btn-request-notif" onclick="requestNotificationPermission()">🔔 Activar</button>
+    </div>
+
+    <!-- Daily Time Picker -->
+    <div style="padding:12px; background:rgba(6,10,18,0.6); border:1px solid var(--border-subtle); border-radius:var(--radius-md); margin-bottom:12px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+        <div>
+          <strong style="font-size:12px; color:var(--text); display:block;">⏰ Hora del Aviso Diario</strong>
+          <span style="font-size:10px; color:var(--muted-2);">Recibe tu alerta de firmeza a esta hora.</span>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <input type="time" id="notif-time-picker" class="input" style="padding:4px 8px; font-size:12px; width:110px;" value="09:00" onchange="saveNotifSchedule()">
+          <button class="btn btn-secondary btn-small" onclick="saveNotifSchedule()">Guardar</button>
+        </div>
+      </div>
+      <div id="notif-schedule-status" style="margin-top:8px; font-size:10.5px; color:var(--cyan); font-weight:600;">
+        ⏰ Próximo aviso diario programado para las 09:00 AM
+      </div>
+    </div>
+
+    <!-- NATIVE CALENDAR ALARM GUARANTEE (App Closed Solution) -->
+    <div style="padding:12px; background:rgba(52,211,153,.08); border:1px solid rgba(52,211,153,.3); border-radius:var(--radius-md); margin-bottom:12px;">
+      <strong style="font-size:12px; color:var(--green); display:block;">📅 Alarma Nativa de Celular (Funciona con App Cerrada)</strong>
+      <p style="font-size:10.5px; color:var(--muted-2); margin-top:2px;">
+        Añade un recordatorio a tu calendario nativo de iPhone, Android o Google Calendar para que tu celular te avise con sonido aunque la app esté cerrada.
+      </p>
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;">
+        <button class="btn btn-success btn-small" onclick="exportNativeCalendarReminder()">📅 Descargar Evento .ICS (iPhone/Android)</button>
+        <button class="btn btn-secondary btn-small" onclick="openGoogleCalendarReminder()">🌐 Google Calendar</button>
+      </div>
+    </div>
+
+    <!-- Siri Shortcuts -->
+    <div style="padding:12px; background:rgba(147,51,234,.08); border:1px solid rgba(147,51,234,.3); border-radius:var(--radius-md); margin-bottom:12px;">
+      <strong style="font-size:12px; color:var(--purple); display:block;">🎙️ Atajos de Siri (iPhone / iOS Shortcuts)</strong>
+      <p style="font-size:10.5px; color:var(--muted-2); margin-top:2px;">Abre el plan de emergencia o consulta tu racha con tu voz:</p>
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;">
+        <button class="btn btn-secondary btn-small" onclick="openCravingDialog()">🎙️ "Oye Siri, Antojo de Fumar"</button>
+        <button class="btn btn-secondary btn-small" onclick="copySiriShortcutLink(this)">📱 Copiar Link Atajos iOS</button>
+      </div>
+    </div>
+
+    <div class="button-row" style="margin-top:12px;">
+      <button class="btn btn-secondary btn-small" onclick="sendTestNotification()">⚡ Probar Notificación con Sonido</button>
+      <button class="btn btn-secondary btn-small" onclick="closeDialog('notif-dialog')">Cerrar</button>
+    </div>
+  </div>
+</dialog>
+
+<!-- Modal de Configuración de Proveedor de IA -->
+<dialog class="nt-dialog" id="ai-config-dialog" aria-labelledby="ai-config-title">
+  <div class="dialog-body">
+    <div class="dialog-head">
+      <div>
+        <h3 id="ai-config-title">✨ Ajustes de Conexión de IA</h3>
+        <p>Configura tu proveedor (OpenRouter, Gemini, Nvidia o HuggingFace) y prueba la conexión.</p>
+      </div>
+      <button class="dialog-close" type="button" onclick="closeDialog('ai-config-dialog')" aria-label="Cerrar">×</button>
+    </div>
+
+    <div class="ai-provider-form">
+      <div class="field" style="margin-top:4px;">
+        <label for="ai-provider-select">Proveedor de IA</label>
+        <select class="input" id="ai-provider-select" onchange="onAIProviderChange()">
+          <option value="openrouter">OpenRouter (DeepSeek R1, Llama 3.3, Qwen - Recomendado)</option>
+          <option value="gemini">Google Gemini API (Gemini 2.0 Flash / 1.5 Pro)</option>
+          <option value="nvidia">Nvidia NIM API (Llama 3.3 70B, Mistral)</option>
+          <option value="huggingface">Hugging Face (Inference API / Serverless)</option>
+        </select>
+      </div>
+
+      <div class="field" style="margin-top:10px;">
+        <label for="ai-api-key">API Key del Proveedor</label>
+        <input class="input" id="ai-api-key" type="password" autocomplete="off" placeholder="Pega tu API Key aquí (ej. sk-or-v1-...)">
+      </div>
+
+      <div class="field" style="margin-top:10px;">
+        <label for="ai-model-name">Nombre de Modelo (Opcional)</label>
+        <input class="input" id="ai-model-name" placeholder="Ej.: google/gemini-2.0-flash-001 ó deepseek/deepseek-r1">
+      </div>
+
+      <div class="button-row" style="margin-top:14px; gap:8px; flex-wrap:wrap;">
+        <button class="btn btn-primary" onclick="saveAIProviderConfig()">💾 Guardar Configuración</button>
+        <button class="btn btn-success" id="btn-test-ai" onclick="testAIConnection()">🧪 Probar Conexión</button>
+      </div>
+
+      <div class="ai-help" id="ai-provider-help" style="margin-top:12px; font-size:11px; line-height:1.5;">
+        La clave se guarda localmente en tu navegador (`localStorage`). Obtén tu clave en <a href="https://openrouter.ai/keys" target="_blank" rel="noreferrer" style="color:var(--cyan)">OpenRouter →</a>, <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noreferrer" style="color:var(--cyan)">Google Gemini →</a>, o <a href="https://build.nvidia.com/" target="_blank" rel="noreferrer" style="color:var(--cyan)">Nvidia NIM →</a>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<!-- Modal de Calendario Interactivo y Agenda de Trabajo -->
+<dialog class="nt-dialog" id="calendar-dialog" style="max-width: 680px; width: 94vw;">
+  <div class="dialog-body">
+    <div class="dialog-head">
+      <div>
+        <h3>📅 Calendario & Agenda de Trabajo</h3>
+        <p>Fechas clave, recordatorios de firmeza, roadmap de contenidos y conteo de días.</p>
+      </div>
+      <button class="dialog-close" type="button" onclick="closeDialog('calendar-dialog')" aria-label="Cerrar">×</button>
+    </div>
+
+    <div class="calendar-view-wrapper">
+      <div class="calendar-header-nav">
+        <button class="btn btn-secondary btn-small" onclick="prevCalendarMonth()">◀ Anterior</button>
+        <div class="calendar-month-title" id="cal-month-title">Agosto 2026</div>
+        <button class="btn btn-secondary btn-small" onclick="nextCalendarMonth()">Siguiente ▶</button>
+      </div>
+
+      <div class="calendar-grid" id="cal-days-grid">
+        <!-- Calendar days injected dynamically -->
+      </div>
+
+      <div class="calendar-agenda-panel">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
+          <div>
+            <strong style="font-size:13px; color:var(--cyan);" id="selected-date-label">Selecciona un día</strong>
+            <span style="font-size:11px; color:var(--muted-2); display:block;" id="selected-date-diff">Días calculados</span>
+          </div>
+          <button class="btn btn-primary btn-small" onclick="showAddEventForm()">+ Agregar Recordatorio / Tarea</button>
+        </div>
+
+        <div id="add-event-form" hidden style="margin-bottom:12px; padding:10px; background:rgba(16,27,46,0.8); border:1px solid var(--border-subtle); border-radius:var(--radius-md);">
+          <div class="field" style="margin-bottom:8px;">
+            <label style="font-size:11px;">Título de la Fecha / Recordatorio</label>
+            <input class="input" id="event-title-input" placeholder="Ej. Lanzar campaña WHABOT / Hito 30 días">
+          </div>
+          <div class="field" style="margin-bottom:8px;">
+            <label style="font-size:11px;">Categoría</label>
+            <select class="input" id="event-cat-input">
+              <option value="content">📢 Publicación de Contenido</option>
+              <option value="smoke">💪 Hito Sin Fumar / Control</option>
+              <option value="project">🚀 Avance de Proyecto</option>
+            </select>
+          </div>
+          <div class="button-row" style="gap:6px;">
+            <button class="btn btn-success btn-small" onclick="saveCalendarEvent()">Guardar Fecha</button>
+            <button class="btn btn-secondary btn-small" onclick="hideAddEventForm()">Cancelar</button>
+          </div>
+        </div>
+
+        <div id="selected-day-events" style="display:grid; gap:8px; max-height:220px; overflow-y:auto;">
+          <!-- Day events injected dynamically -->
+        </div>
+      </div>
     </div>
   </div>
 </dialog>
@@ -2172,30 +2373,76 @@ function updateProgress(){
 }
 
 function getAIConfig(){
+  const rawKey = localStorage.getItem('nt_ai_key') || localStorage.getItem('nt_gemini_key') || state.geminiKey || '';
   return {
     provider: localStorage.getItem('nt_ai_provider') || 'openrouter',
-    apiKey: localStorage.getItem('nt_ai_key') || localStorage.getItem('nt_gemini_key') || state.geminiKey || '',
+    apiKey: String(rawKey).replace(/['"]/g, '').trim(),
     model: localStorage.getItem('nt_ai_model') || ''
   };
 }
 
+function openAIConfigModal(){
+  const cfg = getAIConfig();
+  safeSetValue('ai-provider-select', cfg.provider);
+  safeSetValue('ai-api-key', cfg.apiKey);
+  safeSetValue('ai-model-name', cfg.model);
+  onAIProviderChange();
+  openDialog('ai-config-dialog');
+}
+
+function onAIProviderChange(){
+  const provider = document.getElementById('ai-provider-select')?.value;
+  const helpEl = document.getElementById('ai-provider-help');
+  if(!helpEl) return;
+  if(provider === 'openrouter'){
+    helpEl.innerHTML = `Obtén tu API Key en <a href="https://openrouter.ai/keys" target="_blank" rel="noreferrer" style="color:var(--cyan)">OpenRouter →</a>. Acceso a DeepSeek R1, Llama 3.3 y Qwen.`;
+  } else if(provider === 'gemini'){
+    helpEl.innerHTML = `Obtén tu API Key gratuita en <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noreferrer" style="color:var(--cyan)">Google AI Studio →</a>.`;
+  } else if(provider === 'nvidia'){
+    helpEl.innerHTML = `Obtén tu API Key en <a href="https://build.nvidia.com/" target="_blank" rel="noreferrer" style="color:var(--cyan)">Nvidia NIM →</a>.`;
+  } else {
+    helpEl.innerHTML = `Obtén tu Token en <a href="https://huggingface.co/settings/tokens" target="_blank" rel="noreferrer" style="color:var(--cyan)">HuggingFace →</a>.`;
+  }
+}
+
 function saveAIProviderConfig(){
-  const provider = document.getElementById('ai-provider-select').value;
-  const key = document.getElementById('ai-api-key').value.trim();
-  const model = document.getElementById('ai-model-name').value.trim();
-  
+  const providerEl = document.getElementById('ai-provider-select');
+  const keyEl = document.getElementById('ai-api-key');
+  const modelEl = document.getElementById('ai-model-name');
+
+  const provider = providerEl ? providerEl.value : 'openrouter';
+  const key = keyEl ? keyEl.value.replace(/['"]/g, '').trim() : '';
+  const model = modelEl ? modelEl.value.trim() : '';
+
   if(!key){ toast('Introduce una API Key válida para el proveedor seleccionado.'); return; }
-  
+
   localStorage.setItem('nt_ai_provider', provider);
   localStorage.setItem('nt_ai_key', key);
   localStorage.setItem('nt_ai_model', model);
   if(provider === 'gemini') localStorage.setItem('nt_gemini_key', key);
-  
-  const setupEl = document.getElementById('ai-setup');
-  if(setupEl) setupEl.open = false;
-  
+
+  closeDialog('ai-config-dialog');
   toast(`✓ Proveedor ${provider.toUpperCase()} guardado con éxito.`);
   renderToday();
+}
+
+async function testAIConnection(){
+  const btn = document.getElementById('btn-test-ai');
+  const oldText = btn ? btn.textContent : '';
+  if(btn){ btn.disabled = true; btn.textContent = '🧪 Probando...'; }
+
+  const startTime = Date.now();
+  try {
+    const response = await callUniversalAIProvider('Responde únicamente la palabra OK.');
+    const elapsed = Date.now() - startTime;
+    const cfg = getAIConfig();
+    toast(`✓ ¡Conexión con ${cfg.provider.toUpperCase()} exitosa en ${elapsed}ms!`);
+  } catch(err) {
+    console.error('Test AI Connection error:', err);
+    toast(`❌ Error de conexión: ${err.message}`);
+  } finally {
+    if(btn){ btn.disabled = false; btn.textContent = oldText; }
+  }
 }
 
 function restoreBasePlan(){ const day=todayState(); delete day.aiPlan; day.aiContentDisabled=false; saveState(); renderToday(); renderPublish(); toast('Plan base restaurado.'); }
@@ -2235,8 +2482,15 @@ function renderToday(){
     modelInput.value = cfg.model;
   }
 
-  if(cfg.apiKey){
-    safeSetText('ai-setup-summary', `⚙️ Proveedor ${cfg.provider.toUpperCase()} configurado ✓`);
+  const quickAiBadge = document.getElementById('quick-ai-status');
+  if(quickAiBadge){
+    if(cfg.apiKey){
+      quickAiBadge.textContent = cfg.provider.toUpperCase();
+      quickAiBadge.className = 'qpb-badge violet';
+    } else {
+      quickAiBadge.textContent = 'Config';
+      quickAiBadge.className = 'qpb-badge';
+    }
   }
 
   const suCfg = getSupabaseConfig();
@@ -2662,6 +2916,7 @@ function updateNotifUI() {
   const banner = document.getElementById('ios-install-banner');
   const statusPill = document.getElementById('notif-status-pill');
   const reqBtn = document.getElementById('btn-request-notif');
+  const quickBadge = document.getElementById('quick-notif-status');
 
   // If on iPhone Safari and NOT added to home screen, show iOS install guide banner
   if (isIOS() && !isStandalone()) {
@@ -2673,6 +2928,7 @@ function updateNotifUI() {
   if (!('Notification' in window)) {
     if (statusPill) statusPill.textContent = 'Estado: Notificaciones no soportadas';
     if (reqBtn) reqBtn.disabled = true;
+    if (quickBadge){ quickBadge.textContent = 'No Sop.'; quickBadge.className = 'qpb-badge'; }
     return;
   }
 
@@ -2687,6 +2943,7 @@ function updateNotifUI() {
       reqBtn.classList.add('btn-success');
       reqBtn.disabled = true;
     }
+    if (quickBadge){ quickBadge.textContent = '✓ Activas'; quickBadge.className = 'qpb-badge green'; }
   } else if (perm === 'denied') {
     if (statusPill) {
       statusPill.textContent = '❌ Permiso Denegado en el Navegador';
@@ -2696,12 +2953,14 @@ function updateNotifUI() {
       reqBtn.textContent = 'Permiso Denegado';
       reqBtn.disabled = true;
     }
+    if (quickBadge){ quickBadge.textContent = 'Denegado'; quickBadge.className = 'qpb-badge'; }
   } else {
     if (statusPill) statusPill.textContent = 'Estado: Pendiente de activar';
     if (reqBtn) {
       reqBtn.textContent = '🔔 Activar Notificaciones';
       reqBtn.disabled = false;
     }
+    if (quickBadge){ quickBadge.textContent = 'Activar'; quickBadge.className = 'qpb-badge cyan'; }
   }
 }
 
@@ -2782,6 +3041,62 @@ function copySiriShortcutLink(button) {
   toast('🎙️ Enlace de Atajo para Siri copiado. Úsalo en la app "Atajos" de tu iPhone.');
 }
 
+function exportNativeCalendarReminder(){
+  const timeVal = localStorage.getItem('nt_notif_time') || '09:00';
+  const timeParts = timeVal.split(':');
+  const hh = timeParts[0] || '09';
+  const mm = timeParts[1] || '00';
+
+  const elapsed = smokeElapsed();
+  const days = Math.floor(elapsed / 86400000);
+  
+  const title = `Reto Control — Alerta de Firmeza (${days} Días Sin Fumar)`;
+  const description = `Mantén tu racha intacta. Cada minuto sin fumar cuenta. Revisa tu progreso en Reto Control.`;
+
+  const icsContent = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Reto Control//Recordatorio Diario//ES',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+    'BEGIN:VEVENT',
+    `SUMMARY:${title}`,
+    `DESCRIPTION:${description}`,
+    `DTSTART;TZID=America/Santo_Domingo:20260810T${hh}${mm}00`,
+    'RRULE:FREQ=DAILY',
+    'BEGIN:VALARM',
+    'ACTION:DISPLAY',
+    'DESCRIPTION:Reto Control Alerta',
+    'TRIGGER:-PT0M',
+    'END:VALARM',
+    'END:VEVENT',
+    'END:VCALENDAR'
+  ].join('\r\n');
+
+  const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'reto-control-recordatorio.ics';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+
+  toast('📅 Evento .ICS descargado. Ábrelo en tu celular para activar la alarma nativa.');
+}
+
+function openGoogleCalendarReminder(){
+  const timeVal = localStorage.getItem('nt_notif_time') || '09:00';
+  const cleanTime = timeVal.replace(':', '');
+  const title = encodeURIComponent('Reto Control — Alerta de Firmeza Diario');
+  const details = encodeURIComponent('Aviso de firmeza y control diario. Abre tu panel en https://reto.control.ntdesweb.dev/');
+  const dates = `20260810T${cleanTime}00Z/20260810T${cleanTime}00Z`;
+  const gUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}&dates=${dates}&recur=RRULE:FREQ=DAILY`;
+  window.open(gUrl, '_blank', 'noopener');
+  toast('🌐 Abriendo Google Calendar...');
+}
+
 function sendTestNotification() {
   playNotificationChime();
   if (!('Notification' in window) || Notification.permission !== 'granted') {
@@ -2789,13 +3104,32 @@ function sendTestNotification() {
     requestNotificationPermission();
     return;
   }
-  const title = 'Reto Control — ¡Alerta de Firmeza!';
+
+  const elapsed = smokeElapsed();
+  const days = Math.floor(elapsed / 86400000);
+  const cigsPerDay = state.smoke.cigarettesPerDay || 10;
+  const packSize = state.smoke.packSize || 20;
+  const packPrice = state.smoke.packPrice || 300;
+  const savedExact = Math.floor((elapsed / 86400000) * cigsPerDay * (packPrice / packSize));
+
+  const day = todayState();
+  const goalText = day.goal ? ` | Meta hoy: ${day.goal}` : '';
+
+  const title = `🔥 Reto Control — ¡${days} Días Sin Fumar!`;
+  const body = `Has ahorrado aprox. RD$${savedExact}. Mantén tu firmeza y disciplina intactas.${goalText}`;
+
   const options = {
-    body: 'Notificación de prueba enviada a tu iPhone / Navegador. ¡Mantén tu racha intacta!',
+    body,
     icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="100" fill="%23060a12"/><circle cx="256" cy="256" r="180" fill="none" stroke="%2322d3ee" stroke-width="32"/><path d="M256 140v116l80 48" fill="none" stroke="%2334d399" stroke-width="32" stroke-linecap="round"/></svg>',
-    tag: 'test-notification-tag',
+    badge: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="100" fill="%23060a12"/><circle cx="256" cy="256" r="180" fill="none" stroke="%2322d3ee" stroke-width="32"/></svg>',
+    vibrate: [200, 100, 200, 100, 200],
+    tag: 'reto-control-live-alert',
     renotify: true,
-    silent: false
+    silent: false,
+    actions: [
+      { action: 'craving', title: '⚡ Plan Antojo' },
+      { action: 'confirm', title: '✓ Confirmar Hoy' }
+    ]
   };
 
   if (navigator.serviceWorker && navigator.serviceWorker.controller) {
@@ -2805,7 +3139,193 @@ function sendTestNotification() {
   } else {
     new Notification(title, options);
   }
-  toast('🔔 Alerta visual enviada y sonido emitido.');
+  toast('🔔 Notificación personalizada enviada con sonido y acciones.');
+}
+
+/* ── Interactive Calendar & Agenda Module ── */
+let currentCalYear = new Date().getFullYear();
+let currentCalMonth = new Date().getMonth();
+let selectedCalDateStr = dateKey();
+
+function openCalendarModal(){
+  if(!Array.isArray(state.calendarEvents)) state.calendarEvents = [];
+  openDialog('calendar-dialog');
+  renderCalendar(currentCalYear, currentCalMonth);
+  selectCalendarDay(selectedCalDateStr || dateKey());
+}
+
+function prevCalendarMonth(){
+  currentCalMonth--;
+  if(currentCalMonth < 0){
+    currentCalMonth = 11;
+    currentCalYear--;
+  }
+  renderCalendar(currentCalYear, currentCalMonth);
+}
+
+function nextCalendarMonth(){
+  currentCalMonth++;
+  if(currentCalMonth > 11){
+    currentCalMonth = 0;
+    currentCalYear++;
+  }
+  renderCalendar(currentCalYear, currentCalMonth);
+}
+
+function renderCalendar(year, month){
+  const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+  safeSetText('cal-month-title', `${monthNames[month]} ${year}`);
+
+  const gridEl = document.getElementById('cal-days-grid');
+  if(!gridEl) return;
+
+  const weekdays = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+  let html = weekdays.map(w => `<div class="calendar-weekday">${w}</div>`).join('');
+
+  const firstDayOfMonth = new Date(year, month, 1);
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  let firstDayIndex = (firstDayOfMonth.getDay() + 6) % 7;
+
+  const prevMonthDays = new Date(year, month, 0).getDate();
+  for(let i = firstDayIndex - 1; i >= 0; i--){
+    const dayNum = prevMonthDays - i;
+    html += `<div class="calendar-day-cell other-month">${dayNum}</div>`;
+  }
+
+  const todayStr = dateKey();
+  const quitAtDateStr = smokeConfigured() ? dateKey(new Date(state.smoke.quitAt)) : null;
+
+  for(let day = 1; day <= daysInMonth; day++){
+    const dObj = new Date(year, month, day);
+    const dStr = dateKey(dObj);
+
+    const isToday = dStr === todayStr;
+    const isSelected = dStr === selectedCalDateStr;
+
+    let isSmokeFree = false;
+    if(quitAtDateStr && dStr >= quitAtDateStr && dStr <= todayStr){
+      isSmokeFree = true;
+    }
+
+    const dayEvents = (state.calendarEvents || []).filter(e => e.date === dStr);
+    const hasEvent = dayEvents.length > 0;
+
+    let classes = 'calendar-day-cell';
+    if(isToday) classes += ' today';
+    if(isSelected) classes += ' selected';
+    if(isSmokeFree) classes += ' smoke-free';
+
+    let dots = '';
+    if(hasEvent) dots += `<span class="cal-dot violet"></span>`;
+    else if(isSmokeFree) dots += `<span class="cal-dot green"></span>`;
+
+    html += `<div class="${classes}" onclick="selectCalendarDay('${dStr}')">
+      <span>${day}</span>
+      ${dots}
+    </div>`;
+  }
+
+  gridEl.innerHTML = html;
+}
+
+function selectCalendarDay(dStr){
+  selectedCalDateStr = dStr;
+  const dObj = new Date(dStr + 'T12:00:00');
+  
+  const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+  const formattedDate = new Intl.DateTimeFormat('es-DO', options).format(dObj);
+  safeSetText('selected-date-label', formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1));
+
+  const todayObj = new Date(dateKey() + 'T12:00:00');
+  const diffTime = dObj.getTime() - todayObj.getTime();
+  const diffDays = Math.round(diffTime / 86400000);
+
+  let diffText = 'Hoy';
+  if(diffDays > 0) diffText = `Faltan ${diffDays} día${diffDays === 1 ? '' : 's'}`;
+  else if(diffDays < 0) diffText = `Hace ${Math.abs(diffDays)} día${Math.abs(diffDays) === 1 ? '' : 's'}`;
+
+  safeSetText('selected-date-diff', diffText);
+
+  renderSelectedDayEvents(dStr, dObj);
+  renderCalendar(currentCalYear, currentCalMonth);
+}
+
+function renderSelectedDayEvents(dStr, dObj){
+  const container = document.getElementById('selected-day-events');
+  if(!container) return;
+
+  const events = (state.calendarEvents || []).filter(e => e.date === dStr);
+  const dayOfWeek = dObj.getDay();
+  const schedule = CONTENT_SCHEDULE[dayOfWeek];
+  const primaryAcc = account(schedule.primary);
+
+  let html = '';
+
+  html += `
+    <div style="padding:10px; background:rgba(139,92,246,0.1); border:1px solid rgba(139,92,246,0.3); border-radius:var(--radius-md); font-size:11px;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <strong style="color:var(--violet);">📢 Contenido Asignado (${escapeHTML(primaryAcc.handle)})</strong>
+        <span style="font-weight:700; color:var(--cyan);">${escapeHTML(schedule.format)}</span>
+      </div>
+      <p style="margin-top:4px; color:var(--text-2);">${escapeHTML(schedule.content)}</p>
+    </div>
+  `;
+
+  if(events.length > 0){
+    events.forEach(e => {
+      html += `
+        <div style="padding:10px; background:rgba(6,10,18,0.6); border:1px solid var(--border-subtle); border-radius:var(--radius-md); font-size:11px; display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <strong style="color:var(--cyan);">${escapeHTML(e.title)}</strong>
+            <span style="font-size:10px; color:var(--muted-2); display:block;">Categoría: ${escapeHTML(e.category || 'General')}</span>
+          </div>
+          <button class="btn btn-danger btn-small" onclick="removeCalendarEvent('${e.id}')">× Remove</button>
+        </div>
+      `;
+    });
+  }
+
+  container.innerHTML = html;
+}
+
+function showAddEventForm(){
+  const form = document.getElementById('add-event-form');
+  if(form) form.hidden = false;
+}
+function hideAddEventForm(){
+  const form = document.getElementById('add-event-form');
+  if(form) form.hidden = true;
+}
+function saveCalendarEvent(){
+  const titleEl = document.getElementById('event-title-input');
+  const catEl = document.getElementById('event-cat-input');
+  const title = titleEl ? titleEl.value.trim() : '';
+  const category = catEl ? catEl.value : 'content';
+
+  if(!title){ toast('Escribe el título del recordatorio.'); return; }
+
+  if(!Array.isArray(state.calendarEvents)) state.calendarEvents = [];
+  state.calendarEvents.push({
+    id: uid(),
+    date: selectedCalDateStr,
+    title,
+    category,
+    createdAt: new Date().toISOString()
+  });
+
+  saveState();
+  if(titleEl) titleEl.value = '';
+  hideAddEventForm();
+  selectCalendarDay(selectedCalDateStr);
+  toast('✓ Recordatorio añadido al calendario.');
+}
+
+function removeCalendarEvent(id){
+  state.calendarEvents = (state.calendarEvents || []).filter(e => e.id !== id);
+  saveState();
+  selectCalendarDay(selectedCalDateStr);
+  toast('Recordatorio eliminado.');
 }
 
 async function updateAuthUI() {
