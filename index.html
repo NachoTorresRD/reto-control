@@ -1991,9 +1991,12 @@ dialog.nt-dialog.calendar-dialog-wide {
       </div>
 
       <div class="ai-help" id="ai-provider-help" style="margin-top:12px; font-size:11px; line-height:1.5;">
-        La clave se guarda localmente en tu navegador (`localStorage`). Obtén tu clave en <a href="https://openrouter.ai/keys" target="_blank" rel="noreferrer" style="color:var(--cyan)">OpenRouter →</a>, <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noreferrer" style="color:var(--cyan)">Google Gemini →</a>, o <a href="https://build.nvidia.com/" target="_blank" rel="noreferrer" style="color:var(--cyan)">Nvidia NIM →</a>
+        La clave se guarda localmente en tu navegador. Obtén tu clave en <a href="https://openrouter.ai/keys" target="_blank" rel="noreferrer" style="color:var(--cyan)">OpenRouter →</a>, <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noreferrer" style="color:var(--cyan)">Google Gemini →</a>, o <a href="https://build.nvidia.com/" target="_blank" rel="noreferrer" style="color:var(--cyan)">Nvidia NIM →</a>
       </div>
     </div>
+  </div>
+</dialog>
+
 <!-- Modal de Widget para iPhone (iOS Shortcuts & Live Simulator) -->
 <dialog class="nt-dialog" id="widget-dialog" aria-labelledby="widget-dialog-title" style="width:min(600px, calc(100% - 24px));">
   <div class="dialog-body">
@@ -3805,11 +3808,14 @@ async function pushThisDeviceToCloud(){
   if(!client) { toast('Iniciando cliente de Supabase...'); return; }
   const userId = getUserId();
   try {
-    const { error } = await client.from('app_state').upsert({ id: userId, state: state, updated_at: new Date().toISOString() });
+    const now = new Date().toISOString();
+    const { error } = await client.from('app_state').upsert({ id: userId, state: state, updated_at: now });
     if(error){
       console.warn('Supabase Push Error:', error.message);
       toast(`Error al subir datos a la nube: ${error.message}`);
     } else {
+      const ts = new Date(now).getTime();
+      localStorage.setItem('nt_last_push_ts', String(ts));
       console.log(`✓ Datos de este dispositivo subidos a Supabase (ID: ${userId})`);
       toast(`⬆️ ¡Datos guardados en la Nube! (${userId.split('@')[0]})`);
     }
@@ -3838,22 +3844,28 @@ async function loadStateFromSupabase(force = false){
   if(!client) return;
   const userId = getUserId();
   try {
-    const { data, error } = await client.from('app_state').select('state').eq('id', userId).single();
+    const { data, error } = await client.from('app_state').select('state, updated_at').eq('id', userId).single();
     if(data && data.state){
-      state = { ...state, ...data.state };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-      renderToday();
-      renderSmoke();
-      renderSell();
-      renderPublish();
-      renderProjects();
-      console.log(`✓ Estado cargado desde Supabase DB para (${userId})`);
-      if(force) {
-        toast(`⬇️ Datos sincronizados desde la Nube para "${userId.split('@')[0]}".`);
+      // Only merge cloud data — never overwrite cloud with local on auto-load
+      const cloudState = data.state;
+      const cloudTs = data.updated_at ? new Date(data.updated_at).getTime() : 0;
+      const localTs = parseInt(localStorage.getItem('nt_last_push_ts') || '0', 10);
+
+      // If cloud is newer or this is a manual pull (force), apply cloud data
+      if(force || cloudTs >= localTs) {
+        state = { ...state, ...cloudState };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        localStorage.setItem('nt_last_push_ts', String(cloudTs));
+        renderToday(); renderSmoke(); renderSell(); renderPublish(); renderProjects();
+        console.log(`✓ Estado cargado desde Supabase DB para (${userId})`);
+        if(force) toast(`⬇️ Datos sincronizados desde la Nube para "${userId.split('@')[0]}".`);
+      } else {
+        console.log(`ℹ️ Datos locales más recientes que la nube — no se sobreescribieron.`);
+        if(force) toast(`⬇️ Tus datos locales son más recientes. Usa "Subir a Nube" para actualizar.`);
       }
     } else if(force) {
-      toast(`ℹ️ Creando primer respaldo en la Nube para "${userId.split('@')[0]}"...`);
-      await pushThisDeviceToCloud();
+      // Only push on explicit manual pull, not on auto-startup
+      toast(`ℹ️ No hay datos en la Nube para "${userId.split('@')[0]}". Usa "Subir a Nube" para crear tu respaldo.`);
     }
   } catch(e){
     console.warn('Load state from Supabase error:', e);
