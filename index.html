@@ -1640,6 +1640,12 @@ dialog.nt-dialog.calendar-dialog-wide {
           <span>Calendario & Agenda</span>
         </button>
 
+        <button class="quick-pill-btn" onclick="openThemePreviewModal()">
+          <span class="qpb-icon">🎨</span>
+          <span>Prueba de Fondo</span>
+          <span class="qpb-badge cyan">IA Visual</span>
+        </button>
+
         <button class="quick-pill-btn" onclick="openSystemSettings('sync')">
           <span class="qpb-icon">☁️</span>
           <span>Nube</span>
@@ -2004,6 +2010,58 @@ dialog.nt-dialog.calendar-dialog-wide {
       <button class="btn btn-secondary" type="button" onclick="closeDialog('rewards-dialog')">Cerrar</button>
     </div>
   </form>
+</dialog>
+
+<!-- Modal de Prueba de Fondos e Imagen de Alta Definición -->
+<dialog class="nt-dialog" id="theme-preview-dialog" aria-labelledby="theme-preview-title" style="width:min(640px, calc(100% - 24px));">
+  <div class="dialog-body">
+    <div class="dialog-head">
+      <div>
+        <h3 id="theme-preview-title">🎨 Pruebas de Fondo y Composición Visual</h3>
+        <p>Selecciona y prueba fondos en tiempo real para hacer ver el panel más limpio y resaltar las áreas clave.</p>
+      </div>
+      <button class="dialog-close" type="button" onclick="closeDialog('theme-preview-dialog')" aria-label="Cerrar">×</button>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:10px; margin-bottom:14px;">
+      <!-- Option 1: Aurora Dark Mesh (Generated) -->
+      <div class="theme-option-card" onclick="previewThemeBackground('aurora_mesh')" id="th-card-aurora_mesh" style="padding:12px; background:rgba(12,20,34,0.8); border:2px solid var(--cyan); border-radius:var(--radius-md); cursor:pointer; transition:transform 0.2s ease;">
+        <div style="height:75px; border-radius:var(--radius-sm); background:url('assets/aurora_dark_mesh.png') center/cover; margin-bottom:8px; border:1px solid rgba(255,255,255,0.15);"></div>
+        <strong style="font-size:12.5px; color:var(--text); display:block;">🌌 Malla Aurora Neón (IA Clean)</strong>
+        <span style="font-size:10.5px; color:var(--muted-2);">Fondo degradado orgánico de alta legibilidad que resalta las tarjetas clave.</span>
+      </div>
+
+      <!-- Option 2: Obsidian Glass (Generated) -->
+      <div class="theme-option-card" onclick="previewThemeBackground('obsidian_glass')" id="th-card-obsidian_glass" style="padding:12px; background:rgba(12,20,34,0.8); border:1px solid var(--border-subtle); border-radius:var(--radius-md); cursor:pointer; transition:transform 0.2s ease;">
+        <div style="height:75px; border-radius:var(--radius-sm); background:url('assets/obsidian_glass_bg.png') center/cover; margin-bottom:8px; border:1px solid rgba(255,255,255,0.15);"></div>
+        <strong style="font-size:12.5px; color:var(--text); display:block;">💎 Cristal Obsidiana Oscuro (IA)</strong>
+        <span style="font-size:10.5px; color:var(--muted-2);">Efecto cristal pulido con reflejos suaves morados y turquesa.</span>
+      </div>
+
+      <!-- Option 3: Deep Cyber Gradient -->
+      <div class="theme-option-card" onclick="previewThemeBackground('cyber_dark')" id="th-card-cyber_dark" style="padding:12px; background:rgba(12,20,34,0.8); border:1px solid var(--border-subtle); border-radius:var(--radius-md); cursor:pointer; transition:transform 0.2s ease;">
+        <div style="height:75px; border-radius:var(--radius-sm); background:radial-gradient(ellipse at top,#0f172a,#060a12); margin-bottom:8px; border:1px solid rgba(255,255,255,0.15);"></div>
+        <strong style="font-size:12.5px; color:var(--text); display:block;">🌃 Noche Profunda Minimalista</strong>
+        <span style="font-size:10.5px; color:var(--muted-2);">Contraste puro de tono azul noche con sombras limpias.</span>
+      </div>
+
+      <!-- Option 4: Classic Original -->
+      <div class="theme-option-card" onclick="previewThemeBackground('original')" id="th-card-original" style="padding:12px; background:rgba(12,20,34,0.8); border:1px solid var(--border-subtle); border-radius:var(--radius-md); cursor:pointer; transition:transform 0.2s ease;">
+        <div style="height:75px; border-radius:var(--radius-sm); background:#060a12; margin-bottom:8px; border:1px solid rgba(255,255,255,0.15);"></div>
+        <strong style="font-size:12.5px; color:var(--text); display:block;">⚡ Fondo Original Reto Control</strong>
+        <span style="font-size:10.5px; color:var(--muted-2);">Apariencia original por defecto sin imagen de fondo.</span>
+      </div>
+    </div>
+
+    <div style="padding:10px 12px; background:rgba(34,211,238,0.08); border:1px solid rgba(34,211,238,0.25); border-radius:var(--radius-md); font-size:11px; color:var(--muted-2); margin-bottom:14px;">
+      ✨ <strong>Prueba en vivo:</strong> Al tocar cualquiera de las opciones arriba, la app cambiará su fondo instantáneamente en tu pantalla para que veas cuál resalta mejor tu avance.
+    </div>
+
+    <div class="button-row" style="gap:8px;">
+      <button class="btn btn-success" onclick="applyAndSaveThemeBg()" style="flex:1;">✅ Aplicar este Fondo</button>
+      <button class="btn btn-secondary" onclick="closeDialog('theme-preview-dialog')">Cerrar</button>
+    </div>
+  </div>
 </dialog>
 
 <!-- Modal Unificado de Configuración General del Sistema -->
@@ -4589,6 +4647,60 @@ async function loadStateFromSupabase(force = false){
   }
 }
 
+/* ── Theme Background & Visual Composition Module ── */
+function openThemePreviewModal(){
+  const savedBg = localStorage.getItem('nt_theme_bg') || 'aurora_mesh';
+  previewThemeBackground(savedBg);
+  openDialog('theme-preview-dialog');
+}
+
+function previewThemeBackground(themeId){
+  window._currentThemePreview = themeId;
+  const cards = ['aurora_mesh', 'obsidian_glass', 'cyber_dark', 'original'];
+  cards.forEach(id => {
+    const cardEl = document.getElementById(`th-card-${id}`);
+    if(cardEl){
+      cardEl.style.borderColor = (id === themeId) ? 'var(--cyan)' : 'var(--border-subtle)';
+      cardEl.style.transform = (id === themeId) ? 'scale(1.02)' : 'scale(1)';
+    }
+  });
+
+  const body = document.body;
+  if(themeId === 'aurora_mesh'){
+    body.style.backgroundImage = "url('assets/aurora_dark_mesh.png')";
+    body.style.backgroundSize = "cover";
+    body.style.backgroundAttachment = "fixed";
+    body.style.backgroundPosition = "center";
+  } else if(themeId === 'obsidian_glass'){
+    body.style.backgroundImage = "url('assets/obsidian_glass_bg.png')";
+    body.style.backgroundSize = "cover";
+    body.style.backgroundAttachment = "fixed";
+    body.style.backgroundPosition = "center";
+  } else if(themeId === 'cyber_dark'){
+    body.style.backgroundImage = "radial-gradient(ellipse 70% 50% at 50% 0%, #0f172a 0%, #060a12 100%)";
+    body.style.backgroundSize = "cover";
+    body.style.backgroundAttachment = "fixed";
+  } else {
+    body.style.backgroundImage = "radial-gradient(ellipse 60% 40% at 85% 0%, rgba(139,92,246,.07) 0%, transparent 60%), radial-gradient(ellipse 40% 30% at 10% 80%, rgba(34,211,238,.04) 0%, transparent 50%)";
+  }
+}
+
+function applyAndSaveThemeBg(){
+  const chosen = window._currentThemePreview || 'aurora_mesh';
+  localStorage.setItem('nt_theme_bg', chosen);
+  closeDialog('theme-preview-dialog');
+  toast('✨ Fondo y composición visual aplicados con éxito.', '🎨');
+}
+
+function loadSavedThemeBg(){
+  const saved = localStorage.getItem('nt_theme_bg');
+  if(saved){
+    previewThemeBackground(saved);
+  } else {
+    previewThemeBackground('aurora_mesh');
+  }
+}
+
 function init(){
   const syncUserIdInput = document.getElementById('sync-user-id');
   if (syncUserIdInput) syncUserIdInput.value = getUserId().split('@')[0];
@@ -4601,6 +4713,7 @@ function init(){
   updateNotifUI();
   updateAuthUI();
   saveNotifSchedule();
+  loadSavedThemeBg();
 
   // Load state from cloud on app startup
   loadStateFromSupabase();
