@@ -5068,11 +5068,11 @@ async function speakJarvisResponse(text){
     }
   }
 
-  // FALLBACK: Web Speech Synthesis (Nativa con velocidad 1.1 y selección de voz HD/Cloud)
+  // FALLBACK: Web Speech Synthesis (Nativa con velocidad pausada y natural 0.95)
   if(!('speechSynthesis' in window)) return;
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = 'es-ES';
-  utterance.rate = 1.1; // Ajustado a 1.1 según preferencia del usuario
+  utterance.rate = 0.95; // Velocidad pausada y clara
   utterance.pitch = 1.0;
 
   if(jarvisSpeechSynth.onvoiceschanged !== undefined){
