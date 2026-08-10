@@ -2798,16 +2798,21 @@ function renderSmoke(){
 
   const rewardFundPct = Math.min(100, Math.floor((savedExact / rewardCost) * 100));
   const daysPct = Math.min(100, Math.floor((elapsed / goalMs) * 100));
+  const moneyNeeded = Math.max(0, rewardCost - savedExact);
 
   safeSetText('reward-title-display', rewardName);
-  safeSetText('reward-time-left', `${remainingDays}d, ${remainingHours}h faltan`);
+  safeSetText('reward-time-left', remainingMs > 0 ? `${remainingDays}d, ${remainingHours}h faltan` : '✓ Meta alcanzada');
   safeSetText('reward-fund-progress', `${formatDOPFlat(savedExact)} / ${formatDOPFlat(rewardCost)}`);
   
   const rewardBar = document.getElementById('reward-progress-bar');
   if(rewardBar) rewardBar.style.width = `${rewardFundPct}%`;
 
-  safeSetText('reward-pct-text', `${rewardFundPct}% del premio cubierto con ahorro`);
-  safeSetText('reward-days-pct', `${daysPct}% meta cumplida`);
+  if (savedExact >= rewardCost) {
+    safeSetText('reward-pct-text', `🎉 100% cubierto con ahorro (${formatDOPFlat(savedExact)} acumulados). ¡Premio alcanzado!`);
+  } else {
+    safeSetText('reward-pct-text', `Faltan ${formatDOPFlat(moneyNeeded)} de ahorro para comprar tu premio (${rewardFundPct}% cubierto)`);
+  }
+  safeSetText('reward-days-pct', `${daysPct}% días meta`);
 
   // Widget Live Preview DOM (Medium, Small & Lockscreen)
   safeSetText('widget-preview-days', days);
