@@ -1566,7 +1566,55 @@ dialog.nt-dialog.calendar-dialog-wide {
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
 }
-</style>
+
+/* ── Splash Screen Styling & Auto-Dismiss ── */
+#app-splash {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: #060a12;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+#app-splash.hidden {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+  display: none !important;
+}
+.splash-logo {
+  font-size: 52px;
+  margin-bottom: 12px;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+.splash-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.splash-sub {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+.splash-bar-wrap {
+  width: 140px;
+  height: 4px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.splash-bar {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--cyan), var(--violet));
+  transition: width 0.3s ease;
+}</style>
 </head>
 <body>
 <!-- Splash Screen -->
@@ -4728,15 +4776,19 @@ init();
   const splash = document.getElementById('app-splash');
   const bar = document.getElementById('splash-bar');
   if (!splash) return;
-  // Animate bar quickly
+
+  const dismiss = () => {
+    splash.classList.add('hidden');
+    splash.style.display = 'none';
+  };
+
   requestAnimationFrame(() => {
-    bar.style.width = '60%';
-    setTimeout(() => { bar.style.width = '90%'; }, 300);
-    setTimeout(() => {
-      bar.style.width = '100%';
-      setTimeout(() => splash.classList.add('hidden'), 200);
-    }, 600);
+    if (bar) bar.style.width = '100%';
+    setTimeout(dismiss, 300);
   });
+
+  // Emergency safety fallback timer to ensure screen NEVER hangs on logo
+  setTimeout(dismiss, 600);
 })();
 
 /* ── Bottom Sheet: Swipe-down to close (mobile) ── */
