@@ -2158,7 +2158,7 @@ dialog.nt-dialog.calendar-dialog-wide {
   </div>
 </dialog>
 
-<!-- Modal de Widget para iPhone (iOS Shortcuts & Live Simulator) -->
+<!-- Modal de Widget para iPhone (Scriptable) -->
 <dialog class="nt-dialog" id="widget-dialog" aria-labelledby="widget-dialog-title" style="width:min(600px, calc(100% - 24px));">
   <div class="dialog-body">
     <div class="dialog-head">
@@ -2231,19 +2231,27 @@ dialog.nt-dialog.calendar-dialog-wide {
       </div>
     </div>
 
-    <!-- Shortcut Copy & Guide -->
-    <div style="padding:12px; background:rgba(6,10,18,0.6); border:1px solid var(--border-subtle); border-radius:var(--radius-md); margin-bottom:12px;">
-      <strong style="font-size:12px; color:var(--text); display:block;">📲 ¿Cómo poner este Widget en tu iPhone?</strong>
-      <ol style="font-size:11px; color:var(--muted-2); margin-top:6px; padding-left:18px; line-height:1.6;">
-        <li>Presiona el botón de abajo para <b>copiar el enlace del Widget</b>.</li>
-        <li>Abre la app <b>Atajos (Shortcuts)</b> en tu iPhone y crea un nuevo atajo.</li>
-        <li>Añade la acción <b>"Abrir URL"</b> y pega este enlace.</li>
-        <li>Añade el widget de <b>Atajos (Shortcuts)</b> a tu pantalla de inicio o de bloqueo.</li>
-      </ol>
-      <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
-        <button class="btn btn-primary" style="flex:1;" onclick="copyWidgetLink(this)">📱 Copiar Enlace para Widget iOS</button>
-        <button class="btn btn-secondary" onclick="sendTestNotification()">🔔 Probar Alerta Humana</button>
+    <!-- Scriptable Widget Guide & Copy Button -->
+    <div style="padding:14px; background:rgba(34,211,238,0.06); border:1px solid rgba(34,211,238,0.25); border-radius:var(--radius-md); margin-bottom:12px;">
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+        <span style="font-size:20px;">📲</span>
+        <strong style="font-size:13px; color:var(--cyan);">Widget Real en Pantalla de Inicio (Scriptable)</strong>
       </div>
+      <ol style="font-size:11px; color:var(--muted-2); margin-top:4px; padding-left:18px; line-height:1.7;">
+        <li>Descarga <b>Scriptable</b> gratis en la App Store de tu iPhone.</li>
+        <li>Toca el botón <b>"Copiar Script para Scriptable"</b> de abajo.</li>
+        <li>Abre Scriptable → toca <b>+</b> → pega el código → ponle de nombre <b>"Reto Control"</b>.</li>
+        <li>Mantén presionada la pantalla de inicio del iPhone → <b>+ (arriba izq.) → Scriptable</b> → elige Mediano (4x2).</li>
+      </ol>
+      <div style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="btn btn-primary" style="flex:1;" id="btn-copy-scriptable" onclick="copyScriptableWidget(this)">📋 Copiar Script para Scriptable (iPhone)</button>
+      </div>
+    </div>
+
+    <div style="padding:12px; background:rgba(251,191,36,0.06); border:1px solid rgba(251,191,36,0.25); border-radius:var(--radius-md); margin-bottom:12px; font-size:11px; color:var(--muted-2); line-height:1.5;">
+      <strong style="color:var(--amber); display:block; margin-bottom:4px;">🔔 Para notificaciones que suenen con el cel bloqueado:</strong>
+      Abre Safari → Compartir → <b>"Agregar a pantalla de inicio"</b>. La notificación solo despierta la pantalla si la app está instalada como PWA en tu iPhone.
+      <button class="btn btn-secondary btn-small" style="margin-top:8px; width:100%;" onclick="sendTestNotification()">⚡ Probar Notificación con Sonido Ahora</button>
     </div>
 
     <div class="button-row">
@@ -3956,12 +3964,135 @@ function saveSupabaseConfig(){
   renderToday();
 }
 
-function copySyncLink(button) {
-  const userId = getUserId();
-  const shortId = userId.split('@')[0];
-  const syncUrl = `${window.location.origin}${window.location.pathname}?user=${encodeURIComponent(shortId)}`;
-  copyText(syncUrl, button);
-  toast(`📱 Enlace de sincronización copiado: ?user=${shortId}`);
+function copyScriptableWidget(button) {
+  const activeUser = getUserId();
+  const scriptContent = `// ═══════════════════════════════════════════════════
+// RETO CONTROL — Widget para Scriptable (iPhone)
+// ═══════════════════════════════════════════════════
+const USER_ID      = "${activeUser}";
+const SUPABASE_URL = "https://oberzwgvbrgqokoynqpm.supabase.co";
+const SUPABASE_KEY = "sb_publishable_YWhPwuwfVoORAsW_Wa98IA_b2kb5U3c";
+
+const C = {
+  bg:       new Color("#060a12"),
+  surface:  new Color("#0c1422"),
+  surface2: new Color("#152036"),
+  cyan:     new Color("#22d3ee"),
+  green:    new Color("#34d399"),
+  violet:   new Color("#8b5cf6"),
+  amber:    new Color("#fbbf24"),
+  text:     new Color("#f1f5f9"),
+  muted:    new Color("#94a3b8"),
+  muted2:   new Color("#64748b"),
+};
+
+async function fetchState() {
+  const url = \`\${SUPABASE_URL}/rest/v1/app_state?id=eq.\${encodeURIComponent(USER_ID)}&select=state,updated_at\`;
+  const req = new Request(url);
+  req.headers = {
+    "apikey": SUPABASE_KEY,
+    "Authorization": \`Bearer \${SUPABASE_KEY}\`,
+    "Content-Type": "application/json"
+  };
+  try {
+    const json = await req.loadJSON();
+    if (json && json.length > 0 && json[0].state) return json[0].state;
+  } catch (e) {}
+  return null;
+}
+
+function calcMetrics(state) {
+  const smoke    = state?.smoke || {};
+  const quitAt   = smoke.quitAt ? new Date(smoke.quitAt) : new Date();
+  const now      = new Date();
+  const elapsed  = Math.max(0, now - quitAt);
+  const days     = Math.floor(elapsed / 86400000);
+  const hours    = Math.floor((elapsed % 86400000) / 3600000);
+  const mins     = Math.floor((elapsed % 3600000) / 60000);
+  const cigsDay  = smoke.cigarettesPerDay || 10;
+  const packSize = smoke.packSize || 20;
+  const packPrice= smoke.packPrice || 300;
+  const saved    = Math.floor((elapsed / 86400000) * cigsDay * (packPrice / packSize));
+  const targetDays = smoke.targetDays || 30;
+  const rewardName = smoke.rewardName || "Tu recompensa";
+  const rewardCost = smoke.rewardCost || 3000;
+  const rewardPct  = Math.min(100, Math.floor((saved / rewardCost) * 100));
+  const daysLeft   = Math.max(0, targetDays - days);
+  return { days, hours, mins, saved, targetDays, rewardName, rewardCost, rewardPct, daysLeft };
+}
+
+function buildWidget(m) {
+  const w = new ListWidget();
+  w.backgroundColor = C.bg;
+  w.setPadding(14, 16, 14, 16);
+
+  const header = w.addStack();
+  header.layoutHorizontally();
+  header.centerAlignContent();
+  const flame = header.addText("🔥");
+  flame.font = Font.systemFont(18);
+  header.addSpacer(6);
+  const title = header.addText("Reto Control");
+  title.textColor = C.text;
+  title.font = Font.boldSystemFont(13);
+  header.addSpacer();
+  const tag = header.addText("EN VIVO");
+  tag.textColor = C.cyan;
+  tag.font = Font.boldSystemFont(9);
+
+  w.addSpacer(10);
+  const daysRow = w.addStack();
+  daysRow.layoutHorizontally();
+  daysRow.centerAlignContent();
+  const daysNum = daysRow.addText(String(m.days));
+  daysNum.textColor = C.cyan;
+  daysNum.font = Font.boldSystemFont(44);
+  daysRow.addSpacer(8);
+  const daysCol = daysRow.addStack();
+  daysCol.layoutVertically();
+  const daysLabel = daysCol.addText("DÍAS SIN FUMAR");
+  daysLabel.textColor = C.muted;
+  daysLabel.font = Font.boldSystemFont(9);
+  const hoursLabel = daysCol.addText(\`\${m.hours}h \${m.mins}m de autocontrol\`);
+  hoursLabel.textColor = C.muted2;
+  hoursLabel.font = Font.systemFont(10);
+
+  w.addSpacer(8);
+  const moneyRow = w.addStack();
+  moneyRow.layoutHorizontally();
+  const moneyLabel = moneyRow.addText(\`💰 RD$\${m.saved.toLocaleString()} ahorrados\`);
+  moneyLabel.textColor = C.green;
+  moneyLabel.font = Font.boldSystemFont(12);
+
+  w.addSpacer(6);
+  const rewardRow = w.addStack();
+  rewardRow.layoutHorizontally();
+  const rewardText = rewardRow.addText(\`🎁 \${m.rewardName}: \${m.rewardPct}%\`);
+  rewardText.textColor = m.rewardPct >= 100 ? C.green : C.muted;
+  rewardText.font = Font.systemFont(10);
+  rewardRow.addSpacer();
+  const daysLeftText = rewardRow.addText(\`\${m.daysLeft}d restantes\`);
+  daysLeftText.textColor = C.muted2;
+  daysLeftText.font = Font.systemFont(9);
+
+  return w;
+}
+
+const state = await fetchState();
+const m = calcMetrics(state);
+const widget = buildWidget(m);
+if (config.runsInWidget) {
+  Script.setWidget(widget);
+} else {
+  await widget.presentMedium();
+}
+Script.complete();`;
+
+  navigator.clipboard.writeText(scriptContent).then(() => {
+    toast(`📋 ¡Script de Scriptable copiado para "${activeUser.split('@')[0]}"!`);
+  }).catch(() => {
+    toast('Selecciona y copia manualmente el script');
+  });
 }
 
 let _supabaseClient = null;
