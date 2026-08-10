@@ -2264,6 +2264,14 @@ dialog.nt-dialog.calendar-dialog-wide {
 
     <!-- Tab 3: Asistente IA & Voz ElevenLabs -->
     <div id="sstab-sec-ai" hidden>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; padding:8px 12px; background:rgba(139,92,246,0.08); border:1px solid rgba(139,92,246,0.25); border-radius:var(--radius-md); font-size:11px;">
+        <div>
+          <span style="color:var(--muted-2);">Cuenta Nube:</span>
+          <strong style="color:var(--cyan);" id="sstab-user-display-ai">Cargando...</strong>
+        </div>
+        <button type="button" class="btn btn-secondary btn-small" onclick="pullCloudToThisDevice()">⬇️ Descargar Llaves de Nube</button>
+      </div>
+
       <div class="field" style="margin-top:4px;">
         <label for="sstab-ai-provider">Proveedor de Inteligencia (Cerebro IA)</label>
         <select class="input" id="sstab-ai-provider" onchange="onAIProviderChange()">
@@ -3038,13 +3046,20 @@ function switchSystemSettingsTab(tabName){
     safeSetText('sstab-user-display', userLabel);
   } else if(tabName === 'ai'){
     const s = state.settings || {};
+    const userLabel = (localStorage.getItem('nt_user_email') || getUserId() || 'Usuario Local');
+    safeSetText('sstab-user-display-ai', userLabel);
+
     const cfg = getAIConfig();
     safeSetValue('sstab-ai-provider', cfg.provider);
     safeSetValue('sstab-ai-key', cfg.apiKey);
-    safeSetValue('sstab-eleven-key', localStorage.getItem('nt_eleven_key') || s.elevenKey || '');
-    const savedVoice = localStorage.getItem('nt_eleven_voice') || s.elevenVoice || '21m00Tcm4TlvDq8ikWAM';
-    safeSetValue('sstab-eleven-voice', savedVoice);
-    safeSetValue('sstab-eleven-custom-voice', localStorage.getItem('nt_eleven_custom_voice') || s.elevenCustomVoice || '');
+
+    const elevenKey = s.elevenKey || localStorage.getItem('nt_eleven_key') || '';
+    const elevenVoice = s.elevenVoice || localStorage.getItem('nt_eleven_voice') || '21m00Tcm4TlvDq8ikWAM';
+    const elevenCustomVoice = s.elevenCustomVoice || localStorage.getItem('nt_eleven_custom_voice') || '';
+
+    safeSetValue('sstab-eleven-key', elevenKey);
+    safeSetValue('sstab-eleven-voice', elevenVoice);
+    safeSetValue('sstab-eleven-custom-voice', elevenCustomVoice);
     onElevenVoiceChange();
   }
 }
@@ -4937,6 +4952,7 @@ async function loadStateFromSupabase(force = false){
           localStorage.setItem('nt_ai_key', state.geminiKey);
         }
 
+        switchSystemSettingsTab('ai');
         renderToday(); renderSmoke(); renderSell(); renderPublish(); renderProjects();
         console.log(`✓ Estado cargado desde Supabase DB para (${userId})`);
         if(force) toast(`⬇️ Datos y llaves de IA sincronizados desde la Nube para "${userId.split('@')[0]}".`);
