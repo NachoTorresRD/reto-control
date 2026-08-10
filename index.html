@@ -1583,10 +1583,16 @@ dialog.nt-dialog.calendar-dialog-wide {
 
       <!-- App Mobile-Style Quick Action Bar -->
       <div class="quick-app-toolbar">
-        <button class="quick-pill-btn" onclick="openDialog('notif-dialog')">
-          <span class="qpb-icon">🔔</span>
-          <span>Avisos & Siri</span>
-          <span class="qpb-badge green" id="quick-notif-status">OK</span>
+        <button class="quick-pill-btn" onclick="openSystemSettings('setup')">
+          <span class="qpb-icon">⚙️</span>
+          <span>Configuración General</span>
+          <span class="qpb-badge cyan">Sistema</span>
+        </button>
+
+        <button class="quick-pill-btn" onclick="openRewardsDialog()">
+          <span class="qpb-icon">🎁</span>
+          <span>Metas & Recompensas</span>
+          <span class="qpb-badge violet">Motivación</span>
         </button>
 
         <button class="quick-pill-btn" onclick="openDialog('widget-dialog')">
@@ -1600,16 +1606,9 @@ dialog.nt-dialog.calendar-dialog-wide {
           <span>Calendario & Agenda</span>
         </button>
 
-        <button class="quick-pill-btn" onclick="openDialog('sync-dialog')">
+        <button class="quick-pill-btn" onclick="openSystemSettings('sync')">
           <span class="qpb-icon">☁️</span>
           <span>Nube</span>
-          <span class="qpb-badge cyan">Sincronizar</span>
-        </button>
-
-        <button class="quick-pill-btn" onclick="openAIConfigModal()">
-          <span class="qpb-icon">✨</span>
-          <span>Ajustes IA</span>
-          <span class="qpb-badge violet" id="quick-ai-status">Config</span>
         </button>
       </div>
 
@@ -1621,7 +1620,7 @@ dialog.nt-dialog.calendar-dialog-wide {
             <p>Indica cuándo fue tu último cigarrillo. Verás tu tiempo de resistencia en tiempo real, tu ahorro exacto y tendrás herramientas de intervención inmediata ante la ansiedad.</p>
             <div class="setup-meta"><span>✓ Registro rápido en 1 minuto</span><span>⌁ Privado en tu dispositivo</span></div>
             <div class="setup-actions">
-              <button class="btn btn-success" onclick="openSmokeSetup()">Crear mi punto de partida</button>
+              <button class="btn btn-success" onclick="openSystemSettings('setup')">Crear mi punto de partida</button>
               <button class="btn btn-secondary" onclick="openCravingDialog()">⚡ Antojo activo (Plan de Acción)</button>
             </div>
           </div>
@@ -1693,7 +1692,7 @@ dialog.nt-dialog.calendar-dialog-wide {
                   <h4 id="reward-title-display" style="font-size:15px; font-weight:700; color:var(--text); margin-top:2px;">Tenis nuevos</h4>
                 </div>
               </div>
-              <button class="btn btn-secondary btn-small" onclick="openSmokeSetup()" style="font-size:11px; padding:4px 10px;">⚙️ Configurar Meta</button>
+              <button class="btn btn-secondary btn-small" onclick="openRewardsDialog()" style="font-size:11px; padding:4px 10px;">🎯 Administrar Metas</button>
             </div>
             
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px;">
@@ -1922,17 +1921,152 @@ dialog.nt-dialog.calendar-dialog-wide {
   </form>
 </dialog>
 
+<!-- Modal Dedicado de Metas de Motivación & Recompensas (NO afecta la racha) -->
+<dialog class="nt-dialog" id="rewards-dialog" aria-labelledby="rewards-dialog-title">
+  <form class="dialog-body" onsubmit="saveRewardGoal(event)">
+    <div class="dialog-head">
+      <div>
+        <h3 id="rewards-dialog-title">🎁 Metas de Motivación & Recompensas</h3>
+        <p>Las metas son estímulos independientes para mantener el enfoque. Modificar tus metas <strong>NO borra ni altera tu tiempo sin fumar</strong>.</p>
+      </div>
+      <button class="dialog-close" type="button" onclick="closeDialog('rewards-dialog')" aria-label="Cerrar">×</button>
+    </div>
+
+    <!-- Quick Presets -->
+    <div style="margin-bottom:12px;">
+      <span style="font-size:10px; color:var(--muted-2); font-weight:700; text-transform:uppercase; display:block; margin-bottom:6px;">Metas Populares de Sugerencia:</span>
+      <div style="display:flex; gap:6px; flex-wrap:wrap;">
+        <button type="button" class="btn btn-secondary btn-small" onclick="setRewardPreset('Tenis nuevos', 3000, 30)">👟 Tenis nuevos (RD$3,000)</button>
+        <button type="button" class="btn btn-secondary btn-small" onclick="setRewardPreset('Reloj deportivo', 5000, 30)">⌚ Reloj deportivo (RD$5,000)</button>
+        <button type="button" class="btn btn-secondary btn-small" onclick="setRewardPreset('Viaje de fin de semana', 15000, 60)">✈️ Fin de semana (RD$15,000)</button>
+        <button type="button" class="btn btn-secondary btn-small" onclick="setRewardPreset('Cena especial de victoria', 2500, 14)">🍷 Cena especial (RD$2,500)</button>
+      </div>
+    </div>
+
+    <div class="dialog-grid">
+      <div class="field wide">
+        <label for="reward-name-input">🎁 Nombre del Premio o Meta</label>
+        <input class="input" id="reward-name-input" placeholder="Ej. Tenis nuevos, Viaje, Cena especial" value="Tenis nuevos" required>
+      </div>
+      <div class="field">
+        <label for="reward-cost-input">💰 Costo estimado (RD$)</label>
+        <input class="input" id="reward-cost-input" type="number" min="0" max="1000000" step="50" value="3000" required>
+      </div>
+      <div class="field">
+        <label for="reward-target-days-input">⏳ Meta en Días sin Fumar</label>
+        <input class="input" id="reward-target-days-input" type="number" min="1" max="3650" step="1" value="30" required>
+      </div>
+    </div>
+
+    <div style="padding:10px 12px; background:rgba(139,92,246,0.08); border:1px solid rgba(139,92,246,0.25); border-radius:var(--radius-md); margin-top:10px; font-size:11px; color:var(--muted-2);">
+      💡 <strong style="color:var(--text-2);">Independencia de racha:</strong> Tu contador de días acumulados y tu fecha de inicio permanecen totalmente intactos al guardar o cambiar tus recompensas.
+    </div>
+
+    <div class="button-row" style="margin-top:14px; gap:8px;">
+      <button class="btn btn-success" type="submit" style="flex:1;">💾 Guardar Meta de Recompensa</button>
+      <button class="btn btn-secondary" type="button" onclick="closeDialog('rewards-dialog')">Cerrar</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Modal Unificado de Configuración General del Sistema -->
+<dialog class="nt-dialog" id="system-settings-dialog" aria-labelledby="system-settings-title" style="width:min(680px, calc(100% - 24px));">
+  <div class="dialog-body">
+    <div class="dialog-head">
+      <div>
+        <h3 id="system-settings-title">⚙️ Configuración General del Sistema</h3>
+        <p>Ajustes globales de punto de partida, sincronización, modelo IA, notificaciones y widget.</p>
+      </div>
+      <button class="dialog-close" type="button" onclick="closeDialog('system-settings-dialog')" aria-label="Cerrar">×</button>
+    </div>
+
+    <!-- Tabs Navigation -->
+    <div style="display:flex; gap:6px; margin-bottom:14px; overflow-x:auto; padding-bottom:4px; border-bottom:1px solid var(--border-subtle);">
+      <button type="button" class="btn btn-secondary btn-small active" id="sstab-btn-setup" onclick="switchSystemSettingsTab('setup')">⏱️ Punto de Partida</button>
+      <button type="button" class="btn btn-secondary btn-small" id="sstab-btn-auth" onclick="switchSystemSettingsTab('auth')">🔑 Cuenta & Nube</button>
+      <button type="button" class="btn btn-secondary btn-small" id="sstab-btn-ai" onclick="switchSystemSettingsTab('ai')">✨ Asistente IA</button>
+      <button type="button" class="btn btn-secondary btn-small" id="sstab-btn-notif" onclick="switchSystemSettingsTab('notif')">🔔 Avisos & Alertas</button>
+    </div>
+
+    <!-- Tab 1: Punto de Partida -->
+    <div id="sstab-sec-setup">
+      <form onsubmit="saveSmokeSetup(event)">
+        <div style="padding:10px 12px; background:rgba(34,211,238,0.06); border:1px solid rgba(34,211,238,0.2); border-radius:var(--radius-md); margin-bottom:12px; font-size:11px; color:var(--muted-2);">
+          ⏱️ <strong style="color:var(--cyan);">Configura tu momento inicial:</strong> Estos parámetros miden con precisión matemática tu resistencia y ahorro en pesos.
+        </div>
+        <div class="dialog-grid">
+          <div class="field wide"><label for="quit-at">Fecha / Hora del último cigarrillo</label><input class="input" id="quit-at" type="datetime-local" required></div>
+          <div class="field"><label for="cigs-day">Cigarrillos por día</label><input class="input" id="cigs-day" type="number" min="1" max="100" step="1" value="10" required></div>
+          <div class="field"><label for="pack-size">Cigarrillos por paquete</label><input class="input" id="pack-size" type="number" min="1" max="100" step="1" value="20" required></div>
+          <div class="field wide"><label for="pack-price">Precio del paquete (RD$)</label><input class="input" id="pack-price" type="number" min="0" max="100000" step="1" value="300" required></div>
+        </div>
+        <div class="button-row" style="margin-top:14px; gap:8px; flex-wrap:wrap;">
+          <button class="btn btn-success" type="submit" style="flex:1;">💾 Guardar Punto de Partida</button>
+          <button class="btn btn-secondary" type="button" onclick="restoreDaysStreak(19)">⚡ Fijar Racha en 19 Días</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Tab 2: Cuenta & Nube -->
+    <div id="sstab-sec-auth" hidden>
+      <div style="padding:12px; background:rgba(6,10,18,0.6); border:1px solid var(--border-subtle); border-radius:var(--radius-md); margin-bottom:12px;">
+        <strong style="font-size:12px; color:var(--text); display:block;">👤 Usuario Activo en Supabase DB</strong>
+        <span style="font-size:11px; color:var(--cyan);" id="sstab-user-display">Cargando usuario...</span>
+      </div>
+      <div class="button-row" style="flex-direction:column; gap:8px;">
+        <button class="btn btn-success" type="button" onclick="pushThisDeviceToCloud();">⬆️ Subir / Sincronizar mis datos de este Cel a la Nube</button>
+        <button class="btn btn-primary" type="button" onclick="pullCloudToThisDevice();">⬇️ Descargar datos de la Nube a este Celular</button>
+        <button class="btn btn-secondary" type="button" onclick="openDialog('auth-dialog'); closeDialog('system-settings-dialog');">🔑 Cambiar de Cuenta / Iniciar Sesión</button>
+      </div>
+    </div>
+
+    <!-- Tab 3: Asistente IA -->
+    <div id="sstab-sec-ai" hidden>
+      <div class="field" style="margin-top:4px;">
+        <label for="sstab-ai-provider">Proveedor de IA</label>
+        <select class="input" id="sstab-ai-provider" onchange="onAIProviderChange()">
+          <option value="openrouter">OpenRouter (DeepSeek R1, Llama 3.3, Qwen - Recomendado)</option>
+          <option value="gemini">Google Gemini API (Gemini 2.0 Flash / 1.5 Pro)</option>
+          <option value="nvidia">Nvidia NIM API (Llama 3.3 70B, Mistral)</option>
+          <option value="huggingface">Hugging Face (Inference API / Serverless)</option>
+        </select>
+      </div>
+      <div class="field" style="margin-top:10px;">
+        <label for="sstab-ai-key">API Key del Proveedor</label>
+        <input class="input" id="sstab-ai-key" type="password" autocomplete="off" placeholder="Pega tu API Key aquí">
+      </div>
+      <div class="button-row" style="margin-top:14px; gap:8px;">
+        <button class="btn btn-primary" onclick="saveAIProviderFromSystemSettings()">💾 Guardar Ajustes IA</button>
+        <button class="btn btn-success" onclick="testAIConnection()">🧪 Probar Conexión</button>
+      </div>
+    </div>
+
+    <!-- Tab 4: Notificaciones -->
+    <div id="sstab-sec-notif" hidden>
+      <div style="padding:12px; background:rgba(6,10,18,0.6); border:1px solid var(--border-subtle); border-radius:var(--radius-md); margin-bottom:12px;">
+        <strong style="font-size:12px; color:var(--text); display:block;">🔔 Permiso Notificaciones Web Push (OneSignal)</strong>
+        <button class="btn btn-primary btn-small" style="margin-top:8px;" onclick="requestNotificationPermission()">⚡ Solicitar / Activar Permisos</button>
+      </div>
+      <div class="button-row" style="gap:8px;">
+        <button class="btn btn-secondary btn-small" onclick="sendTestNotification()">🔊 Probar Notificación con Sonido</button>
+        <button class="btn btn-secondary btn-small" onclick="exportNativeCalendarReminder()">📅 Alarma Nativa (.ICS)</button>
+      </div>
+    </div>
+
+    <div class="button-row" style="margin-top:16px;">
+      <button class="btn btn-secondary" onclick="closeDialog('system-settings-dialog')">Cerrar</button>
+    </div>
+  </div>
+</dialog>
+
 <dialog class="nt-dialog" id="smoke-setup-dialog" aria-labelledby="smoke-setup-title">
   <form class="dialog-body" onsubmit="saveSmokeSetup(event)">
     <div class="dialog-head"><div><h3 id="smoke-setup-title">Configura tu Punto de Partida</h3><p>Establece tus parámetros iniciales para medir con precisión matemática tu tiempo de control y tu ahorro acumulado.</p></div><button class="dialog-close" type="button" onclick="closeDialog('smoke-setup-dialog')" aria-label="Cerrar">×</button></div>
     <div class="dialog-grid">
-      <div class="field wide"><label for="quit-at">Último cigarrillo</label><input id="quit-at" type="datetime-local" required></div>
-      <div class="field"><label for="cigs-day">Cigarrillos por día</label><input id="cigs-day" type="number" min="1" max="100" step="1" value="10" required></div>
-      <div class="field"><label for="pack-size">Cigarrillos por paquete</label><input id="pack-size" type="number" min="1" max="100" step="1" value="20" required></div>
-      <div class="field"><label for="pack-price">Precio del paquete (RD$)</label><input id="pack-price" type="number" min="0" max="100000" step="1" value="300" required></div>
-      <div class="field"><label for="quit-goal">Meta en días (ej. 30 días)</label><input id="quit-goal" type="number" min="1" max="3650" step="1" value="30" required></div>
-      <div class="field wide"><label for="reward-name">🎁 Recompensa al cumplir la meta</label><input id="reward-name" placeholder="Ej. Tenis nuevos, Viaje de fin de semana, Cena especial" value="Tenis nuevos"></div>
-      <div class="field wide"><label for="reward-cost">Precio estimado de la recompensa (RD$)</label><input id="reward-cost" type="number" min="0" max="1000000" step="50" value="3000"></div>
+      <div class="field wide"><label for="quit-at">Último cigarrillo</label><input class="input" id="quit-at" type="datetime-local" required></div>
+      <div class="field"><label for="cigs-day">Cigarrillos por día</label><input class="input" id="cigs-day" type="number" min="1" max="100" step="1" value="10" required></div>
+      <div class="field"><label for="pack-size">Cigarrillos por paquete</label><input class="input" id="pack-size" type="number" min="1" max="100" step="1" value="20" required></div>
+      <div class="field wide"><label for="pack-price">Precio del paquete (RD$)</label><input class="input" id="pack-price" type="number" min="0" max="100000" step="1" value="300" required></div>
     </div>
     <div class="button-row" style="flex-wrap:wrap; gap:6px;">
       <button class="btn btn-success" type="submit">Guardar mi punto de partida</button>
@@ -2476,33 +2610,105 @@ function openAIHistoryModal(){
   if(typeof renderAIHistory==='function') renderAIHistory();
   openDialog('ai-history-dialog');
 }
-function openSmokeSetup(){
-  const smoke=state.smoke;
-  document.getElementById('quit-at').value=localDateTimeValue(smokeConfigured()?smoke.quitAt:new Date());
-  document.getElementById('cigs-day').value=smoke.cigarettesPerDay||10;
-  document.getElementById('pack-size').value=smoke.packSize||20;
-  document.getElementById('pack-price').value=smoke.packPrice??300;
-  document.getElementById('quit-goal').value=smoke.targetDays||30;
-  safeSetValue('reward-name', smoke.rewardName || 'Tenis nuevos');
-  safeSetValue('reward-cost', smoke.rewardCost ?? 3000);
-  openDialog('smoke-setup-dialog');
+function openRewardsDialog(){
+  const smoke = state.smoke || {};
+  safeSetValue('reward-name-input', smoke.rewardName || 'Tenis nuevos');
+  safeSetValue('reward-cost-input', smoke.rewardCost ?? 3000);
+  safeSetValue('reward-target-days-input', smoke.targetDays || 30);
+  openDialog('rewards-dialog');
 }
+
+function setRewardPreset(name, cost, days){
+  safeSetValue('reward-name-input', name);
+  safeSetValue('reward-cost-input', cost);
+  safeSetValue('reward-target-days-input', days);
+  toast(`🎁 Preset seleccionado: ${name} (${formatDOPFlat(cost)})`);
+}
+
+function saveRewardGoal(event){
+  if(event) event.preventDefault();
+  const nameVal = document.getElementById('reward-name-input')?.value.trim();
+  const costVal = Number(document.getElementById('reward-cost-input')?.value) || 0;
+  const daysVal = Number(document.getElementById('reward-target-days-input')?.value) || 0;
+
+  state.smoke.rewardName = nameVal || 'Tenis nuevos';
+  state.smoke.rewardCost = costVal > 0 ? costVal : 3000;
+  state.smoke.targetDays = daysVal > 0 ? daysVal : 30;
+
+  saveState();
+  closeDialog('rewards-dialog');
+  renderSmoke();
+  pushThisDeviceToCloud();
+  toast('🎁 Meta de recompensa actualizada sin alterar tu racha.', '✨');
+}
+
+function openSystemSettings(tabName = 'setup'){
+  switchSystemSettingsTab(tabName);
+  openDialog('system-settings-dialog');
+}
+
+function switchSystemSettingsTab(tabName){
+  const tabs = ['setup', 'auth', 'ai', 'notif'];
+  tabs.forEach(t => {
+    const btn = document.getElementById(`sstab-btn-${t}`);
+    const sec = document.getElementById(`sstab-sec-${t}`);
+    if(btn) btn.classList.toggle('active', t === tabName);
+    if(sec) sec.hidden = (t !== tabName);
+  });
+
+  const smoke = state.smoke || {};
+  if(tabName === 'setup'){
+    safeSetValue('quit-at', localDateTimeValue(smokeConfigured() ? smoke.quitAt : new Date()));
+    safeSetValue('cigs-day', smoke.cigarettesPerDay || 10);
+    safeSetValue('pack-size', smoke.packSize || 20);
+    safeSetValue('pack-price', smoke.packPrice ?? 300);
+  } else if(tabName === 'auth'){
+    const userLabel = (localStorage.getItem('nt_user_email') || getUserId() || 'Usuario Local');
+    safeSetText('sstab-user-display', userLabel);
+  } else if(tabName === 'ai'){
+    const cfg = getAIConfig();
+    safeSetValue('sstab-ai-provider', cfg.provider);
+    safeSetValue('sstab-ai-key', cfg.apiKey);
+  }
+}
+
+function saveAIProviderFromSystemSettings(){
+  const pEl = document.getElementById('sstab-ai-provider');
+  const kEl = document.getElementById('sstab-ai-key');
+  if(pEl) localStorage.setItem('nt_ai_provider', pEl.value);
+  if(kEl) {
+    const raw = kEl.value.trim();
+    localStorage.setItem('nt_ai_key', raw);
+    state.geminiKey = raw;
+  }
+  saveState();
+  toast('✓ Configuración de Asistente IA guardada.');
+}
+
+function openSmokeSetup(){
+  openSystemSettings('setup');
+}
+
 function saveSmokeSetup(event){
   event.preventDefault();
-  const quitAt=new Date(document.getElementById('quit-at').value), now=new Date();
-  if(!Number.isFinite(quitAt.getTime())||quitAt>now){ toast('La fecha del último cigarrillo debe ser válida y no puede estar en el futuro.'); return; }
-  state.smoke.quitAt=quitAt.toISOString();
-  state.smoke.cigarettesPerDay=Math.max(1,Number(document.getElementById('cigs-day').value)||10);
-  state.smoke.packSize=Math.max(1,Number(document.getElementById('pack-size').value)||20);
-  state.smoke.packPrice=Math.max(0,Number(document.getElementById('pack-price').value)||0);
-  state.smoke.targetDays=Math.max(1,Number(document.getElementById('quit-goal').value)||30);
+  const quitAtInput = document.getElementById('quit-at')?.value;
+  const quitAt = quitAtInput ? new Date(quitAtInput) : new Date();
+  const now = new Date();
+  if(!Number.isFinite(quitAt.getTime()) || quitAt > now){
+    toast('La fecha del último cigarrillo debe ser válida y no puede estar en el futuro.');
+    return;
+  }
+  state.smoke.quitAt = quitAt.toISOString();
+  state.smoke.cigarettesPerDay = Math.max(1, Number(document.getElementById('cigs-day')?.value) || 10);
+  state.smoke.packSize = Math.max(1, Number(document.getElementById('pack-size')?.value) || 20);
+  state.smoke.packPrice = Math.max(0, Number(document.getElementById('pack-price')?.value) || 0);
 
-  const rName = document.getElementById('reward-name')?.value.trim();
-  const rCost = Number(document.getElementById('reward-cost')?.value) || 0;
-  state.smoke.rewardName = rName || 'Tenis nuevos';
-  state.smoke.rewardCost = rCost > 0 ? rCost : 3000;
-
-  saveState(); closeDialog('smoke-setup-dialog'); renderSmoke(); pushThisDeviceToCloud(); toast('✓ Meta y recompensa guardadas en la Nube.');
+  saveState();
+  closeDialog('smoke-setup-dialog');
+  closeDialog('system-settings-dialog');
+  renderSmoke();
+  pushThisDeviceToCloud();
+  toast('✓ Punto de partida y parámetros de racha actualizados.', '⏱️');
 }
 function smokeElapsed(){ return smokeConfigured()?Math.max(0,Date.now()-new Date(state.smoke.quitAt).getTime()):0; }
 
