@@ -3087,13 +3087,19 @@ function renderSmoke(){
   }
 
   // Widget Live Preview DOM (Medium, Small & Lockscreen)
+  const primaryReward = (state.smoke.rewards && state.smoke.rewards[0]) ? state.smoke.rewards[0] : { name: 'Tenis nuevos', cost: 3000, targetDays: 30 };
+  const pGoalMs = (primaryReward.targetDays || 30) * day;
+  const pRemainingMs = Math.max(0, pGoalMs - elapsed);
+  const pRemainingDays = Math.floor(pRemainingMs / day);
+  const pRewardFundPct = Math.min(100, Math.floor((savedExact / (primaryReward.cost || 1)) * 100));
+
   safeSetText('widget-preview-days', days);
   safeSetText('widget-preview-hours', `${hours} horas de autocontrol`);
   safeSetText('widget-preview-money', formatDOPFlat(savedExact));
-  safeSetText('widget-preview-reward-name', `🎁 Premio: ${rewardName}`);
-  safeSetText('widget-preview-days-left', `Faltan ${remainingDays}d`);
+  safeSetText('widget-preview-reward-name', `🎁 Premio: ${primaryReward.name}`);
+  safeSetText('widget-preview-days-left', `Faltan ${pRemainingDays}d`);
   const wPrevBar = document.getElementById('widget-preview-progress-bar');
-  if(wPrevBar) wPrevBar.style.width = `${rewardFundPct}%`;
+  if(wPrevBar) wPrevBar.style.width = `${pRewardFundPct}%`;
 
   safeSetText('wsmall-days', days);
   safeSetText('wsmall-money', `${formatDOPFlat(savedExact)} ahorrados`);
