@@ -1720,8 +1720,8 @@ dialog.nt-dialog.calendar-dialog-wide {
 
         <button class="quick-pill-btn" onclick="openJarvisAssistant()">
           <span class="qpb-icon">🎙️</span>
-          <span>Asistente de Voz IA</span>
-          <span class="qpb-badge violet">Voz 2030</span>
+          <span>Asistente NICO (Voz)</span>
+          <span class="qpb-badge violet">Voz IA</span>
         </button>
 
         <button class="quick-pill-btn" onclick="openThemePreviewModal()">
@@ -2096,14 +2096,14 @@ dialog.nt-dialog.calendar-dialog-wide {
   </form>
 </dialog>
 
-<!-- Modal JARVIS 2030 Asistente de Voz IA Móvil -->
+<!-- Modal NICO Asistente de Voz IA Móvil -->
 <dialog class="nt-dialog" id="jarvis-dialog" aria-labelledby="jarvis-dialog-title" style="width:min(640px, calc(100% - 24px));">
   <div class="dialog-body">
     <div class="dialog-head">
       <div style="display:flex; align-items:center; gap:10px;">
         <div style="width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg, var(--cyan), var(--violet)); display:flex; align-items:center; justify-content:center; font-size:18px;">🤖</div>
         <div>
-          <h3 id="jarvis-dialog-title">JARVIS — Asistente de Voz IA</h3>
+          <h3 id="jarvis-dialog-title">NICO — Asistente de Voz IA</h3>
           <p>Tu copiloto de autocontrol, cálculo de ahorro y consejos hablados.</p>
         </div>
       </div>
@@ -2147,13 +2147,13 @@ dialog.nt-dialog.calendar-dialog-wide {
 
     <!-- Conversation Stream Box -->
     <div id="jarvis-chat-stream" style="max-height:180px; overflow-y:auto; padding:10px; background:rgba(6,10,18,0.5); border:1px solid var(--border-subtle); border-radius:var(--radius-md); font-size:11.5px; margin-bottom:12px; display:flex; flex-direction:column; gap:8px;">
-      <div style="color:var(--muted-2); text-align:center; font-size:10.5px;">"Hola, soy JARVIS. Estoy listo para ayudarte por voz o texto."</div>
+      <div style="color:var(--muted-2); text-align:center; font-size:10.5px;">"Hola, soy NICO. Estoy listo para ayudarte por voz o texto."</div>
     </div>
 
     <!-- Mic & Prompt Form -->
     <form onsubmit="handleJarvisTextSubmit(event)" style="display:flex; gap:8px;">
       <button type="button" id="jarvis-mic-btn" onclick="toggleJarvisDictation()" class="btn btn-primary" style="padding:8px 14px; font-size:16px;" title="Hablar por micrófono">🎙️</button>
-      <input class="input" id="jarvis-input-text" placeholder="Habla o escribe a JARVIS..." style="flex:1;">
+      <input class="input" id="jarvis-input-text" placeholder="Habla o escribe a NICO..." style="flex:1;">
       <button type="submit" class="btn btn-success">Enviar</button>
     </form>
   </div>
@@ -4833,7 +4833,7 @@ async function loadStateFromSupabase(force = false){
   }
 }
 
-/* ── JARVIS 2030 Mobile Voice Assistant Engine ── */
+/* ── NICO Asistente de Voz IA Engine ── */
 let jarvisMuted = false;
 let jarvisSpeechSynth = window.speechSynthesis;
 let jarvisSpeechRec = null;
@@ -4843,7 +4843,7 @@ function openJarvisAssistant(){
   openDialog('jarvis-dialog');
   if(!window._jarvisWelcomed){
     window._jarvisWelcomed = true;
-    speakJarvisResponse("Hola, soy JARVIS. Tu copiloto de autocontrol. ¿En qué te ayudo hoy?");
+    speakJarvisResponse("Hola, soy NICO. Tu copiloto de autocontrol. ¿En qué te ayudo hoy?");
   }
 }
 
@@ -4852,7 +4852,7 @@ function toggleJarvisMute(){
   const btn = document.getElementById('jarvis-mute-btn');
   if(btn) btn.textContent = jarvisMuted ? '🔇 Silenciada' : '🔊 Activada';
   if(jarvisMuted) stopJarvisSpeech();
-  toast(jarvisMuted ? '🔇 Voz de JARVIS silenciada' : '🔊 Voz de JARVIS activada');
+  toast(jarvisMuted ? '🔇 Voz de NICO silenciada' : '🔊 Voz de NICO activada');
 }
 
 function stopJarvisSpeech(){
@@ -4905,11 +4905,11 @@ async function speakJarvisResponse(text){
 
       audio.onplay = () => {
         if(wave) wave.classList.add('speaking');
-        safeSetText('jarvis-status-text', '🔊 JARVIS hablando por ElevenLabs (Voz Humana)...');
+        safeSetText('jarvis-status-text', '🔊 NICO hablando por ElevenLabs (Voz Humana)...');
       };
       audio.onended = audio.onerror = () => {
         if(wave) wave.classList.remove('speaking');
-        safeSetText('jarvis-status-text', '🎙️ JARVIS listo para escucharte');
+        safeSetText('jarvis-status-text', '🎙️ NICO listo para escucharte');
       };
 
       await audio.play();
@@ -4919,11 +4919,11 @@ async function speakJarvisResponse(text){
     }
   }
 
-  // FALLBACK: Web Speech Synthesis (Nativa)
+  // FALLBACK: Web Speech Synthesis (Nativa con velocidad 1.1 y selección de voz HD/Cloud)
   if(!('speechSynthesis' in window)) return;
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = 'es-ES';
-  utterance.rate = 1.05;
+  utterance.rate = 1.1; // Ajustado a 1.1 según preferencia del usuario
   utterance.pitch = 1.0;
 
   if(jarvisSpeechSynth.onvoiceschanged !== undefined){
@@ -4933,11 +4933,11 @@ async function speakJarvisResponse(text){
 
   utterance.onstart = () => {
     if(wave) wave.classList.add('speaking');
-    safeSetText('jarvis-status-text', '🔊 JARVIS hablando por altavoz...');
+    safeSetText('jarvis-status-text', '🔊 NICO hablando por altavoz...');
   };
   utterance.onend = utterance.onerror = () => {
     if(wave) wave.classList.remove('speaking');
-    safeSetText('jarvis-status-text', '🎙️ JARVIS listo para escucharte');
+    safeSetText('jarvis-status-text', '🎙️ NICO listo para escucharte');
   };
 
   try { jarvisSpeechSynth.speak(utterance); } catch(e){}
@@ -4945,7 +4945,19 @@ async function speakJarvisResponse(text){
 
 function setVoice(utterance){
   const voices = jarvisSpeechSynth.getVoices();
-  const esVoice = voices.find(v => v.lang.startsWith('es') && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Jorge') || v.name.includes('Monica') || v.name.includes('Paulina')));
+  // Priorizar voces de alta definición (Chirp / HD / Natural / Google Cloud / Neural)
+  const esVoice = voices.find(v => v.lang.startsWith('es') && (
+    v.name.includes('Chirp') ||
+    v.name.includes('HD') ||
+    v.name.includes('Natural') ||
+    v.name.includes('Neural') ||
+    v.name.includes('Google Cloud') ||
+    v.name.includes('Google') ||
+    v.name.includes('Jorge') ||
+    v.name.includes('Monica') ||
+    v.name.includes('Paulina')
+  )) || voices.find(v => v.lang.startsWith('es'));
+
   if(esVoice) utterance.voice = esVoice;
 }
 
@@ -4958,6 +4970,11 @@ function toggleJarvisDictation(){
 
   if(isListeningJarvis && jarvisSpeechRec){
     try { jarvisSpeechRec.stop(); } catch(e){}
+    isListeningJarvis = false;
+    const micBtn = document.getElementById('jarvis-mic-btn');
+    if(micBtn) micBtn.style.background = '';
+    const wave = document.getElementById('jarvis-wave-container');
+    if(wave) wave.classList.remove('speaking');
     return;
   }
 
@@ -4981,11 +4998,21 @@ function toggleJarvisDictation(){
       const transcript = event.results[0][0].transcript;
       safeSetValue('jarvis-input-text', transcript);
       toast(`🎙️ Voz captada: "${transcript}"`);
+
+      // APAGADO AUTOMÁTICO DEL MICRÓFONO AL TERMINAR DE HABLAR
+      try { jarvisSpeechRec.stop(); } catch(e){}
+      isListeningJarvis = false;
+      if(micBtn) micBtn.style.background = '';
+      if(wave) wave.classList.remove('speaking');
+
       processJarvisInput(transcript);
     };
 
     jarvisSpeechRec.onerror = (err) => {
-      console.warn('Jarvis Speech Rec error:', err);
+      console.warn('NICO Speech Rec error:', err);
+      isListeningJarvis = false;
+      if(micBtn) micBtn.style.background = '';
+      if(wave) wave.classList.remove('speaking');
       safeSetText('jarvis-status-text', '⚠️ No se captó la voz. Intenta de nuevo.');
     };
 
@@ -5024,10 +5051,10 @@ async function askJarvisCommand(cmdKey){
     return;
   } else if(cmdKey === 'evaluar_progreso'){
     label = '📊 Evalúa mi racha de hoy';
-    prompt = `Evalúa mi racha actual: Llevo ${days} días sin fumar y he ahorrado ${formatDOP(saved)}. Dame una evaluación corta estilo copiloto JARVIS con 1 consejo de enfoque para hoy.`;
+    prompt = `Evalúa mi racha actual: Llevo ${days} días sin fumar y he ahorrado ${formatDOP(saved)}. Dame una evaluación corta estilo copiloto NICO con 1 consejo de enfoque para hoy.`;
   } else {
     label = '🔥 Dame motivación extrema';
-    prompt = `Dame una frase de motivación extrema estilo JARVIS 2030 para un guerrero que lleva ${days} días venciendo la adicción al cigarrillo.`;
+    prompt = `Dame una frase de motivación extrema estilo NICO para un guerrero que lleva ${days} días venciendo la adicción al cigarrillo.`;
   }
 
   processJarvisInput(prompt, label);
@@ -5044,13 +5071,13 @@ async function handleJarvisTextSubmit(e){
 
 async function processJarvisInput(userPrompt, displayLabel = null){
   appendJarvisMessage('user', displayLabel || userPrompt);
-  safeSetText('jarvis-status-text', '✨ JARVIS pensando...');
+  safeSetText('jarvis-status-text', '✨ NICO pensando...');
 
   try {
     let reply = '';
     const { apiKey } = getAIConfig();
     if(apiKey){
-      const systemPrompt = `Eres JARVIS, el copiloto inteligente de voz de 2030 en Reto Control. Responde de forma muy directa, motivadora, limpia y cercana en 2 a 3 oraciones en español.`;
+      const systemPrompt = `Eres NICO, el copiloto inteligente de voz en Reto Control. Responde de forma muy directa, motivadora, limpia y cercana en 2 a 3 oraciones en español.`;
       reply = await callUniversalAIProvider(`${systemPrompt}\n\nUsuario: ${userPrompt}`);
     } else {
       const days = Math.floor(smokeConfigured() ? Math.max(0, Date.now() - new Date(state.smoke.quitAt).getTime()) / 86400000 : 0);
@@ -5060,7 +5087,7 @@ async function processJarvisInput(userPrompt, displayLabel = null){
     appendJarvisMessage('jarvis', reply);
     speakJarvisResponse(reply);
   } catch(err){
-    console.warn('JARVIS AI Error:', err);
+    console.warn('NICO AI Error:', err);
     const fallbackMsg = `Error al consultar la IA. Recuerda mantener la calma y respirar profundo. ¡Tu disciplina sigue intacta!`;
     appendJarvisMessage('jarvis', fallbackMsg);
     speakJarvisResponse(fallbackMsg);
@@ -5073,7 +5100,7 @@ function appendJarvisMessage(sender, text){
   const isUser = sender === 'user';
   const msgDiv = document.createElement('div');
   msgDiv.style.cssText = `padding:8px 12px; border-radius:12px; font-size:11.5px; line-height:1.4; max-width:88%; ${isUser ? 'align-self:flex-end; background:rgba(34,211,238,0.15); color:var(--text); border:1px solid rgba(34,211,238,0.3);' : 'align-self:flex-start; background:rgba(139,92,246,0.15); color:var(--text); border:1px solid rgba(139,92,246,0.3);'}`;
-  msgDiv.innerHTML = `<strong>${isUser ? '👤 Tú:' : '🤖 JARVIS:'}</strong> ${escapeHTML(text)}`;
+  msgDiv.innerHTML = `<strong>${isUser ? '👤 Tú:' : '🤖 NICO:'}</strong> ${escapeHTML(text)}`;
   streamEl.appendChild(msgDiv);
   streamEl.scrollTop = streamEl.scrollHeight;
 }
