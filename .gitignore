@@ -1,0 +1,9 @@
+# Ignore nt skill folder
+nt-skill-supreme/
+nt-skill*
+
+# Ignore Gemini IDE & OS files
+.gemini/
+.DS_Store
+Thumbs.db
+node_modules/

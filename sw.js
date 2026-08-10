@@ -71,15 +71,25 @@ self.addEventListener('push', (event) => {
 // Notification Click Event
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
+  let targetHash = '#today';
+  if (event.action === 'craving') {
+    targetHash = '#craving';
+  } else if (event.action === 'confirm') {
+    targetHash = '#today';
+  }
+
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
       for (const client of clientList) {
         if (client.url && 'focus' in client) {
+          if ('navigate' in client) {
+            client.navigate('./index.html' + targetHash);
+          }
           return client.focus();
         }
       }
       if (clients.openWindow) {
-        return clients.openWindow('./index.html#today');
+        return clients.openWindow('./index.html' + targetHash);
       }
     })
   );
