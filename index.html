@@ -1614,6 +1614,36 @@ dialog.nt-dialog.calendar-dialog-wide {
   height: 100%;
   background: linear-gradient(90deg, var(--cyan), var(--violet));
   transition: width 0.3s ease;
+}
+
+/* ── JARVIS 2030 Voice Assistant Module ── */
+.jarvis-voice-wave {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 32px;
+  margin: 8px 0;
+}
+.jwave-bar {
+  width: 4px;
+  height: 8px;
+  background: var(--cyan);
+  border-radius: 4px;
+  transition: height 0.15s ease;
+}
+.jarvis-voice-wave.speaking .jwave-bar {
+  animation: jwaveAnim 0.8s infinite ease-in-out alternate;
+}
+.jarvis-voice-wave.speaking .jwave-bar:nth-child(1) { animation-delay: 0.1s; }
+.jarvis-voice-wave.speaking .jwave-bar:nth-child(2) { animation-delay: 0.25s; }
+.jarvis-voice-wave.speaking .jwave-bar:nth-child(3) { animation-delay: 0.4s; }
+.jarvis-voice-wave.speaking .jwave-bar:nth-child(4) { animation-delay: 0.25s; }
+.jarvis-voice-wave.speaking .jwave-bar:nth-child(5) { animation-delay: 0.1s; }
+
+@keyframes jwaveAnim {
+  0% { height: 6px; background: var(--cyan); }
+  100% { height: 28px; background: var(--violet); }
 }</style>
 </head>
 <body>
@@ -1686,6 +1716,12 @@ dialog.nt-dialog.calendar-dialog-wide {
         <button class="quick-pill-btn" onclick="openCalendarModal()">
           <span class="qpb-icon">📅</span>
           <span>Calendario & Agenda</span>
+        </button>
+
+        <button class="quick-pill-btn" onclick="openJarvisAssistant()">
+          <span class="qpb-icon">🎙️</span>
+          <span>Asistente de Voz IA</span>
+          <span class="qpb-badge violet">Voz 2030</span>
         </button>
 
         <button class="quick-pill-btn" onclick="openThemePreviewModal()">
@@ -2058,6 +2094,69 @@ dialog.nt-dialog.calendar-dialog-wide {
       <button class="btn btn-secondary" type="button" onclick="closeDialog('rewards-dialog')">Cerrar</button>
     </div>
   </form>
+</dialog>
+
+<!-- Modal JARVIS 2030 Asistente de Voz IA Móvil -->
+<dialog class="nt-dialog" id="jarvis-dialog" aria-labelledby="jarvis-dialog-title" style="width:min(640px, calc(100% - 24px));">
+  <div class="dialog-body">
+    <div class="dialog-head">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div style="width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg, var(--cyan), var(--violet)); display:flex; align-items:center; justify-content:center; font-size:18px;">🤖</div>
+        <div>
+          <h3 id="jarvis-dialog-title">JARVIS — Asistente de Voz IA</h3>
+          <p>Tu copiloto de autocontrol, cálculo de ahorro y consejos hablados.</p>
+        </div>
+      </div>
+      <button class="dialog-close" type="button" onclick="stopJarvisSpeech(); closeDialog('jarvis-dialog');" aria-label="Cerrar">×</button>
+    </div>
+
+    <!-- Voice Waveform & Status Box -->
+    <div style="padding:12px; background:rgba(6,10,18,0.7); border:1px solid var(--border-subtle); border-radius:var(--radius-md); text-align:center; margin-bottom:12px;">
+      <div class="jarvis-voice-wave" id="jarvis-wave-container">
+        <div class="jwave-bar"></div>
+        <div class="jwave-bar"></div>
+        <div class="jwave-bar"></div>
+        <div class="jwave-bar"></div>
+        <div class="jwave-bar"></div>
+      </div>
+      <span id="jarvis-status-text" style="font-size:11.5px; font-weight:700; color:var(--cyan);">🎙️ Presiona el micrófono o selecciona una orden</span>
+    </div>
+
+    <!-- Audio Speech Controls -->
+    <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(139,92,246,0.08); border:1px solid rgba(139,92,246,0.2); padding:8px 12px; border-radius:var(--radius-md); margin-bottom:12px; font-size:11.5px;">
+      <div style="display:flex; align-items:center; gap:6px;">
+        <span>🔊</span>
+        <strong style="color:var(--text);">Voz IA por Altavoz:</strong>
+      </div>
+      <div style="display:flex; gap:6px;">
+        <button type="button" class="btn btn-secondary btn-small" id="jarvis-mute-btn" onclick="toggleJarvisMute()">🔊 Activada</button>
+        <button type="button" class="btn btn-secondary btn-small" onclick="stopJarvisSpeech()">⏹️ Detener Voz</button>
+      </div>
+    </div>
+
+    <!-- Command Shortcuts -->
+    <div style="margin-bottom:12px;">
+      <span style="font-size:10px; color:var(--muted-2); font-weight:700; text-transform:uppercase; display:block; margin-bottom:6px;">Comandos Rápidos de Voz:</span>
+      <div style="display:flex; gap:6px; flex-wrap:wrap;">
+        <button type="button" class="btn btn-secondary btn-small" onclick="askJarvisCommand('tengo_antojo')">🆘 ¡Tengo un antojo fuerte!</button>
+        <button type="button" class="btn btn-secondary btn-small" onclick="askJarvisCommand('cuanto_ahorro')">💰 ¿Cuánto he ahorrado?</button>
+        <button type="button" class="btn btn-secondary btn-small" onclick="askJarvisCommand('evaluar_progreso')">📊 Evalúa mi racha de hoy</button>
+        <button type="button" class="btn btn-secondary btn-small" onclick="askJarvisCommand('dame_motivacion')">🔥 Motivación extrema</button>
+      </div>
+    </div>
+
+    <!-- Conversation Stream Box -->
+    <div id="jarvis-chat-stream" style="max-height:180px; overflow-y:auto; padding:10px; background:rgba(6,10,18,0.5); border:1px solid var(--border-subtle); border-radius:var(--radius-md); font-size:11.5px; margin-bottom:12px; display:flex; flex-direction:column; gap:8px;">
+      <div style="color:var(--muted-2); text-align:center; font-size:10.5px;">"Hola, soy JARVIS. Estoy listo para ayudarte por voz o texto."</div>
+    </div>
+
+    <!-- Mic & Prompt Form -->
+    <form onsubmit="handleJarvisTextSubmit(event)" style="display:flex; gap:8px;">
+      <button type="button" id="jarvis-mic-btn" onclick="toggleJarvisDictation()" class="btn btn-primary" style="padding:8px 14px; font-size:16px;" title="Hablar por micrófono">🎙️</button>
+      <input class="input" id="jarvis-input-text" placeholder="Habla o escribe a JARVIS..." style="flex:1;">
+      <button type="submit" class="btn btn-success">Enviar</button>
+    </form>
+  </div>
 </dialog>
 
 <!-- Modal de Prueba de Fondos e Imagen de Alta Definición -->
@@ -4699,6 +4798,197 @@ async function loadStateFromSupabase(force = false){
   } catch(e){
     console.warn('Load state from Supabase error:', e);
   }
+}
+
+/* ── JARVIS 2030 Mobile Voice Assistant Engine ── */
+let jarvisMuted = false;
+let jarvisSpeechSynth = window.speechSynthesis;
+let jarvisSpeechRec = null;
+let isListeningJarvis = false;
+
+function openJarvisAssistant(){
+  openDialog('jarvis-dialog');
+  if(!window._jarvisWelcomed){
+    window._jarvisWelcomed = true;
+    speakJarvisResponse("Hola, soy JARVIS. Tu copiloto de autocontrol. ¿En qué te ayudo hoy?");
+  }
+}
+
+function toggleJarvisMute(){
+  jarvisMuted = !jarvisMuted;
+  const btn = document.getElementById('jarvis-mute-btn');
+  if(btn) btn.textContent = jarvisMuted ? '🔇 Silenciada' : '🔊 Activada';
+  if(jarvisMuted) stopJarvisSpeech();
+  toast(jarvisMuted ? '🔇 Voz de JARVIS silenciada' : '🔊 Voz de JARVIS activada');
+}
+
+function stopJarvisSpeech(){
+  if(jarvisSpeechSynth) jarvisSpeechSynth.cancel();
+  const wave = document.getElementById('jarvis-wave-container');
+  if(wave) wave.classList.remove('speaking');
+}
+
+function speakJarvisResponse(text){
+  stopJarvisSpeech();
+  if(jarvisMuted || !text) return;
+  if(!('speechSynthesis' in window)) return;
+
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = 'es-ES';
+  utterance.rate = 1.05;
+  utterance.pitch = 1.0;
+
+  if(jarvisSpeechSynth.onvoiceschanged !== undefined){
+    jarvisSpeechSynth.onvoiceschanged = () => setVoice(utterance);
+  }
+  setVoice(utterance);
+
+  const wave = document.getElementById('jarvis-wave-container');
+  utterance.onstart = () => {
+    if(wave) wave.classList.add('speaking');
+    safeSetText('jarvis-status-text', '🔊 JARVIS hablando por altavoz...');
+  };
+  utterance.onend = utterance.onerror = () => {
+    if(wave) wave.classList.remove('speaking');
+    safeSetText('jarvis-status-text', '🎙️ JARVIS listo para escucharte');
+  };
+
+  try { jarvisSpeechSynth.speak(utterance); } catch(e){}
+}
+
+function setVoice(utterance){
+  const voices = jarvisSpeechSynth.getVoices();
+  const esVoice = voices.find(v => v.lang.startsWith('es') && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Jorge') || v.name.includes('Monica') || v.name.includes('Paulina')));
+  if(esVoice) utterance.voice = esVoice;
+}
+
+function toggleJarvisDictation(){
+  const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SpeechRec){
+    toast('Dictado por voz no soportado en este navegador. Escribe tu mensaje.');
+    return;
+  }
+
+  if(isListeningJarvis && jarvisSpeechRec){
+    try { jarvisSpeechRec.stop(); } catch(e){}
+    return;
+  }
+
+  try {
+    jarvisSpeechRec = new SpeechRec();
+    jarvisSpeechRec.lang = 'es-DO';
+    jarvisSpeechRec.continuous = false;
+    jarvisSpeechRec.interimResults = false;
+
+    const micBtn = document.getElementById('jarvis-mic-btn');
+    const wave = document.getElementById('jarvis-wave-container');
+
+    jarvisSpeechRec.onstart = () => {
+      isListeningJarvis = true;
+      if(micBtn) micBtn.style.background = 'var(--red)';
+      if(wave) wave.classList.add('speaking');
+      safeSetText('jarvis-status-text', '🎙️ Escuchando tu voz... Habla ahora');
+    };
+
+    jarvisSpeechRec.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      safeSetValue('jarvis-input-text', transcript);
+      toast(`🎙️ Voz captada: "${transcript}"`);
+      processJarvisInput(transcript);
+    };
+
+    jarvisSpeechRec.onerror = (err) => {
+      console.warn('Jarvis Speech Rec error:', err);
+      safeSetText('jarvis-status-text', '⚠️ No se captó la voz. Intenta de nuevo.');
+    };
+
+    jarvisSpeechRec.onend = () => {
+      isListeningJarvis = false;
+      if(micBtn) micBtn.style.background = '';
+      if(wave) wave.classList.remove('speaking');
+    };
+
+    jarvisSpeechRec.start();
+  } catch(e){
+    console.warn('SpeechRec start error:', e);
+  }
+}
+
+async function askJarvisCommand(cmdKey){
+  const days = Math.floor(smokeConfigured() ? Math.max(0, Date.now() - new Date(state.smoke.quitAt).getTime()) / 86400000 : 0);
+  const cigsDay = state.smoke.cigarettesPerDay || 10;
+  const packPrice = state.smoke.packPrice || 300;
+  const packSize = state.smoke.packSize || 20;
+  const elapsedDays = smokeConfigured() ? Math.max(0, (Date.now() - new Date(state.smoke.quitAt).getTime()) / 86400000) : 0;
+  const saved = Math.floor(elapsedDays * cigsDay * (packPrice / packSize));
+  const formatDOP = (v) => new Intl.NumberFormat('es-DO',{style:'currency',currency:'DOP',maximumFractionDigits:0}).format(v);
+
+  let prompt = '', label = '';
+  if(cmdKey === 'tengo_antojo'){
+    label = '🆘 ¡Tengo un antojo fuerte!';
+    openCravingDialog();
+    prompt = `El usuario tiene un antojo fuerte en este momento. Lleva ${days} días sin fumar. Dame una instrucción de respiración y 2 frases potentes de mentalidad para vencer el antojo ahora.`;
+  } else if(cmdKey === 'cuanto_ahorro'){
+    label = '💰 ¿Cuánto he ahorrado?';
+    const textResp = `Has acumulado ${formatDOP(saved)} en ahorro real fruto de tus ${days} días de resistencia. ¡Ese dinero es 100% tuyo!`;
+    appendJarvisMessage('user', label);
+    appendJarvisMessage('jarvis', textResp);
+    speakJarvisResponse(textResp);
+    return;
+  } else if(cmdKey === 'evaluar_progreso'){
+    label = '📊 Evalúa mi racha de hoy';
+    prompt = `Evalúa mi racha actual: Llevo ${days} días sin fumar y he ahorrado ${formatDOP(saved)}. Dame una evaluación corta estilo copiloto JARVIS con 1 consejo de enfoque para hoy.`;
+  } else {
+    label = '🔥 Dame motivación extrema';
+    prompt = `Dame una frase de motivación extrema estilo JARVIS 2030 para un guerrero que lleva ${days} días venciendo la adicción al cigarrillo.`;
+  }
+
+  processJarvisInput(prompt, label);
+}
+
+async function handleJarvisTextSubmit(e){
+  if(e) e.preventDefault();
+  const inputEl = document.getElementById('jarvis-input-text');
+  const txt = inputEl ? inputEl.value.trim() : '';
+  if(!txt) return;
+  if(inputEl) inputEl.value = '';
+  processJarvisInput(txt);
+}
+
+async function processJarvisInput(userPrompt, displayLabel = null){
+  appendJarvisMessage('user', displayLabel || userPrompt);
+  safeSetText('jarvis-status-text', '✨ JARVIS pensando...');
+
+  try {
+    let reply = '';
+    const { apiKey } = getAIConfig();
+    if(apiKey){
+      const systemPrompt = `Eres JARVIS, el copiloto inteligente de voz de 2030 en Reto Control. Responde de forma muy directa, motivadora, limpia y cercana en 2 a 3 oraciones en español.`;
+      reply = await callUniversalAIProvider(`${systemPrompt}\n\nUsuario: ${userPrompt}`);
+    } else {
+      const days = Math.floor(smokeConfigured() ? Math.max(0, Date.now() - new Date(state.smoke.quitAt).getTime()) / 86400000 : 0);
+      reply = `¡Excelente enfoque! Cada minuto de autocontrol refuerza tu disciplina. Sigue firme con tu racha de ${days} días sin fumar. ¡Tú tienes el control absoluto!`;
+    }
+
+    appendJarvisMessage('jarvis', reply);
+    speakJarvisResponse(reply);
+  } catch(err){
+    console.warn('JARVIS AI Error:', err);
+    const fallbackMsg = `Error al consultar la IA. Recuerda mantener la calma y respirar profundo. ¡Tu disciplina sigue intacta!`;
+    appendJarvisMessage('jarvis', fallbackMsg);
+    speakJarvisResponse(fallbackMsg);
+  }
+}
+
+function appendJarvisMessage(sender, text){
+  const streamEl = document.getElementById('jarvis-chat-stream');
+  if(!streamEl) return;
+  const isUser = sender === 'user';
+  const msgDiv = document.createElement('div');
+  msgDiv.style.cssText = `padding:8px 12px; border-radius:12px; font-size:11.5px; line-height:1.4; max-width:88%; ${isUser ? 'align-self:flex-end; background:rgba(34,211,238,0.15); color:var(--text); border:1px solid rgba(34,211,238,0.3);' : 'align-self:flex-start; background:rgba(139,92,246,0.15); color:var(--text); border:1px solid rgba(139,92,246,0.3);'}`;
+  msgDiv.innerHTML = `<strong>${isUser ? '👤 Tú:' : '🤖 JARVIS:'}</strong> ${escapeHTML(text)}`;
+  streamEl.appendChild(msgDiv);
+  streamEl.scrollTop = streamEl.scrollHeight;
 }
 
 /* ── Theme Background & Visual Composition Module ── */
