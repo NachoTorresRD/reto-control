@@ -2830,9 +2830,10 @@ function loadState(){
   const savedProjects=Array.isArray(saved.projects)?saved.projects:[];
   const projects=BUILT_INS.map(base=>({...base,...(savedProjects.find(p=>p.id===base.id)||{})}));
   savedProjects.filter(p=>!BUILT_INS.some(b=>b.id===p.id)).forEach(p=>projects.push(p));
-  return {activeProject:saved.activeProject||projects.find(p=>p.status==='focus')?.id||'whabot',sellProject:saved.sellProject||'whabot',projects,daily:saved.daily||{},crm:Array.isArray(saved.crm)?saved.crm:(legacy.crm||[]),contentIndex:saved.contentIndex||{},smoke:saved.smoke||{}};
+  return {activeProject:saved.activeProject||projects.find(p=>p.status==='focus')?.id||'whabot',sellProject:saved.sellProject||'whabot',projects,daily:saved.daily||{},crm:Array.isArray(saved.crm)?saved.crm:(legacy.crm||[]),contentIndex:saved.contentIndex||{},smoke:saved.smoke||{},settings:saved.settings||{}};
 }
 let state=loadState();
+state.settings = state.settings || {};
 state.smoke={quitAt:'',cigarettesPerDay:10,packSize:20,packPrice:300,targetDays:30,bestStreakMs:0,history:[],...(state.smoke||{})};
 if(!Array.isArray(state.smoke.history)) state.smoke.history=[];
 
@@ -3036,13 +3037,14 @@ function switchSystemSettingsTab(tabName){
     const userLabel = (localStorage.getItem('nt_user_email') || getUserId() || 'Usuario Local');
     safeSetText('sstab-user-display', userLabel);
   } else if(tabName === 'ai'){
+    const s = state.settings || {};
     const cfg = getAIConfig();
     safeSetValue('sstab-ai-provider', cfg.provider);
     safeSetValue('sstab-ai-key', cfg.apiKey);
-    safeSetValue('sstab-eleven-key', localStorage.getItem('nt_eleven_key') || '');
-    const savedVoice = localStorage.getItem('nt_eleven_voice') || '21m00Tcm4TlvDq8ikWAM';
+    safeSetValue('sstab-eleven-key', localStorage.getItem('nt_eleven_key') || s.elevenKey || '');
+    const savedVoice = localStorage.getItem('nt_eleven_voice') || s.elevenVoice || '21m00Tcm4TlvDq8ikWAM';
     safeSetValue('sstab-eleven-voice', savedVoice);
-    safeSetValue('sstab-eleven-custom-voice', localStorage.getItem('nt_eleven_custom_voice') || '');
+    safeSetValue('sstab-eleven-custom-voice', localStorage.getItem('nt_eleven_custom_voice') || s.elevenCustomVoice || '');
     onElevenVoiceChange();
   }
 }
@@ -3062,19 +3064,39 @@ function saveAIProviderFromSystemSettings(){
   const evEl = document.getElementById('sstab-eleven-voice');
   const ecvEl = document.getElementById('sstab-eleven-custom-voice');
 
-  if(pEl) localStorage.setItem('nt_ai_provider', pEl.value);
+  state.settings = state.settings || {};
+
+  if(pEl) {
+    const val = pEl.value;
+    localStorage.setItem('nt_ai_provider', val);
+    state.settings.aiProvider = val;
+  }
   if(kEl) {
     const raw = kEl.value.trim();
     localStorage.setItem('nt_ai_key', raw);
     state.geminiKey = raw;
+    state.settings.aiKey = raw;
   }
-  if(ekEl) localStorage.setItem('nt_eleven_key', ekEl.value.trim());
-  if(evEl) localStorage.setItem('nt_eleven_voice', evEl.value);
-  if(ecvEl) localStorage.setItem('nt_eleven_custom_voice', ecvEl.value.trim());
+  if(ekEl) {
+    const raw = ekEl.value.trim();
+    localStorage.setItem('nt_eleven_key', raw);
+    state.settings.elevenKey = raw;
+  }
+  if(evEl) {
+    const val = evEl.value;
+    localStorage.setItem('nt_eleven_voice', val);
+    state.settings.elevenVoice = val;
+  }
+  if(ecvEl) {
+    const raw = ecvEl.value.trim();
+    localStorage.setItem('nt_eleven_custom_voice', raw);
+    state.settings.elevenCustomVoice = raw;
+  }
 
   saveState();
   closeDialog('system-settings-dialog');
-  toast('✓ Configuración de Asistente IA y Voz ElevenLabs guardada.', '✨');
+  toast('✓ Ajustes de IA y Voz ElevenLabs guardados y sincronizados con la Nube.', '✨');
+  pushThisDeviceToCloud();
 }
 
 async function testElevenLabsVoice(){
@@ -3408,13 +3430,22 @@ function showView(id){
   window.scrollTo({top:0,behavior:'smooth'});
   if(id==='sell') renderSell();
   if(id==='publish') renderPublish();
-  if(id==='projects') renderProjects();
+if(id==='projects') renderProjects();
 }
 document.querySelectorAll('[data-view]').forEach(button=>button.addEventListener('click',()=>showView(button.dataset.view)));
 
 function safeSetText(id, text){ const el = document.getElementById(id); if(el) el.textContent = text; }
 function safeSetHTML(id, html){ const el = document.getElementById(id); if(el) el.innerHTML = html; }
 function safeSetValue(id, val){ const el = document.getElementById(id); if(el) el.value = val; }
+
+function getAIConfig(){
+  const s = state.settings || {};
+  return {
+    provider: localStorage.getItem('nt_ai_provider') || s.aiProvider || 'openrouter',
+    apiKey: localStorage.getItem('nt_ai_key') || s.aiKey || state.geminiKey || '',
+    model: localStorage.getItem('nt_ai_model') || s.aiModel || ''
+  };
+}
 
 function populateProjectSelects(){
   const allOptions=state.projects.map(p=>`<option value="${escapeHTML(p.id)}">${escapeHTML(p.name)}</option>`).join('');
@@ -4890,9 +4921,21 @@ async function loadStateFromSupabase(force = false){
         state = { ...state, ...cloudState };
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
         localStorage.setItem('nt_last_push_ts', String(cloudTs));
+
+        // Auto-sync cloud settings to local storage cache
+        if(state.settings){
+          if(state.settings.aiProvider) localStorage.setItem('nt_ai_provider', state.settings.aiProvider);
+          if(state.settings.aiKey) localStorage.setItem('nt_ai_key', state.settings.aiKey);
+          if(state.settings.elevenKey) localStorage.setItem('nt_eleven_key', state.settings.elevenKey);
+          if(state.settings.elevenVoice) localStorage.setItem('nt_eleven_voice', state.settings.elevenVoice);
+          if(state.settings.elevenCustomVoice) localStorage.setItem('nt_eleven_custom_voice', state.settings.elevenCustomVoice);
+        } else if(state.geminiKey) {
+          localStorage.setItem('nt_ai_key', state.geminiKey);
+        }
+
         renderToday(); renderSmoke(); renderSell(); renderPublish(); renderProjects();
         console.log(`✓ Estado cargado desde Supabase DB para (${userId})`);
-        if(force) toast(`⬇️ Datos sincronizados desde la Nube para "${userId.split('@')[0]}".`);
+        if(force) toast(`⬇️ Datos y llaves de IA sincronizados desde la Nube para "${userId.split('@')[0]}".`);
       } else {
         console.log(`ℹ️ Datos locales más recientes que la nube — no se sobreescribieron.`);
         if(force) toast(`⬇️ Tus datos locales son más recientes. Usa "Subir a Nube" para actualizar.`);
@@ -4941,10 +4984,11 @@ async function speakJarvisResponse(text){
   stopJarvisSpeech();
   if(jarvisMuted || !text) return;
 
-  const elevenKey = localStorage.getItem('nt_eleven_key') || '';
-  let elevenVoice = localStorage.getItem('nt_eleven_voice') || '21m00Tcm4TlvDq8ikWAM';
+  const s = state.settings || {};
+  const elevenKey = localStorage.getItem('nt_eleven_key') || s.elevenKey || '';
+  let elevenVoice = localStorage.getItem('nt_eleven_voice') || s.elevenVoice || '21m00Tcm4TlvDq8ikWAM';
   if(elevenVoice === 'custom'){
-    elevenVoice = localStorage.getItem('nt_eleven_custom_voice') || '';
+    elevenVoice = localStorage.getItem('nt_eleven_custom_voice') || s.elevenCustomVoice || '';
   }
   const wave = document.getElementById('jarvis-wave-container');
 
