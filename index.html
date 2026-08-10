@@ -9,7 +9,10 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Reto Control">
+<meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='100' fill='%23060a12'/><circle cx='256' cy='256' r='180' fill='none' stroke='%2322d3ee' stroke-width='32'/><path d='M256 140v116l80 48' fill='none' stroke='%2334d399' stroke-width='32' stroke-linecap='round'/></svg>">
 <title>Reto Control — Panel de Disciplina y Notificaciones</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1098,23 +1101,92 @@ dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur
 }
 
 /* ════════════════════════════════════
-   TOAST
+   SPLASH SCREEN
+════════════════════════════════════ */
+#app-splash {
+  position: fixed; inset: 0; z-index: 9999;
+  background: #060a12;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 20px;
+  transition: opacity .4s ease, visibility .4s ease;
+}
+#app-splash.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+.splash-logo {
+  width: 80px; height: 80px;
+  border-radius: 22px;
+  background: linear-gradient(135deg, #0c1422, #152036);
+  border: 1px solid rgba(34,211,238,.3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 36px;
+  box-shadow: 0 0 40px rgba(34,211,238,.15), 0 20px 60px rgba(0,0,0,.5);
+  animation: splashPulse 1.5s ease-in-out infinite;
+}
+@keyframes splashPulse {
+  0%,100% { box-shadow: 0 0 20px rgba(34,211,238,.1), 0 20px 60px rgba(0,0,0,.5); }
+  50% { box-shadow: 0 0 50px rgba(34,211,238,.3), 0 20px 60px rgba(0,0,0,.5); }
+}
+.splash-title { font-family: 'Space Grotesk',sans-serif; font-size: 22px; font-weight: 700; color: #f1f5f9; letter-spacing: -.03em; }
+.splash-sub { font-size: 11px; color: #64748b; font-weight: 500; }
+.splash-bar-wrap { width: 120px; height: 2px; background: rgba(255,255,255,.08); border-radius: 2px; overflow: hidden; }
+.splash-bar { height: 100%; width: 0; background: linear-gradient(90deg, #22d3ee, #8b5cf6); border-radius: 2px; transition: width .6s ease; }
+
+/* ════════════════════════════════════
+   AURORA BACKGROUND GLOW
+════════════════════════════════════ */
+.aurora-bg {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+}
+.aurora-bg::before, .aurora-bg::after {
+  content: ''; position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: .07;
+  animation: auroraDrift 12s ease-in-out infinite alternate;
+}
+.aurora-bg::before {
+  width: 600px; height: 400px; top: -100px; right: -100px;
+  background: radial-gradient(ellipse, #8b5cf6 0%, transparent 70%);
+}
+.aurora-bg::after {
+  width: 500px; height: 350px; bottom: 0; left: -80px;
+  background: radial-gradient(ellipse, #22d3ee 0%, transparent 70%);
+  animation-delay: -6s; animation-direction: alternate-reverse;
+}
+@keyframes auroraDrift {
+  from { transform: translate(0,0) scale(1); }
+  to { transform: translate(30px, -20px) scale(1.05); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .aurora-bg::before, .aurora-bg::after { animation: none; }
+  #app-splash .splash-logo { animation: none; }
+}
+
+/* ════════════════════════════════════
+   TOAST — iOS style (top center)
 ════════════════════════════════════ */
 .toast {
-  position: fixed; z-index: 100;
-  right: 20px; bottom: 20px;
-  max-width: 300px; padding: 12px 16px;
+  position: fixed; z-index: 200;
+  top: max(16px, env(safe-area-inset-top, 16px)); left: 50%; transform: translateX(-50%) translateY(-80px);
+  width: max-content; max-width: min(340px, calc(100vw - 32px));
+  padding: 11px 16px 11px 12px;
   color: var(--text);
-  background: var(--surface-3);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-md);
-  font-size: 11px; font-weight: 500;
-  opacity: 0; transform: translateY(8px);
+  background: rgba(20,30,50,.95);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: var(--radius-pill);
+  box-shadow: 0 8px 32px rgba(0,0,0,.5), 0 0 0 1px rgba(34,211,238,.08);
+  font-size: 12px; font-weight: 600;
+  display: flex; align-items: center; gap: 8px;
   pointer-events: none;
-  transition: opacity .2s ease, transform .2s ease;
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  transition: transform .32s cubic-bezier(0.34,1.56,0.64,1), opacity .2s ease;
+  opacity: 0;
 }
-.toast.show { opacity: 1; transform: translateY(0); }
+.toast::before { content: attr(data-icon); font-size: 15px; flex-shrink: 0; }
+.toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+@media (max-width: 800px) {
+  .toast { top: max(20px, env(safe-area-inset-top, 20px)); bottom: auto; left: 50%; right: auto; max-width: calc(100vw - 32px); }
+}
 
 /* ════════════════════════════════════
    BOTTOM NAV — mobile only
@@ -1122,16 +1194,45 @@ dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur
 .bottom-nav { display: none; }
 
 /* ════════════════════════════════════
-   MICRO INTERACTIONS (pointer:fine)
+   MICRO INTERACTIONS — Touch-first
 ════════════════════════════════════ */
+/* Tactile press on all devices */
+.btn, .bottom-button, .move-card, .checkin-button, .quick-pill-btn, .nav-button {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: transform .15s cubic-bezier(0.34,1.56,0.64,1), opacity .12s ease, background .15s ease, border-color .15s ease, box-shadow .15s ease;
+}
+.btn:active, .checkin-button:active, .quick-pill-btn:active {
+  transform: scale(0.95);
+  opacity: .88;
+}
+.move-card:active { transform: scale(0.97); }
+.bottom-button:active { transform: scale(0.88); }
+.btn-primary:active { box-shadow: 0 0 20px rgba(34,211,238,.25); }
+
+/* Hover only on pointer:fine devices (desktop) */
 @media (hover: hover) and (pointer: fine) {
-  .btn, .nav-button, .move-card, .project-row {
-    transition: transform .18s ease, border-color .18s ease, background .18s ease, box-shadow .18s ease;
-  }
   .move-card:hover {
     border-color: var(--border);
     box-shadow: 0 8px 30px rgba(0,0,0,.3);
+    transform: translateY(-1px);
   }
+  .btn:hover { filter: brightness(1.08); }
+  .quick-pill-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,0,0,.3); }
+}
+
+/* Skeleton loading pulse */
+.skeleton {
+  background: linear-gradient(90deg, var(--surface) 0%, var(--surface-2) 50%, var(--surface) 100%);
+  background-size: 200% 100%;
+  animation: skeletonPulse 1.4s ease infinite;
+  border-radius: var(--radius-sm);
+}
+@keyframes skeletonPulse {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1169,46 +1270,95 @@ dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur
   .project-actions { grid-column: 1/-1; }
   .add-project { grid-template-columns: 1fr; }
 
-  /* ─── Mobile Bottom Nav (iOS / Linear Minimalist) ─── */
+  /* ─── Mobile Bottom Nav (iOS 18 Premium) ─── */
   .bottom-nav {
     position: fixed; z-index: 60;
     left: 0; right: 0; bottom: 0;
     display: grid; grid-template-columns: repeat(4,1fr);
-    padding: 4px max(8px,env(safe-area-inset-right)) calc(6px + env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(6, 10, 18, 0.92);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    padding: 6px max(12px,env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));
+    border-top: 1px solid rgba(255,255,255,.06);
+    background: rgba(6,10,18,.88);
+    backdrop-filter: blur(28px) saturate(180%);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
+    box-shadow: 0 -1px 0 rgba(255,255,255,.04), inset 0 1px 0 rgba(255,255,255,.04);
   }
   .bottom-button {
     position: relative;
-    min-height: 48px;
+    min-height: 52px;
     display: flex; flex-direction: column;
-    align-items: center; justify-content: center; gap: 2px;
-    color: var(--muted);
+    align-items: center; justify-content: center; gap: 3px;
+    color: rgba(148,163,184,.6);
     background: transparent; border: 0;
-    border-radius: var(--radius-sm);
-    font-size: 9px; font-weight: 600;
-    letter-spacing: .01em;
-    transition: color .15s;
+    border-radius: var(--radius-md);
+    font-size: 9.5px; font-weight: 600;
+    letter-spacing: .02em;
+    padding: 4px 8px;
   }
-  .bottom-button svg { width: 18px; height: 18px; stroke-width: 1.8; transition: transform .15s ease; }
-  .bottom-button.active { color: var(--cyan); }
-  .bottom-button.active svg { transform: translateY(-1px); }
-  .bottom-button.active::before {
+  .bottom-button svg { width: 22px; height: 22px; stroke-width: 1.6; transition: transform .2s cubic-bezier(0.34,1.56,0.64,1); }
+  .bottom-button.active {
+    color: var(--cyan);
+  }
+  .bottom-button.active svg {
+    transform: translateY(-2px) scale(1.08);
+    filter: drop-shadow(0 0 6px rgba(34,211,238,.5));
+  }
+  /* Pill indicator instead of just a dot */
+  .bottom-button.active::after {
     content: '';
     position: absolute;
-    top: 2px; left: 50%; transform: translateX(-50%);
-    width: 16px; height: 2px; border-radius: 1px;
+    bottom: 2px; left: 50%; transform: translateX(-50%);
+    width: 20px; height: 3px; border-radius: 2px;
     background: var(--cyan);
-    box-shadow: 0 0 6px var(--cyan);
+    box-shadow: 0 0 8px rgba(34,211,238,.6);
+    transition: width .2s ease;
   }
-  .bottom-button { position: relative; }
-  .toast { left: 16px; right: 16px; bottom: 92px; max-width: none; }
+  .bottom-button .nav-badge {
+    position: absolute; top: 6px; right: calc(50% - 16px);
+    min-width: 16px; height: 16px;
+    background: var(--red); color: #fff;
+    font-size: 8px; font-weight: 800;
+    border-radius: 8px; padding: 0 4px;
+    display: flex; align-items: center; justify-content: center;
+    border: 1.5px solid var(--bg);
+  }
 
   /* Smoke clock on mobile: simpler row */
   .smoke-clock { grid-template-columns: 1fr; gap: 10px; }
   .smoke-goal { text-align: left; }
+
+  /* ─── Bottom Sheet Dialogs (mobile) ─── */
+  dialog.nt-dialog {
+    position: fixed;
+    bottom: 0; left: 0; right: 0; top: auto;
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    border-bottom: 0;
+    max-height: 90dvh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    transform: translateY(100%);
+    transition: transform .36s cubic-bezier(0.32,0.72,0,1);
+    animation: none !important; /* override default dialog animation */
+  }
+  dialog.nt-dialog[open] {
+    transform: translateY(0);
+  }
+  dialog.nt-dialog::before {
+    content: '';
+    display: block;
+    width: 36px; height: 4px;
+    background: rgba(255,255,255,.2);
+    border-radius: 2px;
+    margin: 0 auto 16px;
+    flex-shrink: 0;
+  }
+  /* Wide calendar dialog — slightly smaller sheet */
+  dialog.calendar-dialog-wide {
+    max-height: 85dvh;
+  }
 }
 
 /* ════════════════════════════════════
@@ -1377,6 +1527,17 @@ dialog.nt-dialog.calendar-dialog-wide {
 </style>
 </head>
 <body>
+<!-- Splash Screen -->
+<div id="app-splash" role="status" aria-label="Cargando Reto Control...">
+  <div class="splash-logo">🔥</div>
+  <div class="splash-title">Reto Control</div>
+  <div class="splash-sub">Disciplina · Foco · Libertad</div>
+  <div class="splash-bar-wrap"><div class="splash-bar" id="splash-bar"></div></div>
+</div>
+
+<!-- Aurora ambient glow -->
+<div class="aurora-bg" aria-hidden="true"></div>
+
 <div class="app">
   <aside class="sidebar">
     <div class="brand">
@@ -1660,28 +1821,28 @@ dialog.nt-dialog.calendar-dialog-wide {
   </main>
 </div>
 
-<nav class="bottom-nav" aria-label="Navegación móvil">
-  <button class="bottom-button active" data-view="today">
+<nav class="bottom-nav" aria-label="Navegación móvil" role="tablist">
+  <button class="bottom-button active" data-view="today" role="tab" aria-selected="true" aria-label="Hoy - Panel principal">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
       <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
     </svg>
     Hoy
   </button>
-  <button class="bottom-button" data-view="sell">
+  <button class="bottom-button" data-view="sell" role="tab" aria-selected="false" aria-label="Vender - CRM y prospectos">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+      <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
     </svg>
     Vender
   </button>
-  <button class="bottom-button" data-view="publish">
+  <button class="bottom-button" data-view="publish" role="tab" aria-selected="false" aria-label="Publicar - Contenido y redes">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
+      <path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.069A1 1 0 0121 8.82v6.362a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/>
     </svg>
     Publicar
   </button>
-  <button class="bottom-button" data-view="projects">
+  <button class="bottom-button" data-view="projects" role="tab" aria-selected="false" aria-label="Proyectos - Estado y avance">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+      <path stroke-linecap="round" stroke-linejoin="round" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/>
     </svg>
     Proyectos
   </button>
@@ -3080,7 +3241,16 @@ function sendSheets(action,payload){
 }
 
 let toastTimer;
-function toast(message){ const el=document.getElementById('toast');el.textContent=message;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2200); }
+function toast(message, icon = '✦') {
+  const el = document.getElementById('toast');
+  el.dataset.icon = icon;
+  el.textContent = message;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  // Haptic feedback on supported devices
+  if (navigator.vibrate) navigator.vibrate(8);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
+}
 
 /* ── Topbar Modern Phrase Rotator ── */
 const TOPBAR_PHRASES = [
@@ -3892,6 +4062,67 @@ function init(){
   setInterval(rotateTopbar, 4000);
 }
 init();
+
+/* ── Splash Screen ── */
+(function showSplash() {
+  const splash = document.getElementById('app-splash');
+  const bar = document.getElementById('splash-bar');
+  if (!splash) return;
+  // Animate bar quickly
+  requestAnimationFrame(() => {
+    bar.style.width = '60%';
+    setTimeout(() => { bar.style.width = '90%'; }, 300);
+    setTimeout(() => {
+      bar.style.width = '100%';
+      setTimeout(() => splash.classList.add('hidden'), 200);
+    }, 600);
+  });
+})();
+
+/* ── Bottom Sheet: Swipe-down to close (mobile) ── */
+(function initSwipeToClose() {
+  if (window.matchMedia('(min-width: 801px)').matches) return;
+  document.addEventListener('touchstart', function(e) {
+    const dlg = e.target.closest('dialog.nt-dialog[open]');
+    if (!dlg) return;
+    const handle = dlg.querySelector('.dialog-body');
+    if (!handle) return;
+    const startY = e.touches[0].clientY;
+    const onMove = (ev) => {
+      const dy = ev.touches[0].clientY - startY;
+      if (dy > 0) dlg.style.transform = `translateY(${dy}px)`;
+    };
+    const onEnd = (ev) => {
+      const dy = ev.changedTouches[0].clientY - startY;
+      dlg.style.transition = '';
+      if (dy > 80) {
+        closeDialog(dlg.id);
+      } else {
+        dlg.style.transform = '';
+      }
+      dlg.style.transitionDuration = '.36s';
+      document.removeEventListener('touchmove', onMove);
+      document.removeEventListener('touchend', onEnd);
+    };
+    dlg.style.transitionDuration = '0ms';
+    document.addEventListener('touchmove', onMove, { passive: true });
+    document.addEventListener('touchend', onEnd);
+  }, { passive: true });
+
+  // Also close sheet when tapping the backdrop
+  document.addEventListener('click', function(e) {
+    const openDlg = document.querySelector('dialog.nt-dialog[open]');
+    if (openDlg && e.target === openDlg) closeDialog(openDlg.id);
+  });
+})();
+
+/* ── Escape key closes any open dialog ── */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    const openDlg = document.querySelector('dialog.nt-dialog[open]');
+    if (openDlg) closeDialog(openDlg.id);
+  }
+});
 </script>
 </body>
 </html>
