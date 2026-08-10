@@ -1641,6 +1641,165 @@ dialog.nt-dialog.calendar-dialog-wide {
 .jarvis-voice-wave.speaking .jwave-bar:nth-child(4) { animation-delay: 0.25s; }
 .jarvis-voice-wave.speaking .jwave-bar:nth-child(5) { animation-delay: 0.1s; }
 
+/* ── Rutina Diaria Module Styles ── */
+.routine-badge-row {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;
+}
+.routine-status-badge {
+  display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: var(--radius-pill);
+  font-size: 11px; font-weight: 700; background: rgba(34, 211, 238, 0.12); border: 1px solid rgba(34, 211, 238, 0.3); color: var(--cyan);
+}
+.routine-status-badge.purple {
+  background: rgba(139, 92, 246, 0.12); border-color: rgba(139, 92, 246, 0.3); color: var(--violet);
+}
+.routine-status-badge.amber {
+  background: rgba(251, 191, 36, 0.12); border-color: rgba(251, 191, 36, 0.3); color: var(--amber);
+}
+
+.routine-now-card {
+  position: relative;
+  background: linear-gradient(135deg, rgba(12, 20, 34, 0.95), rgba(21, 32, 54, 0.95));
+  border: 2px solid var(--cyan);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 10px 30px rgba(34, 211, 238, 0.18);
+  overflow: hidden;
+}
+.routine-now-card::before {
+  content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+  background: radial-gradient(circle at 80% 20%, rgba(34, 211, 238, 0.08) 0%, transparent 60%);
+  pointer-events: none;
+}
+.routine-now-header {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
+}
+.routine-now-pill {
+  display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: var(--radius-pill);
+  background: linear-gradient(135deg, var(--cyan), #0284c7); color: #060a12; font-size: 11px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: 0.5px; animation: pulseGlow 2s infinite alternate;
+}
+@keyframes pulseGlow {
+  0% { box-shadow: 0 0 5px rgba(34, 211, 238, 0.4); }
+  100% { box-shadow: 0 0 20px rgba(34, 211, 238, 0.8); }
+}
+.routine-now-time {
+  font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 700; color: var(--cyan);
+}
+.routine-now-title {
+  font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 800; color: var(--text);
+  margin: 6px 0; display: flex; align-items: center; gap: 10px;
+}
+.routine-now-mins {
+  font-size: 13px; font-weight: 600; color: var(--amber); margin-bottom: 14px; display: flex; align-items: center; gap: 6px;
+}
+
+.routine-next-card {
+  background: rgba(12, 20, 34, 0.7);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.routine-next-label {
+  font-size: 10px; font-weight: 800; color: var(--muted-2); text-transform: uppercase; letter-spacing: 0.5px;
+}
+.routine-next-info {
+  font-size: 13px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 8px; margin-top: 2px;
+}
+
+.routine-timeline {
+  position: relative; margin: 20px 0; padding-left: 24px;
+}
+.routine-timeline::before {
+  content: ''; position: absolute; top: 10px; bottom: 10px; left: 9px; width: 2px;
+  background: rgba(148, 163, 184, 0.2);
+}
+.rt-item-row {
+  position: relative; margin-bottom: 16px; background: rgba(12, 20, 34, 0.6);
+  border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 14px;
+  transition: all 0.2s ease;
+}
+.rt-item-row.is-now {
+  border-color: var(--cyan); background: rgba(34, 211, 238, 0.05);
+  box-shadow: 0 4px 15px rgba(34, 211, 238, 0.1);
+}
+.rt-item-row.is-completed {
+  border-color: rgba(52, 211, 153, 0.4); opacity: 0.85;
+}
+.rt-item-row.is-skipped {
+  border-color: rgba(148, 163, 184, 0.2); opacity: 0.6;
+}
+.rt-node-dot {
+  position: absolute; left: -24px; top: 18px; width: 18px; height: 18px; border-radius: 50%;
+  background: #0c1422; border: 2px solid var(--muted-2); transform: translateX(-50%);
+  display: flex; align-items: center; justify-content: center; font-size: 9px; color: var(--muted-2);
+}
+.rt-item-row.is-now .rt-node-dot {
+  border-color: var(--cyan); background: var(--cyan); color: #060a12; box-shadow: 0 0 10px var(--cyan);
+}
+.rt-item-row.is-completed .rt-node-dot {
+  border-color: var(--green); background: var(--green); color: #060a12;
+}
+.rt-item-row.is-skipped .rt-node-dot {
+  border-color: var(--muted-2); background: rgba(148, 163, 184, 0.2); color: var(--muted-2);
+}
+
+.rt-item-head {
+  display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; flex-wrap: wrap;
+}
+.rt-item-time {
+  font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 700; color: var(--cyan);
+}
+.rt-item-title {
+  font-size: 14px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 6px; margin-top: 2px;
+}
+.rt-item-desc {
+  font-size: 11px; color: var(--muted-2); margin-top: 4px; line-height: 1.4;
+}
+
+.rt-subtasks-wrapper {
+  margin-top: 10px; padding-top: 8px; border-top: 1px dashed rgba(148, 163, 184, 0.15);
+}
+.rt-subtask-item {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 4px 0; font-size: 11.5px;
+}
+.rt-subtask-left {
+  display: flex; align-items: center; gap: 8px; color: var(--text); cursor: pointer;
+}
+.rt-subtask-left input[type="checkbox"] {
+  width: 15px; height: 15px; accent-color: var(--cyan); cursor: pointer;
+}
+.rt-subtask-freq-tag {
+  font-size: 9px; font-weight: 700; padding: 1px 5px; border-radius: 4px; background: rgba(100, 116, 139, 0.2); color: var(--muted);
+}
+.rt-subtask-freq-tag.weekly { background: rgba(251, 191, 36, 0.15); color: var(--amber); }
+
+.rt-item-actions {
+  display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap;
+}
+.rt-btn {
+  padding: 5px 10px; border-radius: var(--radius-pill); font-size: 11px; font-weight: 700;
+  border: 1px solid var(--border-subtle); background: rgba(16, 27, 46, 0.6); color: var(--text); cursor: pointer;
+  transition: all 0.15s ease;
+}
+.rt-btn.complete:hover, .rt-btn.complete.active { background: rgba(52, 211, 153, 0.2); border-color: var(--green); color: var(--green); }
+.rt-btn.skip:hover, .rt-btn.skip.active { background: rgba(148, 163, 184, 0.2); border-color: var(--muted-2); color: var(--muted-2); }
+.rt-btn.reset:hover { background: rgba(239, 68, 68, 0.2); border-color: #ef4444; color: #ef4444; }
+
+.routine-later-box {
+  background: rgba(12, 20, 34, 0.8); border: 1px dashed rgba(139, 92, 246, 0.4); border-radius: var(--radius-lg);
+  padding: 16px; margin-top: 24px;
+}
+.routine-later-list {
+  display: flex; flex-direction: column; gap: 8px; margin-top: 12px;
+}
+.routine-later-item {
+  display: flex; justify-content: space-between; align-items: center; padding: 8px 12px;
+  background: rgba(21, 32, 54, 0.6); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); font-size: 12px;
+}
+
 @keyframes jwaveAnim {
   0% { height: 6px; background: var(--cyan); }
   100% { height: 28px; background: var(--violet); }
@@ -1671,9 +1830,10 @@ dialog.nt-dialog.calendar-dialog-wide {
     </div>
     <nav class="side-nav" aria-label="Navegación principal">
       <button class="nav-button active" data-view="today"><span class="nav-index">01</span>Hoy</button>
-      <button class="nav-button" data-view="sell"><span class="nav-index">02</span>Vender</button>
-      <button class="nav-button" data-view="publish"><span class="nav-index">03</span>Publicar</button>
-      <button class="nav-button" data-view="projects"><span class="nav-index">04</span>Proyectos</button>
+      <button class="nav-button" data-view="routine"><span class="nav-index">02</span>Rutina</button>
+      <button class="nav-button" data-view="sell"><span class="nav-index">03</span>Vender</button>
+      <button class="nav-button" data-view="publish"><span class="nav-index">04</span>Publicar</button>
+      <button class="nav-button" data-view="projects"><span class="nav-index">05</span>Proyectos</button>
     </nav>
     <div class="side-rule"><strong>REGLA DE ORO</strong>Un antojo solo dura de 3 a 5 minutos. Si ejecutas una acción corta en esa ventana, aseguras la victoria de hoy.</div>
   </aside>
@@ -1699,6 +1859,12 @@ dialog.nt-dialog.calendar-dialog-wide {
           <span class="qpb-icon">⚙️</span>
           <span>Configuración General</span>
           <span class="qpb-badge cyan">Sistema</span>
+        </button>
+
+        <button class="quick-pill-btn" onclick="showView('routine')">
+          <span class="qpb-icon">⏰</span>
+          <span>Rutina Diaria</span>
+          <span class="qpb-badge violet">Constancia</span>
         </button>
 
         <button class="quick-pill-btn" onclick="openRewardsDialog()">
@@ -1941,6 +2107,83 @@ dialog.nt-dialog.calendar-dialog-wide {
       <div class="project-list" id="project-list"></div>
       <div class="add-project"><input class="input" id="new-project-name" placeholder="Nuevo proyecto"><input class="input" id="new-project-kind" placeholder="SaaS, servicio, herramienta..."><input class="input" id="new-project-next" placeholder="Próxima acción concreta"><button class="btn btn-primary" onclick="addProject()">Añadir</button></div>
     </section>
+
+    <!-- ── MÓDULO RUTINA DIARIA ── -->
+    <section class="view" id="view-routine">
+      <div class="section-head">
+        <div class="eyebrow">ESTRUCTURA Y CONSTANCIA</div>
+        <h2>Rutina Diaria</h2>
+        <p>Dejar de decidir constantemente qué hacer y seguir una estructura previamente definida.</p>
+      </div>
+
+      <!-- Quick Action Toolbar inside Rutina -->
+      <div class="quick-app-toolbar" style="margin-bottom:14px;">
+        <button class="quick-pill-btn" onclick="openRoutineSetupModal()">
+          <span class="qpb-icon">⚙️</span>
+          <span>Configurar Rutina</span>
+          <span class="qpb-badge violet">Ajustes</span>
+        </button>
+        <button class="quick-pill-btn" onclick="openRoutineItemModal()">
+          <span class="qpb-icon">➕</span>
+          <span>Nueva Actividad</span>
+          <span class="qpb-badge green">Bloque</span>
+        </button>
+        <button class="quick-pill-btn" onclick="openRoutineHistoryModal()">
+          <span class="qpb-icon">📊</span>
+          <span>Historial & Rachas</span>
+          <span class="qpb-badge cyan">Stats</span>
+        </button>
+      </div>
+
+      <!-- Badges row: Challenge title & Streak info -->
+      <div class="routine-badge-row" id="routine-badge-row"></div>
+
+      <!-- Tarjeta AHORA (Actividad Actual) -->
+      <div class="routine-now-card" id="routine-now-card"></div>
+
+      <!-- Tarjeta SIGUIENTE (Próxima Actividad) -->
+      <div class="routine-next-card" id="routine-next-card"></div>
+
+      <!-- Progreso del Día -->
+      <div class="card" style="margin-bottom:16px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <strong style="font-size:13px; color:var(--text);" id="rt-progress-title">Rutina de hoy</strong>
+          <span style="font-size:12px; font-weight:700; color:var(--cyan);" id="rt-progress-pct">0%</span>
+        </div>
+        <div class="progress-track" style="height:10px; border-radius:99px;">
+          <div class="progress-fill" id="rt-progress-bar" style="width:0%; background:linear-gradient(90deg, var(--cyan), var(--green));"></div>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px; font-size:11px; color:var(--muted-2);">
+          <span id="rt-progress-count">0 de 0 completadas</span>
+          <span id="rt-streak-badge">🔥 Racha: 0 días</span>
+        </div>
+      </div>
+
+      <!-- Línea de Tiempo Vertical de Bloques -->
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:20px; margin-bottom:10px;">
+        <h3 style="font-family:'Space Grotesk',sans-serif; font-size:15px; font-weight:700; color:var(--text);">⏰ Bloques de la Rutina</h3>
+        <button class="btn btn-secondary btn-small" onclick="openRoutineItemModal()">+ Agregar Bloque</button>
+      </div>
+
+      <div class="routine-timeline" id="routine-timeline"></div>
+
+      <!-- Bandeja Para Después -->
+      <div class="routine-later-box">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <strong style="font-size:14px; color:var(--text); display:flex; align-items:center; gap:6px;">💡 Para después</strong>
+            <p style="font-size:11px; color:var(--muted-2); margin-top:2px;">Anota ideas, nuevos hábitos o experimentos sin alterar tu rutina activa.</p>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:8px; margin-top:12px;">
+          <input class="input" id="rt-later-input" placeholder="Ej. Probar rutina de estiramiento 15 min..." style="font-size:12px;">
+          <button class="btn btn-primary" onclick="addRoutineLaterIdea()" style="white-space:nowrap;">+ Guardar</button>
+        </div>
+
+        <div class="routine-later-list" id="routine-later-list"></div>
+      </div>
+    </section>
   </main>
 </div>
 
@@ -1950,6 +2193,12 @@ dialog.nt-dialog.calendar-dialog-wide {
       <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
     </svg>
     Hoy
+  </button>
+  <button class="bottom-button" data-view="routine" role="tab" aria-selected="false" aria-label="Rutina Diaria">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+    </svg>
+    Rutina
   </button>
   <button class="bottom-button" data-view="sell" role="tab" aria-selected="false" aria-label="Vender - CRM y prospectos">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
@@ -2207,6 +2456,186 @@ dialog.nt-dialog.calendar-dialog-wide {
     <div class="button-row" style="gap:8px;">
       <button class="btn btn-success" onclick="applyAndSaveThemeBg()" style="flex:1;">✅ Aplicar este Fondo</button>
       <button class="btn btn-secondary" onclick="closeDialog('theme-preview-dialog')">Cerrar</button>
+    </div>
+  </div>
+</dialog>
+
+<!-- Modal: Configuración de Rutina / Reto de Constancia -->
+<dialog class="nt-dialog" id="routine-setup-dialog">
+  <form class="dialog-body" onsubmit="saveRoutineSetup(event)">
+    <div class="dialog-head">
+      <div>
+        <h3>⚙️ Ajustes de Rutina Diaria & Reto</h3>
+        <p>Define la duración de tu reto o establece una rutina continua.</p>
+      </div>
+      <button class="dialog-close" type="button" onclick="closeDialog('routine-setup-dialog')">×</button>
+    </div>
+
+    <div class="field" style="margin-bottom:10px;">
+      <label for="rt-setup-name">Nombre de la Rutina</label>
+      <input class="input" id="rt-setup-name" placeholder="Ej. Mi rutina diaria, Modo enfoque, Días productivos" required>
+    </div>
+
+    <div class="field" style="margin-bottom:10px;">
+      <label for="rt-setup-start">Fecha de Inicio</label>
+      <input class="input" id="rt-setup-start" type="date" required>
+    </div>
+
+    <div class="field" style="margin-bottom:10px;">
+      <label for="rt-setup-duration">Duración del Reto de Constancia</label>
+      <select class="input" id="rt-setup-duration" onchange="onRoutineDurationChange()">
+        <option value="infinite">Sin fecha final (Rutina continua e indefinida)</option>
+        <option value="7d">7 Días (Reto de 1 semana)</option>
+        <option value="15d">15 Días</option>
+        <option value="21d">21 Días (Creación de Hábito)</option>
+        <option value="30d">30 Días (1 Mes Completo)</option>
+        <option value="60d">60 Días</option>
+        <option value="90d">90 Días (Transformación)</option>
+        <option value="custom">Personalizado (Indicar número de días)</option>
+      </select>
+    </div>
+
+    <div class="field" id="rt-setup-custom-days-wrapper" style="margin-bottom:10px; display:none;">
+      <label for="rt-setup-custom-days">Número de Días</label>
+      <input class="input" id="rt-setup-custom-days" type="number" min="1" max="365" value="30">
+    </div>
+
+    <div class="field" style="margin-bottom:10px;">
+      <label for="rt-setup-threshold">Umbral Mínimo para Día Exitoso</label>
+      <select class="input" id="rt-setup-threshold">
+        <option value="60">60% de actividades completadas</option>
+        <option value="70">70% de actividades completadas</option>
+        <option value="80" selected>80% de actividades completadas (Recomendado)</option>
+        <option value="90">90% de actividades completadas</option>
+        <option value="100">100% (Disciplina absoluta)</option>
+      </select>
+    </div>
+
+    <div style="padding:10px; background:rgba(139,92,246,0.08); border:1px solid rgba(139,92,246,0.3); border-radius:var(--radius-md); margin-bottom:14px;">
+      <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:12px; color:var(--text); font-weight:700;">
+        <input type="checkbox" id="rt-setup-commitment" style="width:16px; height:16px; accent-color:var(--violet);">
+        <span>🔒 Activar Modo Compromiso</span>
+      </label>
+      <p style="font-size:10.5px; color:var(--muted-2); margin-top:4px; line-height:1.4;">
+        Evita modificar constantemente tu rutina mientras intentas crear constancia. Los cambios solicitados se aplicarán a partir de mañana.
+      </p>
+    </div>
+
+    <div class="button-row">
+      <button class="btn btn-primary" type="submit">💾 Guardar Configuración</button>
+      <button class="btn btn-secondary" type="button" onclick="closeDialog('routine-setup-dialog')">Cancelar</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Modal: Crear / Editar Actividad de Rutina (Bloque Horario + Sub-actividades) -->
+<dialog class="nt-dialog" id="routine-item-dialog">
+  <form class="dialog-body" onsubmit="saveRoutineItem(event)">
+    <input type="hidden" id="rt-item-edit-id" value="">
+    <div class="dialog-head">
+      <div>
+        <h3 id="rt-item-dialog-title">➕ Bloque / Actividad de Rutina</h3>
+        <p>Añade o edita una actividad con su horario y sub-actividades internas.</p>
+      </div>
+      <button class="dialog-close" type="button" onclick="closeDialog('routine-item-dialog')">×</button>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px;">
+      <div class="field">
+        <label for="rt-item-start">Hora Inicio *</label>
+        <input class="input" id="rt-item-start" type="time" required>
+      </div>
+      <div class="field">
+        <label for="rt-item-end">Hora Fin (Opcional)</label>
+        <input class="input" id="rt-item-end" type="time">
+      </div>
+    </div>
+
+    <div class="field" style="margin-bottom:10px;">
+      <label for="rt-item-title">Nombre de la Actividad *</label>
+      <input class="input" id="rt-item-title" placeholder="Ej. Despertar, Higiene personal, Trabajo, Proyecto..." required>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px;">
+      <div class="field">
+        <label for="rt-item-category">Categoría</label>
+        <select class="input" id="rt-item-category">
+          <option value="Personal">Personal</option>
+          <option value="Salud">Salud</option>
+          <option value="Trabajo">Trabajo</option>
+          <option value="Proyecto">Proyecto</option>
+          <option value="Familia">Familia</option>
+          <option value="Descanso">Descanso</option>
+          <option value="Comida">Comida</option>
+          <option value="Ejercicio">Ejercicio</option>
+          <option value="Productividad">Productividad</option>
+          <option value="Otro">Otro</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="rt-item-icon">Icono / Emoji</label>
+        <input class="input" id="rt-item-icon" placeholder="Ej. 🌅, 🧼, ☕, 🚀, 💼" value="📌">
+      </div>
+    </div>
+
+    <div class="field" style="margin-bottom:12px;">
+      <label for="rt-item-desc">Descripción u Observaciones (Opcional)</label>
+      <input class="input" id="rt-item-desc" placeholder="Detalles de este bloque...">
+    </div>
+
+    <!-- Creador de Sub-actividades internas -->
+    <div style="padding:10px; background:rgba(6,10,18,0.5); border:1px solid var(--border-subtle); border-radius:var(--radius-md); margin-bottom:14px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+        <strong style="font-size:11.5px; color:var(--text);">📋 Sub-actividades (Lista de Chequeo)</strong>
+        <button type="button" class="btn btn-secondary btn-small" onclick="addSubItemInputRow()">+ Añadir Sub-tarea</button>
+      </div>
+      <div id="rt-subitems-container" style="display:flex; flex-direction:column; gap:6px;"></div>
+    </div>
+
+    <div class="button-row">
+      <button class="btn btn-primary" type="submit">💾 Guardar Bloque</button>
+      <button class="btn btn-danger" type="button" id="rt-item-delete-btn" onclick="deleteCurrentRoutineItem()" style="display:none;">Eliminar</button>
+      <button class="btn btn-secondary" type="button" onclick="closeDialog('routine-item-dialog')">Cancelar</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Modal: Historial & Estadísticas de Rutina -->
+<dialog class="nt-dialog" id="routine-history-dialog" style="width:min(600px, calc(100% - 24px));">
+  <div class="dialog-body">
+    <div class="dialog-head">
+      <div>
+        <h3>📊 Historial & Estadísticas de Rutina</h3>
+        <p>Resumen de cumplimiento, rachas y días exitosos.</p>
+      </div>
+      <button class="dialog-close" type="button" onclick="closeDialog('routine-history-dialog')">×</button>
+    </div>
+
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap:10px; margin-bottom:16px;">
+      <div style="padding:10px; background:rgba(21,32,54,0.6); border:1px solid var(--border-subtle); border-radius:var(--radius-md); text-align:center;">
+        <span style="font-size:10px; color:var(--muted-2); font-weight:700; text-transform:uppercase;">RACHA ACTUAL</span>
+        <h4 style="font-size:18px; color:var(--amber); margin-top:2px;" id="rt-stat-current-streak">0 días</h4>
+      </div>
+      <div style="padding:10px; background:rgba(21,32,54,0.6); border:1px solid var(--border-subtle); border-radius:var(--radius-md); text-align:center;">
+        <span style="font-size:10px; color:var(--muted-2); font-weight:700; text-transform:uppercase;">MEJOR RACHA</span>
+        <h4 style="font-size:18px; color:var(--green); margin-top:2px;" id="rt-stat-best-streak">0 días</h4>
+      </div>
+      <div style="padding:10px; background:rgba(21,32,54,0.6); border:1px solid var(--border-subtle); border-radius:var(--radius-md); text-align:center;">
+        <span style="font-size:10px; color:var(--muted-2); font-weight:700; text-transform:uppercase;">ÚLTIMOS 7 DÍAS</span>
+        <h4 style="font-size:18px; color:var(--cyan); margin-top:2px;" id="rt-stat-7d">0%</h4>
+      </div>
+      <div style="padding:10px; background:rgba(21,32,54,0.6); border:1px solid var(--border-subtle); border-radius:var(--radius-md); text-align:center;">
+        <span style="font-size:10px; color:var(--muted-2); font-weight:700; text-transform:uppercase;">PROMEDIO GLOBAL</span>
+        <h4 style="font-size:18px; color:var(--violet); margin-top:2px;" id="rt-stat-avg">0%</h4>
+      </div>
+    </div>
+
+    <!-- Calendario de Historial Reciente -->
+    <strong style="font-size:12px; color:var(--text); display:block; margin-bottom:8px;">📅 Registro de los últimos 14 días:</strong>
+    <div id="rt-history-calendar-strip" style="display:grid; grid-template-columns: repeat(7, 1fr); gap:6px; margin-bottom:16px;"></div>
+
+    <div class="button-row">
+      <button class="btn btn-secondary" type="button" onclick="closeDialog('routine-history-dialog')">Cerrar</button>
     </div>
   </div>
 </dialog>
@@ -2744,7 +3173,7 @@ dialog.nt-dialog.calendar-dialog-wide {
 const STORAGE_KEY = 'nt_growth_os_simple_v1';
 const LEGACY_KEY = 'whabot_state';
 const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbxrS7lhNAg81TFWzJI5iEyXmou5Ucr6wIVRcZTa0ZjFJCQMOeUVGRkiF_6_YQFctHjd/exec';
-const TITLES = { today:'Hoy', sell:'Vender', publish:'Publicar', projects:'Proyectos' };
+const TITLES = { today:'Hoy', routine:'Rutina Diaria', sell:'Vender', publish:'Publicar', projects:'Proyectos' };
 
 const ACCOUNTS = [
   {id:'personal',name:'Marca personal',handle:'@nachotorresrd',url:'https://www.instagram.com/nachotorresrd/',purpose:'Código, inteligencia artificial, construcción en público y conexión con todos tus sistemas.',ideas:[
@@ -2838,7 +3267,7 @@ function loadState(){
   const savedProjects=Array.isArray(saved.projects)?saved.projects:[];
   const projects=BUILT_INS.map(base=>({...base,...(savedProjects.find(p=>p.id===base.id)||{})}));
   savedProjects.filter(p=>!BUILT_INS.some(b=>b.id===p.id)).forEach(p=>projects.push(p));
-  return {activeProject:saved.activeProject||projects.find(p=>p.status==='focus')?.id||'whabot',sellProject:saved.sellProject||'whabot',projects,daily:saved.daily||{},crm:Array.isArray(saved.crm)?saved.crm:(legacy.crm||[]),contentIndex:saved.contentIndex||{},smoke:saved.smoke||{},settings:saved.settings||{}};
+  return {activeProject:saved.activeProject||projects.find(p=>p.status==='focus')?.id||'whabot',sellProject:saved.sellProject||'whabot',projects,daily:saved.daily||{},crm:Array.isArray(saved.crm)?saved.crm:(legacy.crm||[]),contentIndex:saved.contentIndex||{},smoke:saved.smoke||{},settings:saved.settings||{},routine:saved.routine||null};
 }
 let state=loadState();
 state.settings = state.settings || {};
@@ -3400,6 +3829,21 @@ function confirmSmokeFree(){
   if(day.smokeStatus!=='clear'){ day.smokeStatus='clear'; smokeEvent('clear'); saveState(); }
   renderSmoke(); toast('Listo. Tu progreso de hoy quedó registrado.');
 }
+
+
+function showView(id){
+  if(!TITLES[id]) id='today';
+  document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===`view-${id}`));
+  document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===id));
+  const viewTitleEl = document.getElementById('view-title');
+  if(viewTitleEl) viewTitleEl.textContent = TITLES[id];
+  history.replaceState(null,'',`#${id}`);
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(id==='routine') renderRoutineView();
+  if(id==='sell') renderSell();
+  if(id==='publish') renderPublish();
+  if(id==='projects') renderProjects();
+}
 function openCravingDialog(){ resetBreathing(); openDialog('craving-dialog'); }
 function resistCraving(event){
   event.preventDefault();
@@ -3452,6 +3896,667 @@ function showView(id){
 if(id==='projects') renderProjects();
 }
 document.querySelectorAll('[data-view]').forEach(button=>button.addEventListener('click',()=>showView(button.dataset.view)));
+
+/* ── MÓDULO RUTINA DIARIA & RETO DE CONSTANCIA ENGINE ── */
+function getRoutineState(){
+  if (!state.routine) {
+    state.routine = {
+      activeRoutine: {
+        id: 'rt-main',
+        name: 'Mi Rutina Diaria',
+        startDate: dateKey(new Date()),
+        durationType: 'infinite',
+        durationDays: 30,
+        completionThreshold: 80,
+        commitmentMode: false,
+        isActive: true
+      },
+      items: [
+        { id: 'item-1', title: 'Despertar', startTime: '08:00', endTime: '08:05', category: 'Personal', icon: '🌅', sortOrder: 1, subItems: [] },
+        { id: 'item-2', title: 'Estiramiento', startTime: '08:05', endTime: '08:10', category: 'Salud', icon: '🧘', sortOrder: 2, subItems: [] },
+        { id: 'item-3', title: 'Higiene Personal', startTime: '08:10', endTime: '08:25', category: 'Salud', icon: '🧼', sortOrder: 3, subItems: [
+            { id: 'sub-1', title: 'Bañarme', freq: 'daily' },
+            { id: 'sub-2', title: 'Cepillarme', freq: 'daily' },
+            { id: 'sub-3', title: 'Recortarme / Afeitarme', freq: 'weekly' }
+        ]},
+        { id: 'item-4', title: 'Café / Desayuno', startTime: '08:25', endTime: '08:45', category: 'Comida', icon: '☕', sortOrder: 4, subItems: [] },
+        { id: 'item-5', title: 'Trabajo Principal', startTime: '09:00', endTime: '18:30', category: 'Trabajo', icon: '💼', sortOrder: 5, subItems: [] },
+        { id: 'item-6', title: 'Casa / Familia', startTime: '19:30', endTime: '20:30', category: 'Familia', icon: '🏠', sortOrder: 6, subItems: [] },
+        { id: 'item-7', title: 'Proyecto Principal', startTime: '20:30', endTime: '21:30', category: 'Proyecto', icon: '🚀', sortOrder: 7, subItems: [] },
+        { id: 'item-8', title: 'Publicaciones / Mantenimiento', startTime: '21:30', endTime: '22:00', category: 'Productividad', icon: '📢', sortOrder: 8, subItems: [] },
+        { id: 'item-9', title: 'Tiempo Libre', startTime: '22:00', endTime: '23:30', category: 'Descanso', icon: '🎮', sortOrder: 9, subItems: [] },
+        { id: 'item-10', title: 'Prepararme para Dormir', startTime: '23:30', endTime: '23:59', category: 'Salud', icon: '🌙', sortOrder: 10, subItems: [] }
+      ],
+      logs: {},
+      progress: {},
+      laterIdeas: [
+        { id: 'idea-1', text: 'Comenzar canal de YouTube', createdAt: new Date().toISOString() },
+        { id: 'idea-2', text: 'Investigar producto SaaS', createdAt: new Date().toISOString() }
+      ],
+      bestStreak: 0
+    };
+  }
+  if (!state.routine.items) state.routine.items = [];
+  if (!state.routine.logs) state.routine.logs = {};
+  if (!state.routine.progress) state.routine.progress = {};
+  if (!state.routine.laterIdeas) state.routine.laterIdeas = [];
+  return state.routine;
+}
+
+function getTodayDateKey(){
+  return dateKey(new Date());
+}
+
+function getTodayRoutineLogs(){
+  const rt = getRoutineState();
+  const todayKey = getTodayDateKey();
+  if (!rt.logs[todayKey]) {
+    rt.logs[todayKey] = {};
+  }
+  return rt.logs[todayKey];
+}
+
+function renderRoutineView(){
+  const rt = getRoutineState();
+  const active = rt.activeRoutine || {};
+  const todayLogs = getTodayRoutineLogs();
+  const nowHM = getHMString(new Date());
+
+  // 1. Render Badges
+  const badgeRow = document.getElementById('routine-badge-row');
+  if (badgeRow) {
+    let html = ``;
+    const streak = calcRoutineStreak();
+    if (active.durationType === 'infinite') {
+      html += `<div class="routine-status-badge">⏰ ${escapeHTML(active.name || 'Rutina Diaria')}</div>`;
+      html += `<div class="routine-status-badge amber">🔥 Racha actual: ${streak} días</div>`;
+    } else {
+      const daysCount = getRoutineChallengeDayCount();
+      const totalDays = active.durationDays || 30;
+      html += `<div class="routine-status-badge purple">🏆 Reto de constancia · Día ${daysCount} de ${totalDays}</div>`;
+      html += `<div class="routine-status-badge amber">🔥 Racha: ${streak} días</div>`;
+      const endFormatted = active.startDate ? getFormattedEndDate(active.startDate, totalDays) : '';
+      if (endFormatted) {
+        html += `<div class="routine-status-badge">🏁 Finaliza: ${endFormatted}</div>`;
+      }
+    }
+    if (active.commitmentMode) {
+      html += `<div class="routine-status-badge purple">🔒 Modo Compromiso Activo</div>`;
+    }
+    badgeRow.innerHTML = html;
+  }
+
+  // 2. Sort items by start_time
+  const sortedItems = [...rt.items].sort((a,b) => (a.startTime || '00:00').localeCompare(b.startTime || '00:00'));
+
+  // 3. Find AHORA & SIGUIENTE items
+  let nowItemIndex = -1;
+  for (let i = 0; i < sortedItems.length; i++) {
+    const item = sortedItems[i];
+    const sTime = item.startTime || '00:00';
+    const eTime = item.endTime || '23:59';
+    if (nowHM >= sTime && nowHM < eTime) {
+      nowItemIndex = i;
+      break;
+    }
+  }
+  if (nowItemIndex === -1) {
+    for (let i = 0; i < sortedItems.length; i++) {
+      if ((sortedItems[i].startTime || '00:00') > nowHM) {
+        nowItemIndex = i;
+        break;
+      }
+    }
+  }
+  if (nowItemIndex === -1 && sortedItems.length > 0) {
+    nowItemIndex = 0;
+  }
+
+  const nowItem = sortedItems[nowItemIndex] || null;
+  const nextItem = sortedItems[nowItemIndex + 1] || sortedItems[0] || null;
+
+  // 4. Render Card AHORA
+  const nowCard = document.getElementById('routine-now-card');
+  if (nowCard) {
+    if (!nowItem) {
+      nowCard.innerHTML = `<div style="text-align:center; padding:10px; color:var(--muted-2);">No hay actividades en la rutina. Presiona <strong>+ Agregar Bloque</strong> para comenzar.</div>`;
+    } else {
+      const nowStatus = todayLogs[nowItem.id]?.status || 'pending';
+      const minsLeft = calcMinsRemaining(nowItem.endTime || '23:59');
+      const timeStr = `${nowItem.startTime}${nowItem.endTime ? ' — ' + nowItem.endTime : ''}`;
+
+      let subTasksHtml = '';
+      if (nowItem.subItems && nowItem.subItems.length > 0) {
+        const itemSubLog = todayLogs[nowItem.id]?.subItems || {};
+        subTasksHtml = `<div class="rt-subtasks-wrapper">`;
+        nowItem.subItems.forEach(sub => {
+          const isChecked = !!itemSubLog[sub.id];
+          const freqTag = sub.freq === 'weekly' ? '<span class="rt-subtask-freq-tag weekly">Semanal</span>' : '<span class="rt-subtask-freq-tag">Diaria</span>';
+          subTasksHtml += `
+            <div class="rt-subtask-item">
+              <label class="rt-subtask-left">
+                <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleSubTaskStatus('${nowItem.id}', '${sub.id}')">
+                <span style="${isChecked ? 'text-decoration:line-through; color:var(--muted-2);' : ''}">${escapeHTML(sub.title)}</span>
+              </label>
+              ${freqTag}
+            </div>`;
+        });
+        subTasksHtml += `</div>`;
+      }
+
+      nowCard.innerHTML = `
+        <div class="routine-now-header">
+          <span class="routine-now-pill">⚡ AHORA</span>
+          <span class="routine-now-time">${timeStr}</span>
+        </div>
+        <div class="routine-now-title">
+          <span>${nowItem.icon || '📌'}</span>
+          <span>${escapeHTML(nowItem.title)}</span>
+        </div>
+        ${nowItem.description ? `<div style="font-size:11.5px; color:var(--muted-2); margin-bottom:8px;">${escapeHTML(nowItem.description)}</div>` : ''}
+        ${minsLeft > 0 ? `<div class="routine-now-mins">⏱️ ${minsLeft} minutos restantes en este bloque</div>` : ''}
+        ${subTasksHtml}
+        <div class="rt-item-actions" style="margin-top:14px;">
+          <button class="rt-btn complete ${nowStatus==='completed'?'active':''}" onclick="toggleRoutineItemStatus('${nowItem.id}', 'completed')">
+            ✓ ${nowStatus==='completed'?'Completada':'Marcar como completada'}
+          </button>
+          <button class="rt-btn skip ${nowStatus==='skipped'?'active':''}" onclick="toggleRoutineItemStatus('${nowItem.id}', 'skipped')">
+            — ${nowStatus==='skipped'?'Omitida':'Omitir'}
+          </button>
+        </div>`;
+    }
+  }
+
+  // 5. Render Card SIGUIENTE
+  const nextCard = document.getElementById('routine-next-card');
+  if (nextCard) {
+    if (!nextItem || nextItem.id === nowItem?.id) {
+      nextCard.style.display = 'none';
+    } else {
+      nextCard.style.display = 'flex';
+      nextCard.innerHTML = `
+        <div>
+          <span class="routine-next-label">SIGUIENTE BLOQUE</span>
+          <div class="routine-next-info">
+            <span>${nextItem.icon || '📌'}</span>
+            <span>${escapeHTML(nextItem.title)}</span>
+          </div>
+        </div>
+        <span style="font-family:'Space Grotesk',sans-serif; font-size:12px; font-weight:700; color:var(--cyan);">${nextItem.startTime}</span>`;
+    }
+  }
+
+  // 6. Render Progress Bar & Streak
+  const totalCount = sortedItems.length;
+  let completedCount = 0;
+  sortedItems.forEach(item => {
+    if (todayLogs[item.id]?.status === 'completed') completedCount++;
+  });
+  const pct = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+
+  safeSetText('rt-progress-pct', `${pct}%`);
+  const progressBar = document.getElementById('rt-progress-bar');
+  if (progressBar) progressBar.style.width = `${pct}%`;
+  safeSetText('rt-progress-count', `${completedCount} de ${totalCount} completadas`);
+  const streakDays = calcRoutineStreak();
+  safeSetText('rt-streak-badge', `🔥 Racha: ${streakDays} días`);
+
+  const todayKey = getTodayDateKey();
+  rt.progress[todayKey] = {
+    percentage: pct,
+    completedCount: completedCount,
+    totalCount: totalCount,
+    status: pct >= (active.completionThreshold || 80) ? 'success' : 'partial'
+  };
+
+  // 7. Render Timeline
+  const timelineEl = document.getElementById('routine-timeline');
+  if (timelineEl) {
+    if (sortedItems.length === 0) {
+      timelineEl.innerHTML = `<div style="color:var(--muted-2); font-size:12px;">No tienes bloques agregados. Agrega tu primer bloque arriba.</div>`;
+    } else {
+      let tHtml = '';
+      sortedItems.forEach(item => {
+        const isNow = (nowItem && item.id === nowItem.id);
+        const itemLog = todayLogs[item.id] || {};
+        const status = itemLog.status || 'pending';
+
+        let rowClass = 'rt-item-row';
+        let dotIcon = '○';
+        if (status === 'completed') { rowClass += ' is-completed'; dotIcon = '✓'; }
+        else if (status === 'skipped') { rowClass += ' is-skipped'; dotIcon = '—'; }
+        if (isNow) { rowClass += ' is-now'; }
+
+        let itemSubHtml = '';
+        if (item.subItems && item.subItems.length > 0) {
+          const itemSubLog = itemLog.subItems || {};
+          itemSubHtml = `<div class="rt-subtasks-wrapper">`;
+          item.subItems.forEach(sub => {
+            const isChecked = !!itemSubLog[sub.id];
+            const freqTag = sub.freq === 'weekly' ? '<span class="rt-subtask-freq-tag weekly">Semanal</span>' : '<span class="rt-subtask-freq-tag">Diaria</span>';
+            itemSubHtml += `
+              <div class="rt-subtask-item">
+                <label class="rt-subtask-left">
+                  <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleSubTaskStatus('${item.id}', '${sub.id}')">
+                  <span style="${isChecked ? 'text-decoration:line-through; color:var(--muted-2);' : ''}">${escapeHTML(sub.title)}</span>
+                </label>
+                ${freqTag}
+              </div>`;
+          });
+          itemSubHtml += `</div>`;
+        }
+
+        tHtml += `
+          <div class="${rowClass}">
+            <div class="rt-node-dot">${dotIcon}</div>
+            <div class="rt-item-head">
+              <div>
+                <span class="rt-item-time">${item.startTime}${item.endTime ? ' - ' + item.endTime : ''}</span>
+                <div class="rt-item-title">
+                  <span>${item.icon || '📌'}</span>
+                  <span>${escapeHTML(item.title)}</span>
+                  ${isNow ? '<span class="routine-now-pill" style="font-size:9px; padding:2px 8px;">AHORA</span>' : ''}
+                </div>
+              </div>
+              <span class="qpb-badge cyan">${escapeHTML(item.category || 'Personal')}</span>
+            </div>
+            ${item.description ? `<div class="rt-item-desc">${escapeHTML(item.description)}</div>` : ''}
+            ${itemSubHtml}
+            <div class="rt-item-actions">
+              <button class="rt-btn complete ${status==='completed'?'active':''}" onclick="toggleRoutineItemStatus('${item.id}', 'completed')">✓ Completada</button>
+              <button class="rt-btn skip ${status==='skipped'?'active':''}" onclick="toggleRoutineItemStatus('${item.id}', 'skipped')">— Omitir</button>
+              <button class="rt-btn" onclick="openRoutineItemModal('${item.id}')">✏️ Editar</button>
+            </div>
+          </div>`;
+      });
+      timelineEl.innerHTML = tHtml;
+    }
+  }
+
+  renderRoutineLaterIdeas();
+}
+
+function toggleRoutineItemStatus(itemId, newStatus){
+  const todayLogs = getTodayRoutineLogs();
+  if (todayLogs[itemId]?.status === newStatus) {
+    delete todayLogs[itemId].status;
+  } else {
+    todayLogs[itemId] = todayLogs[itemId] || {};
+    todayLogs[itemId].status = newStatus;
+  }
+  saveState();
+  renderRoutineView();
+  pushThisDeviceToCloud();
+}
+
+function toggleSubTaskStatus(itemId, subId){
+  const todayLogs = getTodayRoutineLogs();
+  todayLogs[itemId] = todayLogs[itemId] || {};
+  todayLogs[itemId].subItems = todayLogs[itemId].subItems || {};
+  todayLogs[itemId].subItems[subId] = !todayLogs[itemId].subItems[subId];
+
+  const rt = getRoutineState();
+  const item = rt.items.find(i => i.id === itemId);
+  if (item && item.subItems && item.subItems.length > 0) {
+    const allChecked = item.subItems.every(s => !!todayLogs[itemId].subItems[s.id]);
+    if (allChecked) todayLogs[itemId].status = 'completed';
+  }
+
+  saveState();
+  renderRoutineView();
+  pushThisDeviceToCloud();
+}
+
+function getHMString(date){
+  const h = String(date.getHours()).padStart(2,'0');
+  const m = String(date.getMinutes()).padStart(2,'0');
+  return `${h}:${m}`;
+}
+
+function calcMinsRemaining(endTimeStr){
+  if (!endTimeStr) return 0;
+  const now = new Date();
+  const parts = endTimeStr.split(':');
+  if (parts.length < 2) return 0;
+  const end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), parseInt(parts[0], 10), parseInt(parts[1], 10));
+  const diffMs = end.getTime() - now.getTime();
+  return diffMs > 0 ? Math.ceil(diffMs / 60000) : 0;
+}
+
+function calcRoutineStreak(){
+  const rt = getRoutineState();
+  const threshold = rt.activeRoutine?.completionThreshold || 80;
+  const today = new Date();
+  let streak = 0;
+
+  for (let i = 0; i < 365; i++) {
+    const d = new Date(today.getTime() - i * 86400000);
+    const key = dateKey(d);
+    const prog = rt.progress[key];
+    if (prog && prog.percentage >= threshold) {
+      streak++;
+    } else if (i === 0) {
+      continue;
+    } else {
+      break;
+    }
+  }
+  if (streak > (rt.bestStreak || 0)) {
+    rt.bestStreak = streak;
+  }
+  return streak;
+}
+
+function getRoutineChallengeDayCount(){
+  const rt = getRoutineState();
+  const startDate = rt.activeRoutine?.startDate ? new Date(rt.activeRoutine.startDate) : new Date();
+  const now = new Date();
+  const diffTime = Math.max(0, now.getTime() - startDate.getTime());
+  return Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+}
+
+function getFormattedEndDate(startDateStr, totalDays){
+  try {
+    const s = new Date(startDateStr);
+    const e = new Date(s.getTime() + totalDays * 86400000);
+    return `${e.getDate()}/${e.getMonth()+1}/${e.getFullYear()}`;
+  } catch(err) { return ''; }
+}
+
+function renderRoutineLaterIdeas(){
+  const rt = getRoutineState();
+  const listEl = document.getElementById('routine-later-list');
+  if (!listEl) return;
+
+  if (!rt.laterIdeas || rt.laterIdeas.length === 0) {
+    listEl.innerHTML = `<div style="font-size:11px; color:var(--muted-2); font-style:italic;">No hay ideas archivadas en la bandeja.</div>`;
+    return;
+  }
+
+  let html = '';
+  rt.laterIdeas.forEach(idea => {
+    html += `
+      <div class="routine-later-item">
+        <span>💡 ${escapeHTML(idea.text)}</span>
+        <button class="btn btn-danger btn-small" onclick="deleteRoutineLaterIdea('${idea.id}')">✕</button>
+      </div>`;
+  });
+  listEl.innerHTML = html;
+}
+
+function addRoutineLaterIdea(){
+  const input = document.getElementById('rt-later-input');
+  if (!input) return;
+  const val = input.value.trim();
+  if (!val) return;
+
+  const rt = getRoutineState();
+  rt.laterIdeas.push({
+    id: 'idea-' + Date.now(),
+    text: val,
+    createdAt: new Date().toISOString()
+  });
+  input.value = '';
+  saveState();
+  renderRoutineLaterIdeas();
+  toast('💡 Idea guardada en la bandeja "Para después".', '✨');
+  pushThisDeviceToCloud();
+}
+
+function deleteRoutineLaterIdea(id){
+  const rt = getRoutineState();
+  rt.laterIdeas = rt.laterIdeas.filter(i => i.id !== id);
+  saveState();
+  renderRoutineLaterIdeas();
+  toast('Idea eliminada.');
+  pushThisDeviceToCloud();
+}
+
+function openRoutineSetupModal(){
+  const rt = getRoutineState();
+  const active = rt.activeRoutine || {};
+
+  safeSetValue('rt-setup-name', active.name || 'Mi Rutina Diaria');
+  safeSetValue('rt-setup-start', active.startDate || dateKey(new Date()));
+  safeSetValue('rt-setup-duration', active.durationType || 'infinite');
+  safeSetValue('rt-setup-custom-days', active.durationDays || 30);
+  safeSetValue('rt-setup-threshold', active.completionThreshold || 80);
+
+  const commCb = document.getElementById('rt-setup-commitment');
+  if (commCb) commCb.checked = !!active.commitmentMode;
+
+  onRoutineDurationChange();
+  openDialog('routine-setup-dialog');
+}
+
+function onRoutineDurationChange(){
+  const sel = document.getElementById('rt-setup-duration');
+  const wrapper = document.getElementById('rt-setup-custom-days-wrapper');
+  if (sel && wrapper) {
+    wrapper.style.display = (sel.value === 'custom') ? 'block' : 'none';
+  }
+}
+
+function saveRoutineSetup(event){
+  event.preventDefault();
+  const rt = getRoutineState();
+  rt.activeRoutine = rt.activeRoutine || {};
+
+  const durType = document.getElementById('rt-setup-duration')?.value || 'infinite';
+  let durDays = 30;
+  if (durType === '7d') durDays = 7;
+  else if (durType === '15d') durDays = 15;
+  else if (durType === '21d') durDays = 21;
+  else if (durType === '30d') durDays = 30;
+  else if (durType === '60d') durDays = 60;
+  else if (durType === '90d') durDays = 90;
+  else if (durType === 'custom') durDays = parseInt(document.getElementById('rt-setup-custom-days')?.value || '30', 10);
+
+  rt.activeRoutine.name = document.getElementById('rt-setup-name')?.value.trim() || 'Mi Rutina Diaria';
+  rt.activeRoutine.startDate = document.getElementById('rt-setup-start')?.value || dateKey(new Date());
+  rt.activeRoutine.durationType = durType;
+  rt.activeRoutine.durationDays = durDays;
+  rt.activeRoutine.completionThreshold = parseInt(document.getElementById('rt-setup-threshold')?.value || '80', 10);
+  rt.activeRoutine.commitmentMode = !!document.getElementById('rt-setup-commitment')?.checked;
+
+  saveState();
+  closeDialog('routine-setup-dialog');
+  renderRoutineView();
+  toast('⚙️ Configuración de rutina guardada correctamente.', '✨');
+  pushThisDeviceToCloud();
+}
+
+let _editingSubItems = [];
+
+function openRoutineItemModal(itemId = null){
+  const rt = getRoutineState();
+  const editIdInput = document.getElementById('rt-item-edit-id');
+  const delBtn = document.getElementById('rt-item-delete-btn');
+  const titleEl = document.getElementById('rt-item-dialog-title');
+
+  _editingSubItems = [];
+
+  if (itemId) {
+    const item = rt.items.find(i => i.id === itemId);
+    if (!item) return;
+    if (editIdInput) editIdInput.value = item.id;
+    if (titleEl) titleEl.textContent = '✏️ Editar Bloque de Rutina';
+    if (delBtn) delBtn.style.display = 'inline-block';
+
+    safeSetValue('rt-item-start', item.startTime || '08:00');
+    safeSetValue('rt-item-end', item.endTime || '');
+    safeSetValue('rt-item-title', item.title || '');
+    safeSetValue('rt-item-category', item.category || 'Personal');
+    safeSetValue('rt-item-icon', item.icon || '📌');
+    safeSetValue('rt-item-desc', item.description || '');
+
+    if (item.subItems) {
+      _editingSubItems = JSON.parse(JSON.stringify(item.subItems));
+    }
+  } else {
+    if (editIdInput) editIdInput.value = '';
+    if (titleEl) titleEl.textContent = '➕ Bloque / Actividad de Rutina';
+    if (delBtn) delBtn.style.display = 'none';
+
+    safeSetValue('rt-item-start', '08:00');
+    safeSetValue('rt-item-end', '08:30');
+    safeSetValue('rt-item-title', '');
+    safeSetValue('rt-item-category', 'Personal');
+    safeSetValue('rt-item-icon', '📌');
+    safeSetValue('rt-item-desc', '');
+  }
+
+  renderSubItemInputs();
+  openDialog('routine-item-dialog');
+}
+
+function renderSubItemInputs(){
+  const container = document.getElementById('rt-subitems-container');
+  if (!container) return;
+
+  if (_editingSubItems.length === 0) {
+    container.innerHTML = `<div style="font-size:11px; color:var(--muted-2); font-style:italic;">Sin sub-actividades agregadas.</div>`;
+    return;
+  }
+
+  let html = '';
+  _editingSubItems.forEach((sub, idx) => {
+    html += `
+      <div style="display:flex; gap:6px; align-items:center;">
+        <input class="input" style="flex:1; font-size:11.5px; padding:6px 10px;" value="${escapeHTML(sub.title)}" onchange="_editingSubItems[${idx}].title = this.value.trim()">
+        <select class="input" style="width:110px; font-size:11px; padding:6px;" onchange="_editingSubItems[${idx}].freq = this.value">
+          <option value="daily" ${sub.freq==='daily'?'selected':''}>Diaria</option>
+          <option value="weekly" ${sub.freq==='weekly'?'selected':''}>Semanal</option>
+        </select>
+        <button type="button" class="btn btn-danger btn-small" onclick="_editingSubItems.splice(${idx},1); renderSubItemInputs();">✕</button>
+      </div>`;
+  });
+  container.innerHTML = html;
+}
+
+function addSubItemInputRow(){
+  _editingSubItems.push({ id: 'sub-' + Date.now() + Math.random().toString(36).substr(2,4), title: 'Nueva sub-tarea', freq: 'daily' });
+  renderSubItemInputs();
+}
+
+function saveRoutineItem(event){
+  event.preventDefault();
+  const rt = getRoutineState();
+  const editId = document.getElementById('rt-item-edit-id')?.value;
+
+  const title = document.getElementById('rt-item-title')?.value.trim();
+  const startTime = document.getElementById('rt-item-start')?.value;
+  const endTime = document.getElementById('rt-item-end')?.value;
+  const category = document.getElementById('rt-item-category')?.value || 'Personal';
+  const icon = document.getElementById('rt-item-icon')?.value.trim() || '📌';
+  const desc = document.getElementById('rt-item-desc')?.value.trim() || '';
+
+  if (!title || !startTime) {
+    toast('Escribe un nombre y hora de inicio para la actividad.');
+    return;
+  }
+
+  const cleanSubItems = _editingSubItems.filter(s => s.title.length > 0);
+
+  if (editId) {
+    const item = rt.items.find(i => i.id === editId);
+    if (item) {
+      item.title = title;
+      item.startTime = startTime;
+      item.endTime = endTime;
+      item.category = category;
+      item.icon = icon;
+      item.description = desc;
+      item.subItems = cleanSubItems;
+    }
+  } else {
+    rt.items.push({
+      id: 'item-' + Date.now(),
+      title: title,
+      startTime: startTime,
+      endTime: endTime,
+      category: category,
+      icon: icon,
+      description: desc,
+      subItems: cleanSubItems,
+      sortOrder: rt.items.length + 1
+    });
+  }
+
+  saveState();
+  closeDialog('routine-item-dialog');
+  renderRoutineView();
+  toast('⏰ Bloque guardado en la rutina.', '✨');
+  pushThisDeviceToCloud();
+}
+
+function deleteCurrentRoutineItem(){
+  const editId = document.getElementById('rt-item-edit-id')?.value;
+  if (!editId) return;
+  const rt = getRoutineState();
+  rt.items = rt.items.filter(i => i.id !== editId);
+  saveState();
+  closeDialog('routine-item-dialog');
+  renderRoutineView();
+  toast('Bloque eliminado de la rutina.');
+  pushThisDeviceToCloud();
+}
+
+function openRoutineHistoryModal(){
+  const rt = getRoutineState();
+  const streak = calcRoutineStreak();
+
+  safeSetText('rt-stat-current-streak', `${streak} días`);
+  safeSetText('rt-stat-best-streak', `${rt.bestStreak || streak} días`);
+
+  const today = new Date();
+  let sum7 = 0; let count7 = 0;
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(today.getTime() - i * 86400000);
+    const key = dateKey(d);
+    if (rt.progress[key]) {
+      sum7 += rt.progress[key].percentage;
+      count7++;
+    }
+  }
+  const avg7 = count7 > 0 ? Math.round(sum7 / count7) : 0;
+  safeSetText('rt-stat-7d', `${avg7}%`);
+
+  const allKeys = Object.keys(rt.progress);
+  let globalSum = 0;
+  allKeys.forEach(k => { globalSum += rt.progress[k].percentage; });
+  const globalAvg = allKeys.length > 0 ? Math.round(globalSum / allKeys.length) : 0;
+  safeSetText('rt-stat-avg', `${globalAvg}%`);
+
+  const stripEl = document.getElementById('rt-history-calendar-strip');
+  if (stripEl) {
+    let html = '';
+    const threshold = rt.activeRoutine?.completionThreshold || 80;
+    for (let i = 13; i >= 0; i--) {
+      const d = new Date(today.getTime() - i * 86400000);
+      const key = dateKey(d);
+      const prog = rt.progress[key];
+      const pVal = prog ? prog.percentage : 0;
+
+      let color = 'rgba(100,116,139,0.3)';
+      let label = '⚪';
+      if (prog) {
+        if (pVal >= threshold) { color = 'rgba(52,211,153,0.3)'; label = '🟢'; }
+        else { color = 'rgba(251,191,36,0.3)'; label = '🟡'; }
+      }
+
+      html += `
+        <div style="background:${color}; border-radius:6px; padding:6px 2px; text-align:center; font-size:10px;">
+          <div style="font-weight:700; color:var(--text);">${d.getDate()}</div>
+          <div style="font-size:12px; margin-top:2px;">${label}</div>
+          <div style="font-size:9px; color:var(--muted-2);">${pVal}%</div>
+        </div>`;
+    }
+    stripEl.innerHTML = html;
+  }
+
+  openDialog('routine-history-dialog');
+}
 
 function safeSetText(id, text){ const el = document.getElementById(id); if(el) el.textContent = text; }
 function safeSetHTML(id, html){ const el = document.getElementById(id); if(el) el.innerHTML = html; }
@@ -5312,7 +6417,7 @@ function init(){
   const syncUserIdInput = document.getElementById('sync-user-id');
   if (syncUserIdInput) syncUserIdInput.value = getUserId().split('@')[0];
 
-  populateProjectSelects(); renderToday(); renderSell(); renderPublish(); renderProjects();
+  populateProjectSelects(); renderToday(); renderRoutineView(); renderSell(); renderPublish(); renderProjects();
   document.getElementById('craving-dialog')?.addEventListener('close',resetBreathing);
   const initial=location.hash.replace('#',''); showView(TITLES[initial]?initial:'today');
   renderSmoke();
