@@ -3925,7 +3925,7 @@ function getRoutineState(){
         { id: 'item-7', title: 'Proyecto Principal', startTime: '20:30', endTime: '21:30', category: 'Proyecto', icon: '🚀', sortOrder: 7, subItems: [] },
         { id: 'item-8', title: 'Publicaciones / Mantenimiento', startTime: '21:30', endTime: '22:00', category: 'Productividad', icon: '📢', sortOrder: 8, subItems: [] },
         { id: 'item-9', title: 'Tiempo Libre', startTime: '22:00', endTime: '23:30', category: 'Descanso', icon: '🎮', sortOrder: 9, subItems: [] },
-        { id: 'item-10', title: 'Prepararme para Dormir', startTime: '23:30', endTime: '23:59', category: 'Salud', icon: '🌙', sortOrder: 10, subItems: [] }
+        { id: 'item-10', title: 'Prepararme para Dormir', startTime: '23:30', endTime: '08:00', category: 'Salud', icon: '🌙', sortOrder: 10, subItems: [] }
       ],
       logs: {},
       progress: {},
@@ -3989,37 +3989,59 @@ function renderRoutineView(){
   // 2. Sort items by start_time
   const sortedItems = [...rt.items].sort((a,b) => (a.startTime || '00:00').localeCompare(b.startTime || '00:00'));
 
-  // 3. Find AHORA & SIGUIENTE items
+  // 3. Find AHORA & SIGUIENTE items (Strict Time Range Evaluation)
   let nowItemIndex = -1;
   for (let i = 0; i < sortedItems.length; i++) {
     const item = sortedItems[i];
     const sTime = item.startTime || '00:00';
     const eTime = item.endTime || '23:59';
-    if (nowHM >= sTime && nowHM < eTime) {
-      nowItemIndex = i;
-      break;
-    }
-  }
-  if (nowItemIndex === -1) {
-    for (let i = 0; i < sortedItems.length; i++) {
-      if ((sortedItems[i].startTime || '00:00') > nowHM) {
+    if (eTime >= sTime) {
+      if (nowHM >= sTime && nowHM < eTime) {
+        nowItemIndex = i;
+        break;
+      }
+    } else {
+      // Overnight block (e.g. 23:30 to 08:00)
+      if (nowHM >= sTime || nowHM < eTime) {
         nowItemIndex = i;
         break;
       }
     }
   }
-  if (nowItemIndex === -1 && sortedItems.length > 0) {
-    nowItemIndex = 0;
+
+  let nextItem = null;
+  if (nowItemIndex !== -1) {
+    nextItem = sortedItems[(nowItemIndex + 1) % sortedItems.length] || null;
+  } else {
+    for (let i = 0; i < sortedItems.length; i++) {
+      if ((sortedItems[i].startTime || '00:00') > nowHM) {
+        nextItem = sortedItems[i];
+        break;
+      }
+    }
+    if (!nextItem && sortedItems.length > 0) {
+      nextItem = sortedItems[0];
+    }
   }
 
-  const nowItem = sortedItems[nowItemIndex] || null;
-  const nextItem = sortedItems[nowItemIndex + 1] || sortedItems[0] || null;
+  const nowItem = nowItemIndex !== -1 ? sortedItems[nowItemIndex] : null;
 
   // 4. Render Card AHORA
   const nowCard = document.getElementById('routine-now-card');
   if (nowCard) {
     if (!nowItem) {
-      nowCard.innerHTML = `<div style="text-align:center; padding:10px; color:var(--muted-2);">No hay actividades en la rutina. Presiona <strong>+ Agregar Bloque</strong> para comenzar.</div>`;
+      nowCard.innerHTML = `
+        <div class="routine-now-header">
+          <span class="routine-now-pill" style="background:linear-gradient(135deg,#8b5cf6,#4c1d95);">🌙 DESCANSO NOCTURNO</span>
+          <span class="routine-now-time">${nowHM} AM</span>
+        </div>
+        <div class="routine-now-title">
+          <span>🌙</span>
+          <span>Tiempo de Sueño / Descanso Nocturno</span>
+        </div>
+        <div class="routine-now-mins" style="color:var(--cyan);">
+          🌅 Próximo bloque: <strong>${escapeHTML(nextItem?.title || 'Despertar')}</strong> a las ${nextItem?.startTime || '08:00'}
+        </div>`;
     } else {
       const nowStatus = todayLogs[nowItem.id]?.status || 'pending';
       const minsLeft = calcMinsRemaining(nowItem.endTime || '23:59');
