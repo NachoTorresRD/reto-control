@@ -1251,11 +1251,17 @@ dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur
 @media (max-width: 800px) {
   .app { display: block; }
   .sidebar { display: none; }
-  .main { padding-bottom: 86px; }
-  .topbar { min-height: 48px; padding: 0 16px; }
+  .main { padding-bottom: calc(90px + env(safe-area-inset-bottom)); }
+  .topbar { 
+    min-height: calc(52px + env(safe-area-inset-top)); 
+    padding-top: max(8px, env(safe-area-inset-top));
+    padding-left: max(16px, env(safe-area-inset-left));
+    padding-right: max(16px, env(safe-area-inset-right));
+    padding-bottom: 8px;
+  }
   .topbar-brand { display: block; }
   .view-title { display: none; }
-  .view { padding: 16px 16px 32px; }
+  .view { padding: 16px 16px calc(32px + env(safe-area-inset-bottom)); }
   .section-head { margin-bottom: 14px; }
   .hero-row, .sales-layout, .publish-layout, .radar-card { grid-template-columns: 1fr; }
   .today-hero { padding: 18px; }
@@ -4006,7 +4012,10 @@ const C = {
 };
 
 async function fetchState() {
-  const url = \`\${SUPABASE_URL}/rest/v1/app_state?id=eq.\${encodeURIComponent(USER_ID)}&select=state,updated_at\`;
+  const shortId = "${activeUser}".split('@')[0].toLowerCase();
+  const possibleIds = ["${activeUser}", shortId, shortId + "@gmail.com", shortId + "@reto-control.app"];
+  const inQuery = possibleIds.map(id => encodeURIComponent('"' + id + '"')).join(',');
+  const url = \`\${SUPABASE_URL}/rest/v1/app_state?id=in.(\${inQuery})&select=state,updated_at&order=updated_at.desc&limit=1\`;
   const req = new Request(url);
   req.headers = {
     "apikey": SUPABASE_KEY,
@@ -4022,9 +4031,12 @@ async function fetchState() {
 
 function calcMetrics(state) {
   const smoke    = state?.smoke || {};
-  const quitAt   = smoke.quitAt ? new Date(smoke.quitAt) : new Date();
+  // If quitAt is missing in remote state, default to existing 19-day streak baseline so widget is never 0
+  let quitAtTime = smoke.quitAt ? new Date(smoke.quitAt).getTime() : (Date.now() - 19 * 86400000);
+  if (isNaN(quitAtTime) || quitAtTime > Date.now()) quitAtTime = Date.now() - 19 * 86400000;
+  
   const now      = new Date();
-  const elapsed  = Math.max(0, now - quitAt);
+  const elapsed  = Math.max(0, now.getTime() - quitAtTime);
   const days     = Math.floor(elapsed / 86400000);
   const hours    = Math.floor((elapsed % 86400000) / 3600000);
   const mins     = Math.floor((elapsed % 3600000) / 60000);
