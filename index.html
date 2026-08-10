@@ -1861,7 +1861,7 @@ dialog.nt-dialog.calendar-dialog-wide {
     <div class="dialog-head">
       <div>
         <h3 id="auth-dialog-title">🔑 Cuenta de Usuario y Login</h3>
-        <p>Inicia sesión o crea tu cuenta para guardar tu racha de 19 días y tu progreso de forma privada.</p>
+        <p>Inicia sesión o crea tu cuenta para guardar tu racha y tu progreso de forma privada.</p>
       </div>
       <button class="dialog-close" type="button" onclick="closeDialog('auth-dialog')" aria-label="Cerrar">×</button>
     </div>
@@ -1875,7 +1875,6 @@ dialog.nt-dialog.calendar-dialog-wide {
       <div class="button-row" style="flex-direction:column; gap:8px;">
         <button class="btn btn-success" type="button" onclick="pushThisDeviceToCloud(); closeDialog('auth-dialog');">⬆️ Subir / Sincronizar mis datos de este cel</button>
         <button class="btn btn-secondary" type="button" onclick="pullCloudToThisDevice(); closeDialog('auth-dialog');">⬇️ Descargar datos de la Nube a este dispositivo</button>
-        <button class="btn btn-secondary" type="button" onclick="migrateNachoStateToCurrentUser(); closeDialog('auth-dialog');">⚡ Migrar / Vincular mis 19 Días a esta Cuenta</button>
         <button class="btn btn-danger" type="button" onclick="handleSignOut()">🚪 Cerrar Sesión</button>
       </div>
     </div>
@@ -2002,7 +2001,7 @@ dialog.nt-dialog.calendar-dialog-wide {
         </div>
         <div class="button-row" style="margin-top:14px; gap:8px; flex-wrap:wrap;">
           <button class="btn btn-success" type="submit" style="flex:1;">💾 Guardar Punto de Partida</button>
-          <button class="btn btn-secondary" type="button" onclick="restoreDaysStreak(19)">⚡ Fijar Racha en 19 Días</button>
+          <button class="btn btn-secondary" type="button" onclick="setCurrentTimeAsQuitAt()">⏱️ Usar Hora Actual</button>
         </div>
       </form>
     </div>
@@ -2070,7 +2069,7 @@ dialog.nt-dialog.calendar-dialog-wide {
     </div>
     <div class="button-row" style="flex-wrap:wrap; gap:6px;">
       <button class="btn btn-success" type="submit">Guardar mi punto de partida</button>
-      <button class="btn btn-secondary" type="button" onclick="restoreDaysStreak(19)">⚡ Fijar Racha en 19 Días</button>
+      <button class="btn btn-secondary" type="button" onclick="setCurrentTimeAsQuitAt()">⏱️ Usar Hora Actual</button>
       <button class="btn btn-secondary" type="button" onclick="closeDialog('smoke-setup-dialog')">Ahora no</button>
     </div>
     <div class="medical-note">Esta app es tu panel de control de conducta. Ante síntomas de abstinencia severa, consulta a un profesional de salud sobre parches o terapias complementarias.</div>
@@ -4368,14 +4367,22 @@ async function pushThisDeviceToCloud(){
   }
 }
 
-function restoreDaysStreak(days = 19){
+function setCurrentTimeAsQuitAt(){
+  const now = new Date();
+  safeSetValue('quit-at', localDateTimeValue(now));
+  toast('⏱️ Fecha y hora fijadas al momento actual.', '⏱️');
+}
+
+function restoreDaysStreak(days = 0){
+  if (!days || days <= 0) return;
   const targetDate = new Date(Date.now() - days * 86400000);
   state.smoke.quitAt = targetDate.toISOString();
   saveState();
   closeDialog('smoke-setup-dialog');
+  closeDialog('system-settings-dialog');
   renderSmoke();
   pushThisDeviceToCloud();
-  toast(`⚡ Racha fijada en ${days} días sin fumar y guardada en la Nube.`);
+  toast(`⏱️ Racha fijada en ${days} días sin fumar y sincronizada.`);
 }
 
 async function pullCloudToThisDevice(){
