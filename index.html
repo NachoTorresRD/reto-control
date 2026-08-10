@@ -3072,7 +3072,7 @@ function onElevenVoiceChange(){
   }
 }
 
-function saveAIProviderFromSystemSettings(){
+async function saveAIProviderFromSystemSettings(){
   const pEl = document.getElementById('sstab-ai-provider');
   const kEl = document.getElementById('sstab-ai-key');
   const ekEl = document.getElementById('sstab-eleven-key');
@@ -3110,8 +3110,8 @@ function saveAIProviderFromSystemSettings(){
 
   saveState();
   closeDialog('system-settings-dialog');
-  toast('✓ Ajustes de IA y Voz ElevenLabs guardados y sincronizados con la Nube.', '✨');
-  pushThisDeviceToCloud();
+  toast('✓ Ajustes de IA y Voz ElevenLabs guardados localmente. Sincronizando con Nube...', '✨');
+  await pushThisDeviceToCloud();
 }
 
 async function testElevenLabsVoice(){
@@ -4675,7 +4675,7 @@ function getUserId() {
   const paramUser = urlParams.get('user') || urlParams.get('u');
   if (paramUser) {
     const cleanParam = paramUser.trim().toLowerCase();
-    const normalizedParam = cleanParam.includes('@') ? cleanParam : `${cleanParam.replace(/[^a-z0-9]/g, '')}@reto-control.app`;
+    const normalizedParam = cleanParam.includes('@') ? cleanParam : `${cleanParam}@reto-control.app`;
     localStorage.setItem('nt_user_id', normalizedParam);
     localStorage.setItem('nt_user_email', normalizedParam);
     return normalizedParam;
@@ -4684,13 +4684,14 @@ function getUserId() {
   const savedUser = localStorage.getItem('nt_user_id');
 
   if (savedEmail && savedEmail.trim()) {
-    return savedEmail.trim().toLowerCase();
+    const clean = savedEmail.trim().toLowerCase();
+    return clean.includes('@') ? clean : `${clean}@reto-control.app`;
   }
   if (savedUser && savedUser.trim()) {
     const raw = savedUser.trim().toLowerCase();
-    return raw.includes('@') ? raw : `${raw.replace(/[^a-z0-9]/g, '')}@reto-control.app`;
+    return raw.includes('@') ? raw : `${raw}@reto-control.app`;
   }
-  return 'nacho@reto-control.app';
+  return 'nachotechrd@gmail.com';
 }
 
 const DEFAULT_SUPABASE_URL = 'https://oberzwgvbrgqokoynqpm.supabase.co';
@@ -4848,7 +4849,7 @@ function buildWidget(m) {
   rewardRow.addSpacer();
   const daysLeftText = rewardRow.addText(\`\${m.daysLeft}d restantes\`);
   daysLeftText.textColor = C.muted2;
-  daysLeftText.font = Font.systemFont(9);
+  daysLeftText.font = Font.boldSystemFont(9);
 
   return w;
 }
@@ -4935,11 +4936,12 @@ async function loadStateFromSupabase(force = false){
       const cloudTs = data.updated_at ? new Date(data.updated_at).getTime() : 0;
       const localTs = parseInt(localStorage.getItem('nt_last_push_ts') || '0', 10);
 
-      // If cloud is newer or this is a manual pull (force), apply cloud data
-      if(force || cloudTs >= localTs) {
+      // If cloud exists, merge and apply cloud state and settings
+      if(force || cloudTs >= localTs || (cloudState && cloudState.settings && cloudState.settings.elevenKey)) {
         state = { ...state, ...cloudState };
+        state.settings = state.settings || cloudState.settings || {};
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-        localStorage.setItem('nt_last_push_ts', String(cloudTs));
+        localStorage.setItem('nt_last_push_ts', String(cloudTs || Date.now()));
 
         // Auto-sync cloud settings to local storage cache
         if(state.settings){
