@@ -4288,12 +4288,13 @@ OneSignalDeferred.push(async function(OneSignal) {
   try {
     await OneSignal.init({
       appId: _OS_APP_ID,
+      safari_web_id: "web.onesignal.auto.33cdb166-8fda-4ab6-bcd3-b18b9bc1d285",
       allowLocalhostAsSecureOrigin: true,
       notifyButton: { enable: false },
       serviceWorkerParam: { scope: '/' },
       serviceWorkerPath: 'OneSignalSDKWorker.js'
     });
-    console.log('\u2713 OneSignal initialized');
+    console.log('✓ OneSignal initialized with safari_web_id');
 
     /* Link user identity (external ID = the app\u2019s user email) */
     const userId = (typeof getUserId === 'function') ? getUserId() : null;
