@@ -1447,6 +1447,40 @@ dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur
 .qpb-badge.cyan { background: rgba(34, 211, 238, 0.2); color: var(--cyan); }
 .qpb-badge.violet { background: rgba(139, 92, 246, 0.2); color: var(--violet); }
 
+/* ── Multi-Reward Horizontal Carousel ── */
+.rewards-section-wrapper {
+  margin-top: 16px;
+}
+.rewards-section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.rewards-carousel {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 4px 2px 10px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.rewards-carousel::-webkit-scrollbar { display: none; }
+.rc-reward-card-item {
+  flex: 0 0 min(100%, 360px);
+  scroll-snap-align: start;
+  background: linear-gradient(135deg, rgba(139,92,246,0.14) 0%, rgba(34,211,238,0.07) 100%);
+  border: 1px solid rgba(139,92,246,0.32);
+  border-radius: var(--radius-lg);
+  padding: 14px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+  transition: border-color 0.2s ease;
+}
+.rc-reward-card-item:hover {
+  border-color: rgba(139,92,246,0.55);
+}
+
 /* ── Interactive Calendar & Agenda Module ── */
 dialog.nt-dialog.calendar-dialog-wide {
   width: min(700px, calc(100% - 24px)) !important;
@@ -1682,36 +1716,28 @@ dialog.nt-dialog.calendar-dialog-wide {
             </div>
           </div>
 
-          <!-- Personalized Reward & Motivational Goal Card -->
-          <div class="rc-reward-card" id="rc-reward-card" style="margin-top:14px; padding:14px; background:linear-gradient(135deg, rgba(139,92,246,0.12) 0%, rgba(34,211,238,0.06) 100%); border:1px solid rgba(139,92,246,0.3); border-radius:var(--radius-lg);">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-              <div style="display:flex; align-items:center; gap:10px;">
-                <span style="font-size:26px;">🎁</span>
+          <!-- Multi-Reward Horizontal Carousel Section -->
+          <div class="rewards-section-wrapper">
+            <div class="rewards-section-head">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span style="font-size:20px;">🎁</span>
                 <div>
-                  <span style="font-size:9px; color:var(--violet); font-weight:800; text-transform:uppercase; letter-spacing:0.06em;">RECOMPENSA AL CUMPLIR LA META</span>
-                  <h4 id="reward-title-display" style="font-size:15px; font-weight:700; color:var(--text); margin-top:2px;">Tenis nuevos</h4>
+                  <span style="font-size:9px; color:var(--violet); font-weight:800; text-transform:uppercase; letter-spacing:0.06em; display:block;">ESTÍMULOS & MOTIVACIÓN</span>
+                  <h4 style="font-size:14px; font-weight:700; color:var(--text); margin:0;">Mis Metas de Recompensa</h4>
                 </div>
               </div>
-              <button class="btn btn-secondary btn-small" onclick="openRewardsDialog()" style="font-size:11px; padding:4px 10px;">🎯 Administrar Metas</button>
+              <div style="display:flex; gap:6px;">
+                <button class="btn btn-primary btn-small" onclick="openRewardsDialog(null)" style="font-size:11px; padding:4px 10px;">➕ Añadir Meta</button>
+                <button class="btn btn-secondary btn-small" onclick="openRewardsDialog(null)" style="font-size:11px; padding:4px 10px;">🎯 Gestionar</button>
+              </div>
             </div>
             
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px;">
-              <div style="padding:8px 10px; background:rgba(6,10,18,0.6); border:1px solid var(--border-subtle); border-radius:var(--radius-md);">
-                <span style="font-size:9.5px; color:var(--muted-2); display:block;">⏳ Tiempo Faltante</span>
-                <strong id="reward-time-left" style="font-size:12px; color:var(--cyan);">0 días, 0h faltan</strong>
-              </div>
-              <div style="padding:8px 10px; background:rgba(6,10,18,0.6); border:1px solid var(--border-subtle); border-radius:var(--radius-md);">
-                <span style="font-size:9.5px; color:var(--muted-2); display:block;">💰 Fondo del Premio</span>
-                <strong id="reward-fund-progress" style="font-size:12px; color:var(--green);">RD$0 / RD$3,000</strong>
-              </div>
+            <div class="rewards-carousel" id="rewards-carousel">
+              <!-- Dynamically populated carousel cards -->
             </div>
-
-            <div class="smoke-progress-section" style="margin-top:10px;">
-              <div class="spb-track"><span id="reward-progress-bar" style="background:linear-gradient(90deg,var(--violet),var(--cyan)); width:0%;"></span></div>
-              <div class="spb-labels">
-                <span id="reward-pct-text" style="font-size:10px; color:var(--muted-2);">0% del premio cubierto</span>
-                <span id="reward-days-pct" class="spb-pct">0% meta</span>
-              </div>
+            
+            <div id="rewards-scroll-notice" style="text-align:right; font-size:10px; color:var(--cyan); margin-top:2px; font-weight:600;" hidden>
+              👉 Desliza horizontalmente a los lados para ver tus otras metas
             </div>
           </div>
 
@@ -1923,22 +1949,34 @@ dialog.nt-dialog.calendar-dialog-wide {
 <!-- Modal Dedicado de Metas de Motivación & Recompensas (NO afecta la racha) -->
 <dialog class="nt-dialog" id="rewards-dialog" aria-labelledby="rewards-dialog-title">
   <form class="dialog-body" onsubmit="saveRewardGoal(event)">
+    <input type="hidden" id="reward-edit-id" value="">
     <div class="dialog-head">
       <div>
         <h3 id="rewards-dialog-title">🎁 Metas de Motivación & Recompensas</h3>
-        <p>Las metas son estímulos independientes para mantener el enfoque. Modificar tus metas <strong>NO borra ni altera tu tiempo sin fumar</strong>.</p>
+        <p>Añade o edita tus estímulos visuales. Modificar tus metas <strong>NO altera tu racha ni tu fecha de inicio</strong>.</p>
       </div>
       <button class="dialog-close" type="button" onclick="closeDialog('rewards-dialog')" aria-label="Cerrar">×</button>
     </div>
 
+    <!-- Active Rewards List -->
+    <div style="margin-bottom:14px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+        <span style="font-size:10px; color:var(--muted-2); font-weight:700; text-transform:uppercase;">Tus Metas Actuales:</span>
+        <button type="button" class="btn btn-secondary btn-small" onclick="openRewardsDialog(null)" style="font-size:10px; padding:2px 8px;">➕ Nueva Meta</button>
+      </div>
+      <div id="rewards-manage-list" style="display:grid; gap:6px; max-height:160px; overflow-y:auto; padding-right:4px;">
+        <!-- Populated via renderRewardsDialogList() -->
+      </div>
+    </div>
+
     <!-- Quick Presets -->
     <div style="margin-bottom:12px;">
-      <span style="font-size:10px; color:var(--muted-2); font-weight:700; text-transform:uppercase; display:block; margin-bottom:6px;">Metas Populares de Sugerencia:</span>
+      <span style="font-size:10px; color:var(--muted-2); font-weight:700; text-transform:uppercase; display:block; margin-bottom:6px;">Sugerencias Rápida:</span>
       <div style="display:flex; gap:6px; flex-wrap:wrap;">
-        <button type="button" class="btn btn-secondary btn-small" onclick="setRewardPreset('Tenis nuevos', 3000, 30)">👟 Tenis nuevos (RD$3,000)</button>
-        <button type="button" class="btn btn-secondary btn-small" onclick="setRewardPreset('Reloj deportivo', 5000, 30)">⌚ Reloj deportivo (RD$5,000)</button>
-        <button type="button" class="btn btn-secondary btn-small" onclick="setRewardPreset('Viaje de fin de semana', 15000, 60)">✈️ Fin de semana (RD$15,000)</button>
-        <button type="button" class="btn btn-secondary btn-small" onclick="setRewardPreset('Cena especial de victoria', 2500, 14)">🍷 Cena especial (RD$2,500)</button>
+        <button type="button" class="btn btn-secondary btn-small" onclick="setRewardPreset('Tenis nuevos', 3000, 30)">👟 Tenis (RD$3k)</button>
+        <button type="button" class="btn btn-secondary btn-small" onclick="setRewardPreset('Reloj deportivo', 5000, 45)">⌚ Reloj (RD$5k)</button>
+        <button type="button" class="btn btn-secondary btn-small" onclick="setRewardPreset('Viaje de fin de semana', 15000, 60)">✈️ Viaje (RD$15k)</button>
+        <button type="button" class="btn btn-secondary btn-small" onclick="setRewardPreset('Cena de victoria', 2500, 14)">🍷 Cena (RD$2.5k)</button>
       </div>
     </div>
 
@@ -2609,36 +2647,134 @@ function openAIHistoryModal(){
   if(typeof renderAIHistory==='function') renderAIHistory();
   openDialog('ai-history-dialog');
 }
-function openRewardsDialog(){
-  const smoke = state.smoke || {};
-  safeSetValue('reward-name-input', smoke.rewardName || 'Tenis nuevos');
-  safeSetValue('reward-cost-input', smoke.rewardCost ?? 3000);
-  safeSetValue('reward-target-days-input', smoke.targetDays || 30);
+function ensureRewardsArray(){
+  if(!state.smoke) state.smoke = {};
+  if(!Array.isArray(state.smoke.rewards) || state.smoke.rewards.length === 0){
+    state.smoke.rewards = [
+      {
+        id: 'rw-' + Date.now(),
+        name: state.smoke.rewardName || 'Tenis nuevos',
+        cost: state.smoke.rewardCost || 3000,
+        targetDays: state.smoke.targetDays || 30
+      }
+    ];
+  }
+}
+
+function openRewardsDialog(editId = null){
+  ensureRewardsArray();
+  const editIdInput = document.getElementById('reward-edit-id');
+  
+  if (editId) {
+    const existing = state.smoke.rewards.find(r => r.id === editId);
+    if (existing) {
+      if(editIdInput) editIdInput.value = existing.id;
+      safeSetValue('reward-name-input', existing.name);
+      safeSetValue('reward-cost-input', existing.cost);
+      safeSetValue('reward-target-days-input', existing.targetDays);
+    }
+  } else {
+    if(editIdInput) editIdInput.value = '';
+    safeSetValue('reward-name-input', '');
+    safeSetValue('reward-cost-input', 3000);
+    safeSetValue('reward-target-days-input', 30);
+  }
+  
+  renderRewardsDialogList();
   openDialog('rewards-dialog');
 }
 
+function renderRewardsDialogList(){
+  ensureRewardsArray();
+  const listEl = document.getElementById('rewards-manage-list');
+  if(!listEl) return;
+  
+  const formatDOPFlat = (val) => new Intl.NumberFormat('es-DO',{style:'currency',currency:'DOP',maximumFractionDigits:0}).format(val);
+
+  listEl.innerHTML = state.smoke.rewards.map(rw => `
+    <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:rgba(6,10,18,0.6); border:1px solid var(--border-subtle); border-radius:var(--radius-md); font-size:12px;">
+      <div>
+        <strong style="color:var(--text);">${escapeHTML(rw.name)}</strong>
+        <span style="color:var(--muted-2); font-size:10.5px; display:block;">Costo: ${formatDOPFlat(rw.cost)} · Meta: ${rw.targetDays} días</span>
+      </div>
+      <div style="display:flex; gap:6px;">
+        <button type="button" class="btn btn-secondary btn-small" onclick="openRewardsDialog('${rw.id}')" style="font-size:10.5px; padding:2px 8px;">✏️ Editar</button>
+        ${state.smoke.rewards.length > 1 ? `<button type="button" class="btn btn-secondary btn-small" onclick="deleteRewardGoal('${rw.id}')" style="font-size:10.5px; padding:2px 6px; color:#fecdd3;">🗑️</button>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+function deleteRewardGoal(id){
+  ensureRewardsArray();
+  if(state.smoke.rewards.length <= 1){
+    toast('Debes conservar al menos una meta de recompensa.');
+    return;
+  }
+  state.smoke.rewards = state.smoke.rewards.filter(r => r.id !== id);
+  if(state.smoke.rewards[0]) {
+    state.smoke.rewardName = state.smoke.rewards[0].name;
+    state.smoke.rewardCost = state.smoke.rewards[0].cost;
+    state.smoke.targetDays = state.smoke.rewards[0].targetDays;
+  }
+  saveState();
+  renderSmoke();
+  renderRewardsDialogList();
+  pushThisDeviceToCloud();
+  toast('🗑️ Meta eliminada.');
+}
+
 function setRewardPreset(name, cost, days){
+  ensureRewardsArray();
+  safeSetValue('reward-edit-id', '');
   safeSetValue('reward-name-input', name);
   safeSetValue('reward-cost-input', cost);
   safeSetValue('reward-target-days-input', days);
-  toast(`🎁 Preset seleccionado: ${name} (${formatDOPFlat(cost)})`);
+  toast(`🎁 Datos listos: ${name}. Presiona "Guardar Meta".`);
 }
 
 function saveRewardGoal(event){
   if(event) event.preventDefault();
+  ensureRewardsArray();
+
+  const editId = document.getElementById('reward-edit-id')?.value;
   const nameVal = document.getElementById('reward-name-input')?.value.trim();
   const costVal = Number(document.getElementById('reward-cost-input')?.value) || 0;
   const daysVal = Number(document.getElementById('reward-target-days-input')?.value) || 0;
 
-  state.smoke.rewardName = nameVal || 'Tenis nuevos';
-  state.smoke.rewardCost = costVal > 0 ? costVal : 3000;
-  state.smoke.targetDays = daysVal > 0 ? daysVal : 30;
+  if(!nameVal){
+    toast('Ingresa un nombre para tu recompensa.');
+    return;
+  }
+
+  if (editId) {
+    const item = state.smoke.rewards.find(r => r.id === editId);
+    if (item) {
+      item.name = nameVal;
+      item.cost = costVal > 0 ? costVal : 3000;
+      item.targetDays = daysVal > 0 ? daysVal : 30;
+    }
+  } else {
+    state.smoke.rewards.push({
+      id: 'rw-' + Date.now(),
+      name: nameVal,
+      cost: costVal > 0 ? costVal : 3000,
+      targetDays: daysVal > 0 ? daysVal : 30
+    });
+  }
+
+  // Keep primary properties synced with 1st reward for external widgets
+  if(state.smoke.rewards[0]) {
+    state.smoke.rewardName = state.smoke.rewards[0].name;
+    state.smoke.rewardCost = state.smoke.rewards[0].cost;
+    state.smoke.targetDays = state.smoke.rewards[0].targetDays;
+  }
 
   saveState();
   closeDialog('rewards-dialog');
   renderSmoke();
   pushThisDeviceToCloud();
-  toast('🎁 Meta de recompensa actualizada sin alterar tu racha.', '✨');
+  toast('🎁 Meta de recompensa guardada. ¡Desliza a los lados para ver tus metas!', '✨');
 }
 
 function openSystemSettings(tabName = 'setup'){
@@ -2788,30 +2924,61 @@ function renderSmoke(){
   const smokeProgressEl = document.getElementById('smoke-progress');
   if(smokeProgressEl) smokeProgressEl.style.width=`${progress}%`;
 
-  // Motivational Reward & Widget calculations
-  const rewardName = state.smoke.rewardName || 'Tenis nuevos';
-  const rewardCost = state.smoke.rewardCost || 3000;
-  const remainingMs = Math.max(0, goalMs - elapsed);
-  const remainingDays = Math.floor(remainingMs / day);
-  const remainingHours = Math.floor((remainingMs % day) / hour);
+  // Multi-Reward Horizontal Carousel Rendering
+  ensureRewardsArray();
+  const carouselEl = document.getElementById('rewards-carousel');
+  const scrollNoticeEl = document.getElementById('rewards-scroll-notice');
 
-  const rewardFundPct = Math.min(100, Math.floor((savedExact / rewardCost) * 100));
-  const daysPct = Math.min(100, Math.floor((elapsed / goalMs) * 100));
-  const moneyNeeded = Math.max(0, rewardCost - savedExact);
+  if (carouselEl) {
+    carouselEl.innerHTML = state.smoke.rewards.map((rw, idx) => {
+      const rGoalMs = (rw.targetDays || 30) * day;
+      const rRemainingMs = Math.max(0, rGoalMs - elapsed);
+      const rRemainingDays = Math.floor(rRemainingMs / day);
+      const rRemainingHours = Math.floor((rRemainingMs % day) / hour);
+      const rFundPct = Math.min(100, Math.floor((savedExact / (rw.cost || 1)) * 100));
+      const rDaysPct = Math.min(100, Math.floor((elapsed / rGoalMs) * 100));
+      const rMoneyNeeded = Math.max(0, rw.cost - savedExact);
+      const isAchieved = savedExact >= rw.cost;
 
-  safeSetText('reward-title-display', rewardName);
-  safeSetText('reward-time-left', remainingMs > 0 ? `${remainingDays}d, ${remainingHours}h faltan` : '✓ Meta alcanzada');
-  safeSetText('reward-fund-progress', `${formatDOPFlat(savedExact)} / ${formatDOPFlat(rewardCost)}`);
-  
-  const rewardBar = document.getElementById('reward-progress-bar');
-  if(rewardBar) rewardBar.style.width = `${rewardFundPct}%`;
+      return `
+        <div class="rc-reward-card-item">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="font-size:24px;">${isAchieved ? '🎉' : '🎁'}</span>
+              <div>
+                <span style="font-size:9px; color:var(--violet); font-weight:800; text-transform:uppercase; letter-spacing:0.06em;">META #${idx + 1}</span>
+                <h4 style="font-size:14.5px; font-weight:700; color:var(--text); margin-top:1px;">${escapeHTML(rw.name)}</h4>
+              </div>
+            </div>
+            <button class="btn btn-secondary btn-small" onclick="openRewardsDialog('${rw.id}')" style="font-size:10px; padding:3px 8px;">✏️ Editar</button>
+          </div>
 
-  if (savedExact >= rewardCost) {
-    safeSetText('reward-pct-text', `🎉 100% cubierto con ahorro (${formatDOPFlat(savedExact)} acumulados). ¡Premio alcanzado!`);
-  } else {
-    safeSetText('reward-pct-text', `Faltan ${formatDOPFlat(moneyNeeded)} de ahorro para comprar tu premio (${rewardFundPct}% cubierto)`);
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px;">
+            <div style="padding:7px 9px; background:rgba(6,10,18,0.6); border:1px solid var(--border-subtle); border-radius:var(--radius-md);">
+              <span style="font-size:9px; color:var(--muted-2); display:block;">⏳ Tiempo Faltante</span>
+              <strong style="font-size:11.5px; color:var(--cyan);">${rRemainingMs > 0 ? `${rRemainingDays}d, ${rRemainingHours}h faltan` : '✓ Meta cumplida'}</strong>
+            </div>
+            <div style="padding:7px 9px; background:rgba(6,10,18,0.6); border:1px solid var(--border-subtle); border-radius:var(--radius-md);">
+              <span style="font-size:9px; color:var(--muted-2); display:block;">💰 Fondo del Premio</span>
+              <strong style="font-size:11.5px; color:var(--green);">${formatDOPFlat(savedExact)} / ${formatDOPFlat(rw.cost)}</strong>
+            </div>
+          </div>
+
+          <div class="smoke-progress-section" style="margin-top:8px;">
+            <div class="spb-track"><span style="background:linear-gradient(90deg,var(--violet),var(--cyan)); width:${rFundPct}%;"></span></div>
+            <div class="spb-labels">
+              <span style="font-size:9.5px; color:var(--muted-2);">${isAchieved ? `🎉 100% cubierto (${formatDOPFlat(savedExact)})` : `Faltan ${formatDOPFlat(rMoneyNeeded)} (${rFundPct}%)`}</span>
+              <span class="spb-pct">${rDaysPct}% días</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
   }
-  safeSetText('reward-days-pct', `${daysPct}% días meta`);
+
+  if (scrollNoticeEl) {
+    scrollNoticeEl.hidden = (state.smoke.rewards.length <= 1);
+  }
 
   // Widget Live Preview DOM (Medium, Small & Lockscreen)
   safeSetText('widget-preview-days', days);
