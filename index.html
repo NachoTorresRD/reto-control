@@ -1549,6 +1549,35 @@ dialog:not([open]) {
   .smoke-clock { grid-template-columns: 1fr; gap: 10px; }
   .smoke-goal { text-align: left; }
 
+  /* ─── 4 Tarjetas de Métricas Ejecutivas: Cuadrícula 2x2 en Móvil (Cero Desborde) ─── */
+  .rc-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .rc-card {
+    padding: 10px 12px !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+  }
+  .rc-title {
+    font-size: 8.5px !important;
+    letter-spacing: 0.05em !important;
+  }
+  .rc-val {
+    font-size: 15px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+  .rc-sub {
+    font-size: 9px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
   /* ─── Modales Móviles: Centrados Nativamente por el Navegador ─── */
   dialog.nt-dialog {
     width: min(500px, calc(100vw - 20px)) !important;
@@ -1618,7 +1647,7 @@ dialog:not([open]) {
   .breathing-orb { margin-inline: auto; }
   .crm-form, .crm-tools, .format-row, .project-summary { grid-template-columns: 1fr; }
   .discipline-head, .smoke-empty { align-items: flex-start; flex-direction: column; }
-  .smoke-stats { grid-template-columns: 1fr 1fr; }
+  .rc-grid, .smoke-stats { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 8px !important; }
   .smoke-stat:first-child { grid-column: 1/-1; }
   .health-row { grid-template-columns: 34px 1fr; }
   .health-source { grid-column: 2; }
