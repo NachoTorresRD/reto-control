@@ -1378,15 +1378,26 @@ dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur
   .sidebar { display: none; }
   .main { padding-bottom: calc(90px + env(safe-area-inset-bottom)); }
   .topbar { 
-    min-height: calc(52px + env(safe-area-inset-top)); 
+    min-height: calc(50px + env(safe-area-inset-top)); 
     padding-top: max(8px, env(safe-area-inset-top));
-    padding-left: max(16px, env(safe-area-inset-left));
-    padding-right: max(16px, env(safe-area-inset-right));
+    padding-left: max(12px, env(safe-area-inset-left));
+    padding-right: max(12px, env(safe-area-inset-right));
     padding-bottom: 8px;
+    gap: 8px;
   }
+  .topbar-phrase-box { max-width: calc(100% - 145px); padding: 4px 10px; }
+  .topbar-phrase { font-size: 11px; }
+  .topbar-actions-right { gap: 6px; }
   .topbar-brand { display: block; }
   .view-title { display: none; }
-  .view { padding: 16px 16px calc(32px + env(safe-area-inset-bottom)); }
+  .view { 
+    width: 100% !important;
+    max-width: 580px !important;
+    padding: 16px 14px calc(40px + env(safe-area-inset-bottom)) !important;
+    margin: 0 auto !important;
+    box-sizing: border-box !important;
+  }
+  .hide-mobile { display: none !important; }
   .section-head { margin-bottom: 14px; }
   .hero-row, .sales-layout, .publish-layout, .radar-card { grid-template-columns: 1fr; }
   .today-hero { padding: 18px; }
@@ -1459,38 +1470,58 @@ dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur
   .smoke-clock { grid-template-columns: 1fr; gap: 10px; }
   .smoke-goal { text-align: left; }
 
-  /* ─── Bottom Sheet Dialogs (mobile) ─── */
+  /* ─── Modales Móviles: Centrados, Limpios y Altamente Accesibles ─── */
   dialog.nt-dialog {
-    position: fixed;
-    bottom: 0; left: 0; right: 0; top: auto;
-    max-width: 100% !important;
-    width: 100% !important;
-    margin: 0;
-    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-    border-bottom: 0;
-    max-height: 90dvh;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    bottom: auto !important;
+    right: auto !important;
+    transform: translate(-50%, -50%) !important;
+    width: min(520px, calc(100vw - 20px)) !important;
+    max-width: calc(100vw - 20px) !important;
+    max-height: 88dvh !important;
+    margin: 0 !important;
+    border-radius: var(--radius-xl) !important;
+    border: 1px solid var(--border) !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
     overscroll-behavior: contain;
-    transform: translateY(100%);
-    transition: transform .36s cubic-bezier(0.32,0.72,0,1);
-    animation: none !important; /* override default dialog animation */
+    box-shadow: 0 20px 60px rgba(0,0,0,0.85) !important;
+    animation: dialogFadeIn .2s ease-out !important;
   }
-  dialog.nt-dialog[open] {
-    transform: translateY(0);
+  @keyframes dialogFadeIn {
+    from { opacity: 0; transform: translate(-50%, -46%) scale(0.97); }
+    to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
   }
   dialog.nt-dialog::before {
-    content: '';
-    display: block;
-    width: 36px; height: 4px;
-    background: rgba(255,255,255,.2);
-    border-radius: 2px;
-    margin: 0 auto 16px;
-    flex-shrink: 0;
+    display: none !important;
   }
-  /* Wide calendar dialog — slightly smaller sheet */
   dialog.calendar-dialog-wide {
-    max-height: 85dvh;
+    max-height: 88dvh !important;
+    width: min(560px, calc(100vw - 16px)) !important;
+  }
+  .dialog-body {
+    padding: 18px 16px !important;
+  }
+  .dialog-grid {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+  .dialog-grid .wide {
+    grid-column: 1/-1 !important;
+  }
+  .tools-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+  }
+  @media (max-width: 420px) {
+    .tools-grid { grid-template-columns: 1fr !important; }
+  }
+  #system-settings-dialog .btn-small {
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
   }
 }
 
@@ -1990,7 +2021,7 @@ dialog.nt-dialog.calendar-dialog-wide {
           <h2>Panel de Resistencia y Progreso</h2>
           <p>Seguimiento firme de tu tiempo sin fumar, ahorro acumulado y ejecución diaria.</p>
         </div>
-        <div style="display:flex; gap:8px;">
+        <div class="hide-mobile" style="display:flex; gap:8px;">
           <button class="btn btn-secondary btn-small" onclick="openDialog('tools-dialog')">🛠️ Herramientas</button>
           <button class="btn btn-secondary btn-small" onclick="toggleThemeMode()" id="header-theme-toggle">🌓 Tema</button>
         </div>
@@ -6754,37 +6785,8 @@ init();
   setTimeout(dismiss, 600);
 })();
 
-/* ── Bottom Sheet: Swipe-down to close (mobile) ── */
-(function initSwipeToClose() {
-  if (window.matchMedia('(min-width: 801px)').matches) return;
-  document.addEventListener('touchstart', function(e) {
-    const dlg = e.target.closest('dialog.nt-dialog[open]');
-    if (!dlg) return;
-    const handle = dlg.querySelector('.dialog-body');
-    if (!handle) return;
-    const startY = e.touches[0].clientY;
-    const onMove = (ev) => {
-      const dy = ev.touches[0].clientY - startY;
-      if (dy > 0) dlg.style.transform = `translateY(${dy}px)`;
-    };
-    const onEnd = (ev) => {
-      const dy = ev.changedTouches[0].clientY - startY;
-      dlg.style.transition = '';
-      if (dy > 80) {
-        closeDialog(dlg.id);
-      } else {
-        dlg.style.transform = '';
-      }
-      dlg.style.transitionDuration = '.36s';
-      document.removeEventListener('touchmove', onMove);
-      document.removeEventListener('touchend', onEnd);
-    };
-    dlg.style.transitionDuration = '0ms';
-    document.addEventListener('touchmove', onMove, { passive: true });
-    document.addEventListener('touchend', onEnd);
-  }, { passive: true });
-
-  // Also close sheet when tapping the backdrop
+/* ── Dialog: Cierre al hacer click en el backdrop oscuro ── */
+(function initDialogBackdropClose() {
   document.addEventListener('click', function(e) {
     const openDlg = document.querySelector('dialog.nt-dialog[open]');
     if (openDlg && e.target === openDlg) closeDialog(openDlg.id);
