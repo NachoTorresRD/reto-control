@@ -26,44 +26,113 @@
    Archetype: mobile-app + dashboard
    /polish-ui --style balanced
 ═══════════════════════════════════════ */
-:root {
-  /* Core palette */
-  --bg: #060a12;
-  --surface: #0c1422;
-  --surface-2: #101b2e;
-  --surface-3: #152036;
-  --border: hsl(215 30% 22%);
-  --border-subtle: hsl(215 30% 16%);
+:root, [data-theme="dark"] {
+  --theme-mode: dark;
+  /* Core palette - Sober Charcoal & Deep Slate */
+  --bg: #0b0f17;
+  --surface: #121824;
+  --surface-2: #182232;
+  --surface-3: #202c40;
+  --surface-hover: #1e293b;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-subtle: rgba(255, 255, 255, 0.04);
+  --border-focus: #10b981;
 
-  /* Accent colors */
-  --cyan: #22d3ee;
-  --cyan-dim: rgba(34,211,238,.10);
-  --cyan-glow: rgba(34,211,238,.18);
-  --violet: #8b5cf6;
-  --violet-dim: rgba(139,92,246,.10);
-  --green: #34d399;
-  --green-dim: rgba(52,211,153,.10);
-  --green-glow: rgba(52,211,153,.18);
-  --amber: #fbbf24;
-  --amber-dim: rgba(251,191,36,.10);
-  --red: #fb7185;
-  --red-dim: rgba(251,113,133,.10);
+  /* Primary Accent: Emerald Sage (Discipline, Health & Victory) */
+  --accent: #10b981;
+  --accent-light: #34d399;
+  --accent-dim: rgba(16, 185, 129, 0.12);
+  --accent-glow: rgba(16, 185, 129, 0.22);
+
+  /* Semantic accents */
+  --green: #10b981;
+  --green-dim: rgba(16, 185, 129, 0.12);
+  --green-glow: rgba(16, 185, 129, 0.20);
+  --cyan: #38bdf8;
+  --cyan-dim: rgba(56, 189, 248, 0.12);
+  --cyan-glow: rgba(56, 189, 248, 0.20);
+  --violet: #818cf8;
+  --violet-dim: rgba(129, 140, 248, 0.12);
+  --amber: #f59e0b;
+  --amber-dim: rgba(245, 158, 11, 0.12);
+  --red: #f43f5e;
+  --red-dim: rgba(244, 63, 94, 0.12);
 
   /* Typography */
-  --text: #f1f5f9;
+  --text: #f8fafc;
   --text-2: #cbd5e1;
   --muted: #64748b;
   --muted-2: #94a3b8;
 
+  /* Components */
+  --card-bg: #121824;
+  --topbar-bg: rgba(11, 15, 23, 0.94);
+  --sidebar-bg: #0c1018;
+  --clock-bg: #151e2c;
+  --input-bg: #0b0f17;
+  --input-border: rgba(255, 255, 255, 0.10);
+
   /* Shadows & radii */
-  --shadow-sm: 0 4px 16px rgba(0,0,0,.3);
-  --shadow-md: 0 8px 32px rgba(0,0,0,.4);
-  --shadow-lg: 0 20px 60px rgba(0,0,0,.5);
-  --radius-sm: 10px;
-  --radius-md: 14px;
-  --radius-lg: 18px;
-  --radius-xl: 22px;
+  --shadow-sm: 0 2px 8px rgba(0,0,0,.35);
+  --shadow-md: 0 8px 24px rgba(0,0,0,.45);
+  --shadow-lg: 0 20px 60px rgba(0,0,0,.60);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
   --radius-pill: 999px;
+}
+
+[data-theme="light"] {
+  --theme-mode: light;
+  /* Core palette - Clean White / Slate */
+  --bg: #f8fafc;
+  --surface: #ffffff;
+  --surface-2: #f1f5f9;
+  --surface-3: #e2e8f0;
+  --surface-hover: #edf2f7;
+  --border: #e2e8f0;
+  --border-subtle: #edf2f7;
+  --border-focus: #059669;
+
+  /* Primary Accent: Emerald */
+  --accent: #059669;
+  --accent-light: #10b981;
+  --accent-dim: rgba(5, 150, 105, 0.10);
+  --accent-glow: rgba(5, 150, 105, 0.18);
+
+  /* Semantic accents */
+  --green: #059669;
+  --green-dim: rgba(5, 150, 105, 0.10);
+  --green-glow: rgba(5, 150, 105, 0.18);
+  --cyan: #0284c7;
+  --cyan-dim: rgba(2, 132, 199, 0.10);
+  --cyan-glow: rgba(2, 132, 199, 0.18);
+  --violet: #6366f1;
+  --violet-dim: rgba(99, 102, 241, 0.10);
+  --amber: #d97706;
+  --amber-dim: rgba(217, 119, 6, 0.10);
+  --red: #e11d48;
+  --red-dim: rgba(225, 29, 72, 0.10);
+
+  /* Typography */
+  --text: #0f172a;
+  --text-2: #334155;
+  --muted: #64748b;
+  --muted-2: #475569;
+
+  /* Components */
+  --card-bg: #ffffff;
+  --topbar-bg: rgba(255, 255, 255, 0.95);
+  --sidebar-bg: #ffffff;
+  --clock-bg: #f8fafc;
+  --input-bg: #ffffff;
+  --input-border: #cbd5e1;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --shadow-md: 0 4px 14px rgba(0,0,0,.07);
+  --shadow-lg: 0 12px 32px rgba(0,0,0,.10);
 }
 
 /* ── Reset ── */
@@ -78,14 +147,12 @@ body {
   font-family: 'Inter', system-ui, sans-serif;
   font-size: 14px;
   line-height: 1.5;
-  background-image:
-    radial-gradient(ellipse 60% 40% at 85% 0%, rgba(139,92,246,.07) 0%, transparent 60%),
-    radial-gradient(ellipse 40% 30% at 10% 80%, rgba(34,211,238,.04) 0%, transparent 50%);
   -webkit-font-smoothing: antialiased;
+  transition: background-color .2s ease, color .2s ease;
 }
 button, input, select, textarea { font: inherit; color: inherit; }
 button { cursor: pointer; }
-:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; border-radius: 4px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
 
 /* ── Layout Shell ── */
 .app { min-height: 100vh; display: grid; grid-template-columns: 240px minmax(0,1fr); }
@@ -95,10 +162,11 @@ button { cursor: pointer; }
   position: sticky; top: 0; height: 100vh;
   display: flex; flex-direction: column;
   padding: 24px 14px;
-  border-right: 1px solid var(--border-subtle);
-  background: rgba(8,13,22,.96);
+  border-right: 1px solid var(--border);
+  background: var(--sidebar-bg);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
+  transition: background-color .2s ease, border-color .2s ease;
 }
 .brand { padding: 0 8px 20px; border-bottom: 1px solid var(--border-subtle); }
 .brand-kicker {
@@ -163,43 +231,61 @@ button { cursor: pointer; }
 .topbar {
   position: sticky; top: 0; z-index: 30;
   min-height: 52px;
-  display: flex; align-items: center; justify-content: center;
-  padding: 6px 20px;
-  border-bottom: 1px solid var(--border-subtle);
-  background: rgba(6,10,18,.97);
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px;
+  padding: 8px 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--topbar-bg);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
+  transition: background-color .2s ease, border-color .2s ease;
 }
 .topbar-phrase-box {
   display: inline-flex; align-items: center; justify-content: center;
   padding: 6px 18px;
-  background: linear-gradient(135deg, rgba(139,92,246,0.16), rgba(15,23,42,0.85));
-  border: 1px solid rgba(139,92,246,0.38);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
   border-radius: var(--radius-pill);
-  box-shadow: 0 4px 14px rgba(139,92,246,0.18);
-  max-width: 92%;
+  box-shadow: var(--shadow-sm);
+  max-width: 60%;
 }
 .topbar-phrase {
   font: 500 12px/1.4 'Inter', sans-serif;
   font-style: italic;
-  color: #f1f5f9;
+  color: var(--text-2);
   letter-spacing: .01em;
   text-align: center;
   transition: opacity .25s ease, transform .25s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.topbar-actions-right {
+  display: flex; align-items: center; gap: 8px; margin-left: auto;
+}
+.topbar-tool-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 12px; height: 34px;
+  color: var(--text-2); background: var(--surface-2);
+  border: 1px solid var(--border); border-radius: var(--radius-pill);
+  font-size: 11.5px; font-weight: 600; cursor: pointer;
+  transition: all .15s ease;
+}
+.topbar-tool-btn:hover {
+  color: var(--text); border-color: var(--accent); background: var(--surface-hover);
 }
 .topbar-brand { display: none; }
-.view-title { display: none; }
-.view-title { font-size: 13px; font-weight: 700; color: var(--text-2); }
+.view-title { display: none; font-size: 13px; font-weight: 700; color: var(--text-2); }
 .date-pill {
   padding: 6px 12px;
   color: var(--amber); font-size: 10px; font-weight: 700;
   background: var(--amber-dim);
-  border: 1px solid rgba(251,191,36,.2);
+  border: 1px solid var(--amber);
   border-radius: var(--radius-pill);
 }
 
 /* ── Views ── */
-.view { display: none; width: 100%; max-width: 1080px; padding: 28px 32px 100px; }
+.view { display: none; width: 100%; max-width: 1080px; padding: 24px 32px 100px; margin: 0 auto; }
 .view.active { display: block; animation: fadeUp .25s ease; }
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(8px); }
@@ -207,33 +293,33 @@ button { cursor: pointer; }
 }
 
 /* ── Section headers ── */
-.section-head { margin-bottom: 14px; }
+.section-head { margin-bottom: 18px; }
 .eyebrow {
-  color: var(--cyan); font-size: 9px; font-weight: 800;
+  color: var(--accent); font-size: 10px; font-weight: 800;
   letter-spacing: .15em; text-transform: uppercase;
 }
 .section-head h2 {
   margin-top: 5px;
-  font: 700 clamp(20px,3vw,32px) 'Space Grotesk', sans-serif;
-  letter-spacing: -.04em; line-height: 1.15;
+  font: 700 clamp(20px,3vw,30px) 'Space Grotesk', system-ui, sans-serif;
+  letter-spacing: -.035em; line-height: 1.15;
+  color: var(--text);
 }
-.section-head p { max-width: 680px; margin-top: 6px; color: var(--muted-2); font-size: 12px; line-height: 1.6; }
-
+.section-head p { max-width: 680px; margin-top: 5px; color: var(--muted); font-size: 12.5px; line-height: 1.55; }
 
 /* ── Cards ── */
 .card {
-  background: rgba(16, 27, 46, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: var(--radius-md);
-  padding: 16px;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  box-shadow: var(--shadow-sm);
+  transition: border-color .15s ease, box-shadow .15s ease, background-color .2s ease;
 }
-.card-title { font-size: 11px; font-weight: 700; color: var(--text-2); letter-spacing: .02em; text-transform: uppercase; }
+.card-title { font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: .04em; text-transform: uppercase; }
 
-/* ── Buttons (Pro App Finishing) ── */
+/* ── Buttons ── */
 .btn {
-  min-height: 44px;
+  min-height: 42px;
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   padding: 0 16px;
   border-radius: var(--radius-md); border: 1px solid transparent;
@@ -241,210 +327,179 @@ button { cursor: pointer; }
   letter-spacing: -0.01em;
   white-space: nowrap;
   cursor: pointer;
-  transition: all .2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all .18s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .btn-primary {
-  color: #041018; 
-  background: linear-gradient(135deg, #38bdf8 0%, #22d3ee 100%);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 4px 16px rgba(34, 211, 238, 0.25);
+  color: #ffffff; 
+  background: var(--accent);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 2px 10px var(--accent-glow);
 }
-.btn-primary:hover { box-shadow: 0 6px 22px rgba(34, 211, 238, 0.4); transform: translateY(-1px); }
-
+.btn-primary:hover {
+  filter: brightness(1.08);
+  box-shadow: 0 4px 18px var(--accent-glow);
+  transform: translateY(-1px);
+}
 .btn-secondary { 
-  color: #e2e8f0; 
-  background: rgba(30, 41, 59, 0.6); 
-  border: 1px solid rgba(255, 255, 255, 0.12); 
+  color: var(--text); 
+  background: var(--surface-2); 
+  border: 1px solid var(--border); 
 }
-.btn-secondary:hover { border-color: rgba(255, 255, 255, 0.25); background: rgba(51, 65, 85, 0.7); color: #ffffff; }
-
-.btn-danger { color: #fecdd3; background: linear-gradient(135deg, rgba(244,63,94,0.2), rgba(225,29,72,0.3)); border: 1px solid rgba(244,63,94,0.3); }
-
+.btn-secondary:hover {
+  background: var(--surface-hover);
+  border-color: var(--muted);
+  color: var(--text);
+}
+.btn-danger {
+  color: #ffffff;
+  background: var(--red);
+  border: 1px solid rgba(255,255,255,0.15);
+}
 .btn-success { 
-  color: #022c22; 
-  background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  box-shadow: 0 4px 16px rgba(52, 211, 153, 0.28);
+  color: #ffffff; 
+  background: var(--green);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 2px 10px var(--green-glow);
 }
-.btn-success:hover { box-shadow: 0 6px 24px rgba(52, 211, 153, 0.42); transform: translateY(-1.5px); }
-
+.btn-success:hover {
+  filter: brightness(1.08);
+  box-shadow: 0 4px 18px var(--green-glow);
+  transform: translateY(-1.5px);
+}
 .btn-warning { 
-  color: #1c1000; 
-  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 4px 16px rgba(251, 191, 36, 0.28);
+  color: #ffffff; 
+  background: var(--amber);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
-.btn-warning:hover { box-shadow: 0 6px 24px rgba(251, 191, 36, 0.42); transform: translateY(-1.5px); }
-
-.btn-small { min-height: 34px; padding: 0 12px; font-size: 11px; border-radius: var(--radius-sm); }
+.btn-small { min-height: 32px; padding: 0 12px; font-size: 11px; border-radius: var(--radius-sm); }
 
 /* ── Form fields ── */
 .field label {
   display: block; margin-bottom: 5px;
-  color: var(--muted); font-size: 8.5px; font-weight: 700;
-  letter-spacing: .08em; text-transform: uppercase;
+  color: var(--muted); font-size: 9.5px; font-weight: 700;
+  letter-spacing: .06em; text-transform: uppercase;
 }
 .field input, .field select, .field textarea, .input {
-  width: 100%; min-height: 38px; padding: 8px 11px;
-  color: var(--text); background: rgba(0, 0, 0, 0.35);
-  border: 1px solid rgba(255, 255, 255, 0.08); border-radius: var(--radius-sm);
+  width: 100%; min-height: 38px; padding: 8px 12px;
+  color: var(--text); background: var(--input-bg);
+  border: 1px solid var(--input-border); border-radius: var(--radius-sm);
   outline: none; font-size: 12.5px; transition: border-color .15s, box-shadow .15s;
 }
 .field textarea { min-height: 70px; resize: vertical; }
 .field input:focus, .field select:focus, .field textarea:focus, .input:focus {
-  border-color: rgba(34, 211, 238, 0.5);
-  box-shadow: 0 0 0 2px rgba(34,211,238,.12);
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 2px var(--accent-dim);
 }
 
 /* ══════════════════════════════════════
-   TODAY VIEW — discipline card (smoke)
+   3 STEPS ARCHITECTURE & BADGES
+══════════════════════════════════════ */
+.step-indicator {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 12px;
+}
+.step-num {
+  width: 24px; height: 24px; border-radius: 50%;
+  background: var(--accent); color: #ffffff;
+  font-size: 11.5px; font-weight: 800;
+  display: inline-flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.step-label {
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  font-size: 13.5px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--text);
+}
+.badge-missions {
+  font-size: 11px; font-weight: 700; padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--accent-dim); color: var(--accent);
+  border: 1px solid var(--accent);
+  margin-left: auto;
+}
+
+/* ══════════════════════════════════════
+   TODAY VIEW — DISCIPLINE CARD
 ══════════════════════════════════════ */
 .discipline-card {
-  margin-bottom: 16px; padding: 18px;
-  background: linear-gradient(135deg,
-    rgba(52,211,153,.06) 0%,
-    rgba(12,20,34,.95) 40%,
-    rgba(139,92,246,.04) 100%);
-  border: 1px solid rgba(52,211,153,.18);
+  margin-bottom: 18px; padding: 20px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
   border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: background-color .2s ease, border-color .2s ease;
 }
 .smoke-empty {
-  min-height: 250px;
+  min-height: 220px;
   display: grid;
-  grid-template-columns: minmax(0,1fr) minmax(220px,.55fr);
-  gap: 28px;
+  grid-template-columns: minmax(0,1fr) minmax(200px,.5fr);
+  gap: 24px;
   align-items: center;
-  padding: 18px;
+  padding: 10px;
 }
-.smoke-empty-copy { min-width: 0; max-width: 620px; }
+.smoke-empty-copy { min-width: 0; max-width: 600px; }
 .smoke-empty h3 {
-  margin-top: 7px;
-  font: 700 clamp(23px,3.5vw,36px)/1.08 'Space Grotesk', sans-serif;
-  letter-spacing: -.045em;
+  margin-top: 6px;
+  font: 700 clamp(22px,3vw,32px)/1.15 'Space Grotesk', sans-serif;
+  letter-spacing: -.035em; color: var(--text);
 }
 .smoke-empty p {
-  max-width: 580px; margin-top: 10px;
-  color: var(--muted-2); font-size: 13px; line-height: 1.65;
+  max-width: 560px; margin-top: 8px;
+  color: var(--muted); font-size: 12.5px; line-height: 1.6;
 }
-.setup-meta { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 16px; }
+.setup-meta { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 14px; }
 .setup-meta span {
   display: inline-flex; align-items: center; gap: 6px;
-  max-width: 100%;
-  padding: 6px 9px; color: var(--text-2);
-  background: rgba(255,255,255,.035);
-  border: 1px solid var(--border-subtle); border-radius: var(--radius-pill);
+  padding: 5px 10px; color: var(--text-2);
+  background: var(--surface-2);
+  border: 1px solid var(--border); border-radius: var(--radius-pill);
   font-size: 10px; font-weight: 600;
 }
-.setup-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+.setup-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
 .support-orbit {
-  width: min(220px,100%); aspect-ratio: 1; justify-self: center;
+  width: min(180px,100%); aspect-ratio: 1; justify-self: center;
   display: grid; place-items: center; position: relative;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(52,211,153,.18), rgba(34,211,238,.05) 50%, transparent 71%);
+  background: radial-gradient(circle, var(--accent-dim) 0%, transparent 70%);
 }
-.support-orbit::before, .support-orbit::after {
-  content: ''; position: absolute; border-radius: 50%;
-  border: 1px solid rgba(52,211,153,.2);
+.support-orbit::before {
+  content: ''; position: absolute; inset: 12%; border-radius: 50%;
+  border: 1px solid var(--border);
 }
-.support-orbit::before { inset: 14%; }
-.support-orbit::after { inset: 28%; border-color: rgba(34,211,238,.24); }
 .orbit-heart {
-  position: relative; z-index: 1; width: 64px; height: 64px;
-  display: grid; place-items: center; border-radius: 22px;
-  color: var(--green); background: rgba(6,10,18,.84);
-  border: 1px solid rgba(52,211,153,.3);
-  font: 600 30px 'Space Grotesk', sans-serif;
-  box-shadow: 0 12px 40px rgba(52,211,153,.12);
-}
-.checkin-panel {
-  padding: 14px; margin-bottom: 12px;
-  background: linear-gradient(135deg, rgba(52,211,153,.1), rgba(34,211,238,.035));
-  border: 1px solid rgba(52,211,153,.22); border-radius: var(--radius-md);
-}
-.checkin-copy strong { display: block; font: 700 17px 'Space Grotesk', sans-serif; }
-.checkin-copy span { display: block; margin-top: 3px; color: var(--muted-2); font-size: 10.5px; line-height: 1.5; }
-.checkin-actions { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 8px; margin-top: 12px; }
-.checkin-button {
-  min-height: 46px; padding: 8px 10px;
-  color: var(--text-2); background: rgba(6,10,18,.48);
-  border: 1px solid rgba(255,255,255,.09); border-radius: var(--radius-sm);
-  font-size: 11px; font-weight: 700; line-height: 1.25;
-}
-.checkin-button:hover { color: var(--text); border-color: rgba(255,255,255,.2); }
-.checkin-button.support { color: #fde68a; border-color: rgba(251,191,36,.26); background: rgba(251,191,36,.07); }
-.checkin-button.restart { color: #fecdd3; }
-.discipline-head {
-  display: flex; align-items: flex-start;
-  justify-content: space-between; gap: 16px;
-}
-.discipline-head h3 {
-  margin-top: 6px;
-  font: 700 clamp(18px,2.5vw,26px) 'Space Grotesk', sans-serif;
-  letter-spacing: -.035em; line-height: 1.2;
-}
-.discipline-head p { display: none; } /* hidden — tips show via .discipline-tip */
-.discipline-tip {
-  max-width: 520px; margin-top: 7px;
-  padding-left: 10px;
-  border-left: 2px solid rgba(139,92,246,.45);
-  color: var(--muted-2); font-size: 11px; line-height: 1.55;
-  font-style: italic;
-  animation: tip-fade .4s ease;
+  position: relative; z-index: 1; width: 56px; height: 56px;
+  display: grid; place-items: center; border-radius: 18px;
+  color: var(--accent); background: var(--surface);
+  border: 1px solid var(--border);
+  font: 600 24px 'Space Grotesk', sans-serif;
+  box-shadow: var(--shadow-sm);
 }
 
-.smoke-pill {
-  flex: 0 0 auto; padding: 6px 12px;
-  color: var(--green); font-size: 9.5px; font-weight: 800;
-  background: var(--green-dim);
-  border: 1px solid rgba(52,211,153,.25);
-  border-radius: var(--radius-pill);
-}
-
-/* ── Reto Control Quote Pill ── */
-.smoke-quote-box {
-  margin-bottom: 14px;
-  padding: 8px 16px;
-  background: linear-gradient(135deg, rgba(139,92,246,0.16), rgba(15,23,42,0.85));
-  border: 1px solid rgba(139,92,246,0.38);
-  border-radius: var(--radius-pill);
-  box-shadow: 0 4px 14px rgba(139,92,246,0.18);
-  text-align: center;
-}
-.smoke-quote-text {
-  font: 500 12.5px/1.4 'Inter', sans-serif;
-  font-style: italic;
-  color: #f1f5f9;
-  letter-spacing: .01em;
-  transition: opacity .25s ease, transform .25s ease;
-}
-
-
-
-/* ── Reto Control 4-Color Clock ── */
+/* ── Clean Smoke Clock (Executive Counter) ── */
 .smoke-clock-wrapper {
-  margin-top: 14px; padding: 12px 14px;
-  background: rgba(6, 10, 18, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  margin-top: 10px; padding: 18px;
+  background: var(--clock-bg);
+  border: 1px solid var(--border);
   border-radius: var(--radius-md);
 }
 .smoke-clock-title {
-  font-size: 9px; font-weight: 700; letter-spacing: 0.1em;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
   color: var(--muted); text-transform: uppercase; text-align: center;
-  margin-bottom: 8px;
-  display: flex; align-items: center; justify-content: center; gap: 6px;
+  margin-bottom: 12px;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
 }
 .live-dot-pill {
-  display: inline-flex; align-items: center; gap: 4px;
-  padding: 2px 7px;
-  font-size: 8px; font-weight: 800; color: #4ade80;
-  background: rgba(74,222,128,0.12);
-  border: 1px solid rgba(74,222,128,0.3);
-  border-radius: 10px; text-transform: uppercase; letter-spacing: 0.05em;
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 2px 8px;
+  font-size: 8.5px; font-weight: 800; color: var(--accent);
+  background: var(--accent-dim);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-pill); text-transform: uppercase; letter-spacing: 0.05em;
 }
 .live-dot {
-  width: 5px; height: 5px; border-radius: 50%;
-  background: #4ade80;
-  box-shadow: 0 0 8px #4ade80;
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
   animation: livePulse 1.2s infinite ease-in-out;
 }
 @keyframes livePulse {
@@ -453,98 +508,167 @@ button { cursor: pointer; }
 }
 .smoke-clock-grid {
   display: grid; grid-template-columns: repeat(4, 1fr);
-  gap: 8px; text-align: center;
+  gap: 10px; text-align: center;
 }
-.sc-unit { display: flex; flex-direction: column; align-items: center; }
+.sc-unit {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px 8px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
 .sc-val {
-  font: 700 24px/1 'Space Grotesk', sans-serif;
+  font: 700 clamp(22px, 3.8vw, 34px)/1 'Space Grotesk', system-ui, sans-serif;
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.03em;
+  color: var(--text);
 }
-.val-blue { color: #38bdf8; }
-.val-purple { color: #c084fc; }
-.val-green { color: #4ade80; }
-.val-yellow { color: #facc15; }
-.sc-lbl { font-size: 9px; font-weight: 600; color: var(--muted); margin-top: 3px; }
+.val-blue, .val-purple, .val-green, .val-yellow { color: var(--text); }
+.sc-lbl {
+  font-size: 10px; font-weight: 600; color: var(--muted);
+  margin-top: 6px; text-transform: uppercase; letter-spacing: 0.05em;
+}
 
-.smoke-progress-section { margin-top: 10px; }
+.smoke-progress-section { margin-top: 14px; }
 .spb-track {
-  height: 4px; background: rgba(255,255,255,0.08);
+  height: 6px; background: var(--surface-3);
   border-radius: var(--radius-pill); overflow: hidden;
 }
 .spb-track span {
   display: block; height: 100%; width: 0;
-  background: linear-gradient(90deg, #38bdf8, #c084fc, #4ade80);
+  background: var(--accent);
   border-radius: inherit; transition: width 0.4s ease;
 }
 .spb-labels {
   display: flex; justify-content: space-between;
-  margin-top: 5px; font-size: 9.5px; font-weight: 600; color: var(--muted-2);
+  margin-top: 6px; font-size: 10px; font-weight: 600; color: var(--muted-2);
 }
-.spb-pct { color: #c084fc; font-weight: 700; }
+.spb-pct { color: var(--accent); font-weight: 700; }
 
-/* ── 2x2 Metric Cards Grid ── */
+/* ── Check-in Action Bar (Immediate Clarity) ── */
+.checkin-panel {
+  padding: 16px; margin: 14px 0;
+  background: var(--surface-2);
+  border: 1px solid var(--border); border-radius: var(--radius-md);
+}
+.checkin-copy strong { display: block; font: 700 15px 'Space Grotesk', sans-serif; color: var(--text); }
+.checkin-copy span { display: block; margin-top: 3px; color: var(--muted); font-size: 11px; line-height: 1.5; }
+.checkin-actions { display: grid; grid-template-columns: 1.4fr 1.1fr 0.9fr; gap: 8px; margin-top: 12px; }
+.checkin-button {
+  min-height: 46px; padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 11.5px; font-weight: 700; line-height: 1.25;
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  cursor: pointer;
+  transition: all .15s ease;
+}
+.checkin-button.firm-pass {
+  background: var(--accent); border: 1px solid rgba(255,255,255,0.2);
+  color: #ffffff; box-shadow: 0 2px 10px var(--accent-glow);
+}
+.checkin-button.firm-pass:hover { filter: brightness(1.1); transform: translateY(-1px); }
+.checkin-button.support {
+  background: var(--amber-dim); border: 1px solid var(--amber);
+  color: var(--amber);
+}
+.checkin-button.support:hover { background: rgba(245, 158, 11, 0.2); transform: translateY(-1px); }
+.checkin-button.restart {
+  background: var(--surface-3); border: 1px solid var(--border);
+  color: var(--text-2);
+}
+.checkin-button.restart:hover { background: var(--surface-hover); border-color: var(--muted); }
+
+/* ── 4 Metric Cards Grid (Sober, Balanced) ── */
 .rc-grid {
-  display: grid; grid-template-columns: repeat(2, 1fr);
-  gap: 8px; margin-top: 10px;
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 10px; margin-top: 12px;
 }
 .rc-card {
-  padding: 10px 12px;
-  background: rgba(16, 27, 46, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  padding: 12px 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
   border-radius: var(--radius-md);
   display: flex; flex-direction: column; justify-content: space-between;
 }
-.rc-card-top { display: flex; align-items: center; gap: 6px; }
+.rc-card-top { display: flex; align-items: center; gap: 8px; }
 .rc-icon {
-  width: 20px; height: 20px; border-radius: 6px;
+  width: 22px; height: 22px; border-radius: 6px;
   display: flex; align-items: center; justify-content: center;
   font-size: 11px; font-weight: 800;
+  background: var(--surface-3); color: var(--accent);
 }
-.icon-green { background: rgba(52,211,153,.15); color: #4ade80; }
-.icon-blue { background: rgba(56,189,248,.15); color: #38bdf8; }
-.icon-purple { background: rgba(192,132,252,.15); color: #c084fc; }
-.icon-yellow { background: rgba(250,204,21,.15); color: #facc15; }
+.icon-green { color: var(--green); }
+.icon-blue { color: var(--cyan); }
+.icon-purple { color: var(--violet); }
+.icon-yellow { color: var(--amber); }
 
-.rc-title { font-size: 8.5px; font-weight: 800; color: var(--muted); letter-spacing: 0.08em; }
+.rc-title { font-size: 9px; font-weight: 800; color: var(--muted); letter-spacing: 0.08em; }
 .rc-val {
-  font: 700 15px/1.2 'Space Grotesk', sans-serif;
+  font: 700 16px/1.2 'Space Grotesk', sans-serif;
   font-variant-numeric: tabular-nums; color: var(--text);
-  margin-top: 4px;
+  margin-top: 5px;
 }
-.val-project { color: #facc15; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.rc-sub { font-size: 8.5px; color: var(--muted); margin-top: 2px; }
-.rc-bar { height: 3px; border-radius: 2px; margin-top: 6px; }
-.green-bar { background: #4ade80; width: 40%; }
-.rc-milestones { display: flex; gap: 4px; margin-top: 6px; font-size: 7.5px; color: var(--muted); }
+.rc-sub { font-size: 9.5px; color: var(--muted); margin-top: 3px; }
 
 /* ── Interactive Health Banner ── */
 .rc-health-banner {
   width: 100%; color: inherit; text-align: left;
-  display: flex; align-items: center; gap: 10px;
-  margin-top: 10px; padding: 10px 12px;
-  background: rgba(52, 211, 153, 0.07);
-  border: 1px solid rgba(52, 211, 153, 0.2);
+  display: flex; align-items: center; gap: 12px;
+  margin-top: 12px; padding: 12px 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
   border-radius: var(--radius-md); cursor: pointer;
-  transition: background 0.15s, border-color 0.15s;
+  transition: all 0.15s ease;
 }
-.rc-health-banner:hover { background: rgba(52, 211, 153, 0.12); border-color: rgba(52, 211, 153, 0.35); }
+.rc-health-banner:hover { background: var(--surface-hover); border-color: var(--accent); }
 .hb-icon {
-  width: 30px; height: 30px; border-radius: 8px;
-  background: rgba(52, 211, 153, 0.18); color: #4ade80;
-  display: flex; align-items: center; justify-content: center; font-size: 15px;
+  width: 32px; height: 32px; border-radius: 8px;
+  background: var(--accent-dim); color: var(--accent);
+  display: flex; align-items: center; justify-content: center; font-size: 16px;
+  flex-shrink: 0;
 }
-.hb-body strong { display: block; font-size: 11.5px; color: var(--text); }
-.hb-body span { font-size: 9px; color: var(--muted-2); }
+.hb-body strong { display: block; font-size: 12px; color: var(--text); }
+.hb-body span { font-size: 10px; color: var(--muted); }
 
-.wide { flex: 1; }
-.smoke-log { margin-top: 10px; color: var(--muted-2); font-size: 10px; }
-.smoke-log summary { width: max-content; cursor: pointer; font-weight: 700; color: var(--cyan); }
+/* ── Tools Grid & Cards (Consolidated Utility) ── */
+.tools-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr);
+  gap: 10px; margin-top: 12px;
+}
+.tool-card-btn {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text);
+  text-align: left; cursor: pointer;
+  transition: all 0.15s ease; width: 100%;
+}
+.tool-card-btn:hover {
+  border-color: var(--accent); background: var(--surface-hover);
+  transform: translateY(-1px);
+}
+.tool-card-icon {
+  font-size: 20px; width: 38px; height: 38px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: var(--radius-sm);
+  background: var(--surface-3); flex-shrink: 0;
+}
+.tool-card-text { flex: 1; min-width: 0; }
+.tool-card-text strong { display: block; font-size: 12.5px; color: var(--text); }
+.tool-card-text span {
+  display: block; font-size: 10.5px; color: var(--muted);
+  margin-top: 2px; line-height: 1.35; white-space: normal;
+}
+
+.smoke-log { margin-top: 10px; color: var(--muted); font-size: 10.5px; }
+.smoke-log summary { width: max-content; cursor: pointer; font-weight: 700; color: var(--accent); }
 .smoke-log-list { display: grid; gap: 6px; margin-top: 8px; }
 .smoke-log-item {
   display: flex; justify-content: space-between; gap: 12px;
-  padding: 8px 11px;
-  background: rgba(6,10,18,0.5); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px;
+  padding: 8px 12px;
+  background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px;
   font-size: 11px;
 }
 .smoke-log-item span:last-child { text-align: right; color: var(--muted); font-size: 10px; }
@@ -1138,6 +1262,7 @@ dialog.nt-dialog::backdrop { background: rgba(2,5,10,.85); backdrop-filter: blur
 ════════════════════════════════════ */
 .aurora-bg {
   position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+  display: none;
 }
 .aurora-bg::before, .aurora-bg::after {
   content: ''; position: absolute;
@@ -1836,6 +1961,10 @@ dialog.nt-dialog.calendar-dialog-wide {
       <button class="nav-button" data-view="projects"><span class="nav-index">05</span>Proyectos</button>
     </nav>
     <div class="side-rule"><strong>REGLA DE ORO</strong>Un antojo solo dura de 3 a 5 minutos. Si ejecutas una acción corta en esa ventana, aseguras la victoria de hoy.</div>
+    <div style="margin: 12px 8px 0; display:flex; flex-direction:column; gap:6px;">
+      <button class="nav-button" onclick="openDialog('tools-dialog')" style="min-height:38px;"><span class="nav-index">🛠️</span>Herramientas</button>
+      <button class="nav-button" onclick="toggleThemeMode()" id="sidebar-theme-toggle" style="min-height:38px;"><span class="nav-index">🌓</span>Cambiar Tema</button>
+    </div>
   </aside>
 
   <main class="main">
@@ -1844,64 +1973,30 @@ dialog.nt-dialog.calendar-dialog-wide {
       <div class="topbar-phrase-box">
         <p class="topbar-phrase" id="topbar-phrase" aria-live="polite">“Cada minuto sin fumar es una victoria real de tu disciplina.”</p>
       </div>
-      <button class="topbar-user-btn" id="topbar-user-btn" onclick="openDialog('auth-dialog')">
-        <span class="user-status-dot" id="user-status-dot"></span>
-        <span id="topbar-user-label">🔑 Iniciar Sesión</span>
-      </button>
+      <div class="topbar-actions-right">
+        <button class="topbar-tool-btn" id="topbar-theme-toggle" onclick="toggleThemeMode()" title="Cambiar Tema (Claro / Oscuro)">🌓</button>
+        <button class="topbar-tool-btn" onclick="openDialog('tools-dialog')" title="Herramientas y Accesos">🛠️ <span class="hide-mobile">Herramientas</span></button>
+        <button class="topbar-user-btn" id="topbar-user-btn" onclick="openDialog('auth-dialog')">
+          <span class="user-status-dot" id="user-status-dot"></span>
+          <span id="topbar-user-label">🔑 Iniciar Sesión</span>
+        </button>
+      </div>
     </header>
 
     <section class="view active" id="view-today">
-      <div class="section-head"><div class="eyebrow">RETOMAR EL CONTROL</div><h2>Panel de Resistencia y Progreso</h2><p>Seguimiento firme de tu tiempo sin fumar, ahorro acumulado y ejecución diaria.</p></div>
-
-      <!-- App Mobile-Style Quick Action Bar -->
-      <div class="quick-app-toolbar">
-        <button class="quick-pill-btn" onclick="openSystemSettings('setup')">
-          <span class="qpb-icon">⚙️</span>
-          <span>Configuración General</span>
-          <span class="qpb-badge cyan">Sistema</span>
-        </button>
-
-        <button class="quick-pill-btn" onclick="showView('routine')">
-          <span class="qpb-icon">⏰</span>
-          <span>Rutina Diaria</span>
-          <span class="qpb-badge violet">Constancia</span>
-        </button>
-
-        <button class="quick-pill-btn" onclick="openRewardsDialog()">
-          <span class="qpb-icon">🎁</span>
-          <span>Metas & Recompensas</span>
-          <span class="qpb-badge violet">Motivación</span>
-        </button>
-
-        <button class="quick-pill-btn" onclick="openDialog('widget-dialog')">
-          <span class="qpb-icon">📱</span>
-          <span>Widget iPhone</span>
-          <span class="qpb-badge violet">iOS</span>
-        </button>
-
-        <button class="quick-pill-btn" onclick="openCalendarModal()">
-          <span class="qpb-icon">📅</span>
-          <span>Calendario & Agenda</span>
-        </button>
-
-        <button class="quick-pill-btn" onclick="openJarvisAssistant()">
-          <span class="qpb-icon">🎙️</span>
-          <span>Asistente NICO (Voz)</span>
-          <span class="qpb-badge violet">Voz IA</span>
-        </button>
-
-        <button class="quick-pill-btn" onclick="openThemePreviewModal()">
-          <span class="qpb-icon">🎨</span>
-          <span>Prueba de Fondo</span>
-          <span class="qpb-badge cyan">IA Visual</span>
-        </button>
-
-        <button class="quick-pill-btn" onclick="openSystemSettings('sync')">
-          <span class="qpb-icon">☁️</span>
-          <span>Nube</span>
-        </button>
+      <div class="section-head" style="display:flex; justify-content:space-between; align-items:flex-end; gap:12px; flex-wrap:wrap;">
+        <div>
+          <div class="eyebrow">CONTROL TOTAL · PLAN DE EJECUCIÓN</div>
+          <h2>Panel de Resistencia y Progreso</h2>
+          <p>Seguimiento firme de tu tiempo sin fumar, ahorro acumulado y ejecución diaria.</p>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button class="btn btn-secondary btn-small" onclick="openDialog('tools-dialog')">🛠️ Herramientas</button>
+          <button class="btn btn-secondary btn-small" onclick="toggleThemeMode()" id="header-theme-toggle">🌓 Tema</button>
+        </div>
       </div>
 
+      <!-- PASO 1: ESTADO DE CONTROL (DISCIPLINA SIN FUMAR) -->
       <section class="discipline-card" aria-labelledby="discipline-title">
         <div class="smoke-empty" id="smoke-empty">
           <div class="smoke-empty-copy">
@@ -1918,22 +2013,22 @@ dialog.nt-dialog.calendar-dialog-wide {
         </div>
 
         <div id="smoke-dashboard" hidden>
-          <div class="checkin-panel">
-            <div class="checkin-copy"><strong id="checkin-title">¿CUÁL ES TU ESTADO AHORA?</strong><span id="checkin-description">Confirma tu progreso diario o activa la intervención rápida ante la ansiedad.</span></div>
-            <div class="checkin-actions" aria-label="Registro rápido">
-              <button class="checkin-button firm-pass" onclick="confirmSmokeFree()">✓ Mantengo el Control (0 Cigarrillos)</button>
-              <button class="checkin-button support" onclick="openCravingDialog()">⚡ Antojo Activo — Plan de Acción</button>
-              <button class="checkin-button restart" onclick="openLapseDialog()">↻ Reiniciar Contador — Retomar Ya</button>
-            </div>
+          <div class="step-indicator">
+            <span class="step-num">1</span>
+            <span class="step-label">Tu Estado de Control</span>
           </div>
-          <!-- 4-Color Clock Section -->
+
+          <!-- Contador Ejecutivo de Tiempo Sin Fumar -->
           <div class="smoke-clock-wrapper">
-            <div class="smoke-clock-title">TIEMPO SIN FUMAR <span class="live-dot-pill"><span class="live-dot"></span> EN VIVO</span></div>
+            <div class="smoke-clock-title">
+              <span>TIEMPO SIN FUMAR</span>
+              <span class="live-dot-pill"><span class="live-dot"></span> EN VIVO</span>
+            </div>
             <div class="smoke-clock-grid">
-              <div class="sc-unit"><span class="sc-val val-blue" id="su-days">0</span><span class="sc-lbl">días</span></div>
-              <div class="sc-unit"><span class="sc-val val-purple" id="su-hours">00</span><span class="sc-lbl">horas</span></div>
-              <div class="sc-unit"><span class="sc-val val-green" id="su-mins">00</span><span class="sc-lbl">min</span></div>
-              <div class="sc-unit"><span class="sc-val val-yellow" id="su-secs">00</span><span class="sc-lbl">seg</span></div>
+              <div class="sc-unit"><span class="sc-val" id="su-days">0</span><span class="sc-lbl">días</span></div>
+              <div class="sc-unit"><span class="sc-val" id="su-hours">00</span><span class="sc-lbl">horas</span></div>
+              <div class="sc-unit"><span class="sc-val" id="su-mins">00</span><span class="sc-lbl">min</span></div>
+              <div class="sc-unit"><span class="sc-val" id="su-secs">00</span><span class="sc-lbl">seg</span></div>
             </div>
             <div class="smoke-progress-section">
               <div class="spb-track"><span id="smoke-progress"></span></div>
@@ -1944,11 +2039,30 @@ dialog.nt-dialog.calendar-dialog-wide {
             </div>
           </div>
 
-          <!-- hidden element kept for JS compatibility -->
+          <!-- Hidden elements kept for JS compatibility -->
           <span id="smoke-time" hidden>0 días · 0 h · 0 min</span>
           <span id="smoke-health-next" hidden></span>
 
-          <!-- 2x2 Metric Cards Grid (Reto Control Style) -->
+          <!-- Panel de Registro Rápido (Check-in Inmediato) -->
+          <div class="checkin-panel">
+            <div class="checkin-copy">
+              <strong id="checkin-title">¿CUÁL ES TU ESTADO AHORA?</strong>
+              <span id="checkin-description">Confirma tu progreso diario o activa la intervención rápida ante la ansiedad.</span>
+            </div>
+            <div class="checkin-actions" aria-label="Registro rápido">
+              <button class="checkin-button firm-pass" id="btn-checkin-main" onclick="confirmSmokeFree()">
+                ✓ Mantengo el Control (0 Cigarrillos)
+              </button>
+              <button class="checkin-button support" onclick="openCravingDialog()">
+                ⚡ Antojo Activo — Plan de Acción
+              </button>
+              <button class="checkin-button restart" onclick="openLapseDialog()">
+                ↻ Reiniciar Contador — Retomar Ya
+              </button>
+            </div>
+          </div>
+
+          <!-- 4 Tarjetas de Métricas Ejecutivas -->
           <div class="rc-grid">
             <div class="rc-card">
               <div class="rc-card-top"><span class="rc-icon icon-green">$</span><span class="rc-title">AHORRADO</span></div>
@@ -1972,33 +2086,31 @@ dialog.nt-dialog.calendar-dialog-wide {
             </div>
           </div>
 
-          <!-- Multi-Reward Horizontal Carousel Section -->
-          <div class="rewards-section-wrapper">
-            <div class="rewards-section-head">
+          <!-- Metas de Recompensa (Estímulos por el ahorro) -->
+          <div class="rewards-section-wrapper" style="margin-top:16px;">
+            <div class="rewards-section-head" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
               <div style="display:flex; align-items:center; gap:8px;">
-                <span style="font-size:20px;">🎁</span>
+                <span style="font-size:18px;">🎁</span>
                 <div>
-                  <span style="font-size:9px; color:var(--violet); font-weight:800; text-transform:uppercase; letter-spacing:0.06em; display:block;">ESTÍMULOS & MOTIVACIÓN</span>
-                  <h4 style="font-size:14px; font-weight:700; color:var(--text); margin:0;">Mis Metas de Recompensa</h4>
+                  <span style="font-size:9.5px; color:var(--accent); font-weight:800; text-transform:uppercase; letter-spacing:0.06em; display:block;">ESTÍMULOS & MOTIVACIÓN</span>
+                  <h4 style="font-size:13.5px; font-weight:700; color:var(--text); margin:0;">Mis Metas de Recompensa</h4>
                 </div>
               </div>
               <div style="display:flex; gap:6px;">
-                <button class="btn btn-primary btn-small" onclick="openRewardsDialog(null)" style="font-size:11px; padding:4px 10px;">➕ Añadir Meta</button>
-                <button class="btn btn-secondary btn-small" onclick="openRewardsDialog(null)" style="font-size:11px; padding:4px 10px;">🎯 Gestionar</button>
+                <button class="btn btn-secondary btn-small" onclick="openRewardsDialog(null)" style="font-size:11px; padding:3px 10px;">➕ Añadir</button>
+                <button class="btn btn-secondary btn-small" onclick="openRewardsDialog(null)" style="font-size:11px; padding:3px 10px;">🎯 Gestionar</button>
               </div>
             </div>
             
-            <div class="rewards-carousel" id="rewards-carousel">
-              <!-- Dynamically populated carousel cards -->
-            </div>
+            <div class="rewards-carousel" id="rewards-carousel"></div>
             
-            <div id="rewards-scroll-notice" style="text-align:right; font-size:10px; color:var(--cyan); margin-top:2px; font-weight:600;" hidden>
-              👉 Desliza horizontalmente a los lados para ver tus otras metas
+            <div id="rewards-scroll-notice" style="text-align:right; font-size:10px; color:var(--accent); margin-top:2px; font-weight:600;" hidden>
+              👉 Desliza horizontalmente para ver tus otras metas
             </div>
           </div>
 
-          <!-- Interactive Health Banner -->
-          <button class="rc-health-banner" type="button" onclick="openDialog('health-modal')" style="margin-top:10px;">
+          <!-- Banner Interactivo de Salud y Recuperación -->
+          <button class="rc-health-banner" type="button" onclick="openDialog('health-modal')">
             <div class="hb-icon">💪</div>
             <div class="hb-body">
               <strong>BENEFICIOS REALES EN TU ORGANISMO</strong>
@@ -2006,52 +2118,64 @@ dialog.nt-dialog.calendar-dialog-wide {
             </div>
           </button>
 
-          <div class="smoke-footer" style="margin-top:8px;">
+          <div class="smoke-footer">
             <details class="smoke-log"><summary>📋 Registro de eventos de control</summary><div class="smoke-log-list" id="smoke-log-list"></div></details>
           </div>
         </div>
       </section>
 
-      <!-- MISIONES Y EJECUCIÓN DIARIA -->
-      <section class="card daily-missions-card" style="margin-top:16px; padding:18px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px; border-bottom:1px solid var(--border-subtle); padding-bottom:12px;">
-          <div>
-            <div class="eyebrow" style="color:var(--cyan);">EJECUCIÓN DIARIA DE PROYECTOS</div>
-            <h3 style="font-size:16px; font-weight:700;">🎯 Misiones de Hoy <span id="missions-count-badge" style="font-size:11px; padding:2px 8px; background:rgba(34,211,238,0.15); color:var(--cyan); border-radius:99px; font-weight:700; margin-left:6px;">0 / 4 Listas</span></h3>
+      <!-- PASO 2 Y PASO 3: ENFOQUE Y EJECUCIÓN DEL PLAN DIARIO -->
+      <section class="card daily-missions-card" style="margin-top:18px; padding:20px;">
+        <!-- Paso 2: Meta Principal y Proyecto -->
+        <div class="step-block" id="step-2-meta">
+          <div class="step-indicator">
+            <span class="step-num">2</span>
+            <span class="step-label">Meta Principal del Día</span>
           </div>
-          <div style="display:flex; align-items:center; gap:8px;">
-            <select id="today-project" class="input" style="font-size:12px; padding:6px 10px; width:auto;" onchange="changeFocus(this.value)"></select>
+
+          <div style="display:grid; grid-template-columns: 2fr 1fr; gap:10px; margin-bottom:12px;">
+            <div class="field" style="margin:0;">
+              <label for="today-goal">¿Cuál es tu objetivo prioritario de hoy?</label>
+              <input class="input" id="today-goal" maxlength="140" placeholder="Ej.: Agendar 1 demo, publicar 1 pieza y cerrar prospecto" oninput="saveTodayGoal(this.value)">
+            </div>
+            <div class="field" style="margin:0;">
+              <label for="today-project">Proyecto en Foco</label>
+              <select id="today-project" class="input" onchange="changeFocus(this.value)"></select>
+            </div>
+          </div>
+
+          <!-- Asistente IA y personalización opcional -->
+          <div style="background:var(--surface-2); border:1px solid var(--border); border-radius:var(--radius-md); padding:12px; margin-bottom:8px;">
+            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+              <div class="field" style="margin:0; flex:1; min-width:200px;">
+                <input class="input" id="today-ai-focus" maxlength="140" placeholder="🎯 Enfoque opcional para la IA (ej. Captar B2B / Día suave)" oninput="saveTodayAIFocus(this.value)">
+              </div>
+              <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                <button class="btn btn-secondary btn-small" id="ai-generate" onclick="generateAIPlan(this)">✨ Generar con IA</button>
+                <button class="btn btn-secondary btn-small" id="ai-view-history" onclick="openAIHistoryModal()">📜 Historial</button>
+                <button class="btn btn-secondary btn-small" onclick="restoreBasePlan()">↻ Base</button>
+              </div>
+            </div>
+            <div id="ai-status" style="font-size:11px; color:var(--muted); margin-top:8px;">Plan base activo.</div>
           </div>
         </div>
 
-        <!-- AI Assistant & Goal Input Bar -->
-        <div style="background:rgba(6,10,18,0.5); border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:12px; margin-bottom:14px;">
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px;">
-            <div class="field" style="margin:0;">
-              <label style="font-size:10.5px;">Meta principal de hoy</label>
-              <input class="input" id="today-goal" maxlength="140" placeholder="Ej.: agendar 1 demo y publicar historia" oninput="saveTodayGoal(this.value)" style="font-size:11.5px;">
+        <!-- Paso 3: Misiones de Ejecución -->
+        <div class="step-block" id="step-3-misiones" style="margin-top:18px; border-top:1px solid var(--border); padding-top:18px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:8px;">
+            <div class="step-indicator" style="margin-bottom:0;">
+              <span class="step-num">3</span>
+              <span class="step-label">Misiones de Ejecución</span>
             </div>
-            <div class="field" style="margin:0;">
-              <label style="font-size:10.5px;">🎯 Enfoque opcional para la IA</label>
-              <input class="input" id="today-ai-focus" maxlength="140" placeholder="Ej.: Captar B2B / Día suave" oninput="saveTodayAIFocus(this.value)" style="font-size:11.5px;">
-            </div>
+            <span id="missions-count-badge" class="badge-missions">0 / 4 Listas</span>
           </div>
 
-          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; border-top:1px solid var(--border-subtle); padding-top:10px;">
-            <div id="ai-status" style="font-size:11px; color:var(--muted-2);">Plan base activo.</div>
-            <div style="display:flex; gap:6px; flex-wrap:wrap;">
-              <button class="btn btn-secondary btn-small" id="ai-generate" onclick="generateAIPlan(this)">✨ Generar con IA</button>
-              <button class="btn btn-secondary btn-small" id="ai-view-history" onclick="openAIHistoryModal()">📜 Historial</button>
-              <button class="btn btn-secondary btn-small" onclick="restoreBasePlan()">↻ Plan Base</button>
-            </div>
+          <!-- 4 Daily Mission Cards -->
+          <div class="moves-grid" id="daily-moves"></div>
+
+          <div class="day-note" style="margin-top:14px;">
+            <div class="compact-note"><strong>💡 Principio de inercia:</strong> Si hoy tienes poca energía o poco tiempo, completar 1 sola misión de 5 minutos mantiene tu racha intacta.</div>
           </div>
-        </div>
-
-        <!-- 4 Daily Mission Cards -->
-        <div class="moves-grid" id="daily-moves" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;"></div>
-
-        <div class="day-note" style="margin-top:12px; font-size:10.5px;">
-          <div class="compact-note"><strong>💡 Consejo:</strong> si hoy tienes poca energía, completar 1 sola misión de 5 minutos mantiene tu inercia intacta.</div>
         </div>
       </section>
     </section>
@@ -2408,49 +2532,141 @@ dialog.nt-dialog.calendar-dialog-wide {
   </div>
 </dialog>
 
+<!-- Modal Unificado de Herramientas y Accesos Rápidos -->
+<dialog class="nt-dialog" id="tools-dialog" aria-labelledby="tools-dialog-title" style="width:min(640px, calc(100% - 24px));">
+  <div class="dialog-body">
+    <div class="dialog-head">
+      <div>
+        <h3 id="tools-dialog-title">🛠️ Herramientas y Accesos Rápidos</h3>
+        <p>Todos los módulos y utilidades del sistema organizados en un solo lugar.</p>
+      </div>
+      <button class="dialog-close" type="button" onclick="closeDialog('tools-dialog')" aria-label="Cerrar">×</button>
+    </div>
+
+    <div class="tools-grid">
+      <!-- 1: Configuración General -->
+      <button class="tool-card-btn" onclick="closeDialog('tools-dialog'); openSystemSettings('setup');">
+        <span class="tool-card-icon">⚙️</span>
+        <div class="tool-card-text">
+          <strong>Configuración General</strong>
+          <span>Ajustar fecha de inicio, cigarrillos y costos</span>
+        </div>
+      </button>
+
+      <!-- 2: Rutina Diaria -->
+      <button class="tool-card-btn" onclick="closeDialog('tools-dialog'); showView('routine');">
+        <span class="tool-card-icon">⏰</span>
+        <div class="tool-card-text">
+          <strong>Rutina Diaria</strong>
+          <span>Horarios, bloques de constancia y hábitos</span>
+        </div>
+      </button>
+
+      <!-- 3: Metas & Recompensas -->
+      <button class="tool-card-btn" onclick="closeDialog('tools-dialog'); openRewardsDialog();">
+        <span class="tool-card-icon">🎁</span>
+        <div class="tool-card-text">
+          <strong>Metas & Recompensas</strong>
+          <span>Estímulos motivacionales con tu dinero ahorrado</span>
+        </div>
+      </button>
+
+      <!-- 4: Widget iPhone (iOS) -->
+      <button class="tool-card-btn" onclick="closeDialog('tools-dialog'); openDialog('widget-dialog');">
+        <span class="tool-card-icon">📱</span>
+        <div class="tool-card-text">
+          <strong>Widget iPhone (iOS)</strong>
+          <span>Atajo e instrucciones para Scriptable y Lockscreen</span>
+        </div>
+      </button>
+
+      <!-- 5: Calendario & Agenda -->
+      <button class="tool-card-btn" onclick="closeDialog('tools-dialog'); openCalendarModal();">
+        <span class="tool-card-icon">📅</span>
+        <div class="tool-card-text">
+          <strong>Calendario & Agenda</strong>
+          <span>Visualización mensual y registro de victorias</span>
+        </div>
+      </button>
+
+      <!-- 6: Asistente NICO (Voz) -->
+      <button class="tool-card-btn" onclick="closeDialog('tools-dialog'); openJarvisAssistant();">
+        <span class="tool-card-icon">🎙️</span>
+        <div class="tool-card-text">
+          <strong>Asistente NICO (Voz)</strong>
+          <span>Copiloto con voz hablada ante la ansiedad</span>
+        </div>
+      </button>
+
+      <!-- 7: Sincronización Nube -->
+      <button class="tool-card-btn" onclick="closeDialog('tools-dialog'); openSystemSettings('sync');">
+        <span class="tool-card-icon">☁️</span>
+        <div class="tool-card-text">
+          <strong>Nube & Sincronización</strong>
+          <span>Respaldar y sincronizar Celular ↔ PC</span>
+        </div>
+      </button>
+
+      <!-- 8: Personalización / Temas -->
+      <button class="tool-card-btn" onclick="closeDialog('tools-dialog'); openThemePreviewModal();">
+        <span class="tool-card-icon">🎨</span>
+        <div class="tool-card-text">
+          <strong>Aspecto Visual & Fondos</strong>
+          <span>Composición de fondo y contrastes</span>
+        </div>
+      </button>
+    </div>
+
+    <div style="margin-top:16px; padding-top:14px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+      <button class="btn btn-secondary btn-small" onclick="toggleThemeMode()">🌓 Alternar Tema Claro / Oscuro</button>
+      <button class="btn btn-secondary btn-small" onclick="closeDialog('tools-dialog')">Cerrar</button>
+    </div>
+  </div>
+</dialog>
+
 <!-- Modal de Prueba de Fondos e Imagen de Alta Definición -->
 <dialog class="nt-dialog" id="theme-preview-dialog" aria-labelledby="theme-preview-title" style="width:min(640px, calc(100% - 24px));">
   <div class="dialog-body">
     <div class="dialog-head">
       <div>
         <h3 id="theme-preview-title">🎨 Pruebas de Fondo y Composición Visual</h3>
-        <p>Selecciona y prueba fondos en tiempo real para hacer ver el panel más limpio y resaltar las áreas clave.</p>
+        <p>Selecciona el estilo visual que te dé mayor claridad y enfoque.</p>
       </div>
       <button class="dialog-close" type="button" onclick="closeDialog('theme-preview-dialog')" aria-label="Cerrar">×</button>
     </div>
 
     <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:10px; margin-bottom:14px;">
-      <!-- Option 1: Aurora Dark Mesh (Generated) -->
-      <div class="theme-option-card" onclick="previewThemeBackground('aurora_mesh')" id="th-card-aurora_mesh" style="padding:12px; background:rgba(12,20,34,0.8); border:2px solid var(--cyan); border-radius:var(--radius-md); cursor:pointer; transition:transform 0.2s ease;">
-        <div style="height:75px; border-radius:var(--radius-sm); background:url('assets/aurora_dark_mesh.png') center/cover; margin-bottom:8px; border:1px solid rgba(255,255,255,0.15);"></div>
-        <strong style="font-size:12.5px; color:var(--text); display:block;">🌌 Malla Aurora Neón (IA Clean)</strong>
-        <span style="font-size:10.5px; color:var(--muted-2);">Fondo degradado orgánico de alta legibilidad que resalta las tarjetas clave.</span>
+      <!-- Option 1: Clean Solid (Recommended) -->
+      <div class="theme-option-card" onclick="previewThemeBackground('clean_solid')" id="th-card-clean_solid" style="padding:12px; background:var(--surface-2); border:2px solid var(--accent); border-radius:var(--radius-md); cursor:pointer; transition:transform 0.2s ease;">
+        <div style="height:75px; border-radius:var(--radius-sm); background:var(--bg); margin-bottom:8px; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:22px;">💎</div>
+        <strong style="font-size:12.5px; color:var(--text); display:block;">✨ Sólido Sobrio Ejecutivo (Recomendado)</strong>
+        <span style="font-size:10.5px; color:var(--muted);">Sin imágenes ni ruidos de fondo. Máxima legibilidad, contraste y elegancia.</span>
       </div>
 
-      <!-- Option 2: Obsidian Glass (Generated) -->
-      <div class="theme-option-card" onclick="previewThemeBackground('obsidian_glass')" id="th-card-obsidian_glass" style="padding:12px; background:rgba(12,20,34,0.8); border:1px solid var(--border-subtle); border-radius:var(--radius-md); cursor:pointer; transition:transform 0.2s ease;">
-        <div style="height:75px; border-radius:var(--radius-sm); background:url('assets/obsidian_glass_bg.png') center/cover; margin-bottom:8px; border:1px solid rgba(255,255,255,0.15);"></div>
-        <strong style="font-size:12.5px; color:var(--text); display:block;">💎 Cristal Obsidiana Oscuro (IA)</strong>
-        <span style="font-size:10.5px; color:var(--muted-2);">Efecto cristal pulido con reflejos suaves morados y turquesa.</span>
+      <!-- Option 2: Deep Cyber Gradient -->
+      <div class="theme-option-card" onclick="previewThemeBackground('cyber_dark')" id="th-card-cyber_dark" style="padding:12px; background:var(--surface-2); border:1px solid var(--border); border-radius:var(--radius-md); cursor:pointer; transition:transform 0.2s ease;">
+        <div style="height:75px; border-radius:var(--radius-sm); background:radial-gradient(ellipse at top,#0f172a,#060a12); margin-bottom:8px; border:1px solid var(--border);"></div>
+        <strong style="font-size:12.5px; color:var(--text); display:block;">🌃 Azul Noche Profundo</strong>
+        <span style="font-size:10.5px; color:var(--muted);">Degradado suave azul noche con sombras limpias.</span>
       </div>
 
-      <!-- Option 3: Deep Cyber Gradient -->
-      <div class="theme-option-card" onclick="previewThemeBackground('cyber_dark')" id="th-card-cyber_dark" style="padding:12px; background:rgba(12,20,34,0.8); border:1px solid var(--border-subtle); border-radius:var(--radius-md); cursor:pointer; transition:transform 0.2s ease;">
-        <div style="height:75px; border-radius:var(--radius-sm); background:radial-gradient(ellipse at top,#0f172a,#060a12); margin-bottom:8px; border:1px solid rgba(255,255,255,0.15);"></div>
-        <strong style="font-size:12.5px; color:var(--text); display:block;">🌃 Noche Profunda Minimalista</strong>
-        <span style="font-size:10.5px; color:var(--muted-2);">Contraste puro de tono azul noche con sombras limpias.</span>
+      <!-- Option 3: Obsidian Glass -->
+      <div class="theme-option-card" onclick="previewThemeBackground('obsidian_glass')" id="th-card-obsidian_glass" style="padding:12px; background:var(--surface-2); border:1px solid var(--border); border-radius:var(--radius-md); cursor:pointer; transition:transform 0.2s ease;">
+        <div style="height:75px; border-radius:var(--radius-sm); background:url('assets/obsidian_glass_bg.png') center/cover; margin-bottom:8px; border:1px solid var(--border);"></div>
+        <strong style="font-size:12.5px; color:var(--text); display:block;">💎 Cristal Obsidiana</strong>
+        <span style="font-size:10.5px; color:var(--muted);">Efecto cristal pulido con reflejos sutiles.</span>
       </div>
 
-      <!-- Option 4: Classic Original -->
-      <div class="theme-option-card" onclick="previewThemeBackground('original')" id="th-card-original" style="padding:12px; background:rgba(12,20,34,0.8); border:1px solid var(--border-subtle); border-radius:var(--radius-md); cursor:pointer; transition:transform 0.2s ease;">
-        <div style="height:75px; border-radius:var(--radius-sm); background:#060a12; margin-bottom:8px; border:1px solid rgba(255,255,255,0.15);"></div>
-        <strong style="font-size:12.5px; color:var(--text); display:block;">⚡ Fondo Original Reto Control</strong>
-        <span style="font-size:10.5px; color:var(--muted-2);">Apariencia original por defecto sin imagen de fondo.</span>
+      <!-- Option 4: Aurora Mesh -->
+      <div class="theme-option-card" onclick="previewThemeBackground('aurora_mesh')" id="th-card-aurora_mesh" style="padding:12px; background:var(--surface-2); border:1px solid var(--border); border-radius:var(--radius-md); cursor:pointer; transition:transform 0.2s ease;">
+        <div style="height:75px; border-radius:var(--radius-sm); background:url('assets/aurora_dark_mesh.png') center/cover; margin-bottom:8px; border:1px solid var(--border);"></div>
+        <strong style="font-size:12.5px; color:var(--text); display:block;">🌌 Malla Aurora Neón (Original)</strong>
+        <span style="font-size:10.5px; color:var(--muted);">Fondo con cintas moradas y cian.</span>
       </div>
     </div>
 
-    <div style="padding:10px 12px; background:rgba(34,211,238,0.08); border:1px solid rgba(34,211,238,0.25); border-radius:var(--radius-md); font-size:11px; color:var(--muted-2); margin-bottom:14px;">
-      ✨ <strong>Prueba en vivo:</strong> Al tocar cualquiera de las opciones arriba, la app cambiará su fondo instantáneamente en tu pantalla para que veas cuál resalta mejor tu avance.
+    <div style="padding:10px 12px; background:var(--surface-2); border:1px solid var(--border); border-radius:var(--radius-md); font-size:11px; color:var(--muted); margin-bottom:14px;">
+      ✨ <strong>Prueba en vivo:</strong> Al tocar cualquiera de las opciones arriba, la app cambiará su fondo instantáneamente en tu pantalla.
     </div>
 
     <div class="button-row" style="gap:8px;">
@@ -6381,57 +6597,104 @@ function appendJarvisMessage(sender, text){
   streamEl.scrollTop = streamEl.scrollHeight;
 }
 
-/* ── Theme Background & Visual Composition Module ── */
+/* ── Theme Mode (Dark/Light) & Visual Composition Module ── */
+function toggleThemeMode(){
+  const current = document.documentElement.getAttribute('data-theme') || 'dark';
+  const newMode = current === 'dark' ? 'light' : 'dark';
+  applyThemeMode(newMode);
+  toast(newMode === 'light' ? '☀️ Modo Claro activado' : '🌙 Modo Oscuro activado', '🌓');
+}
+
+function applyThemeMode(mode){
+  document.documentElement.setAttribute('data-theme', mode);
+  localStorage.setItem('nt_theme_mode', mode);
+
+  const topbarBtn = document.getElementById('topbar-theme-toggle');
+  if(topbarBtn){
+    topbarBtn.innerHTML = mode === 'dark' ? '☀️' : '🌙';
+    topbarBtn.title = mode === 'dark' ? 'Cambiar a Modo Claro' : 'Cambiar a Modo Oscuro';
+  }
+
+  const otherBtns = [
+    document.getElementById('header-theme-toggle'),
+    document.getElementById('sidebar-theme-toggle'),
+    document.getElementById('theme-toggle-btn')
+  ];
+  otherBtns.forEach(b => {
+    if(b){
+      b.innerHTML = mode === 'dark' ? '☀️ <span class="hide-mobile">Modo Claro</span>' : '🌙 <span class="hide-mobile">Modo Oscuro</span>';
+    }
+  });
+
+  if(mode === 'light'){
+    document.body.style.backgroundImage = 'none';
+    const auroraEl = document.querySelector('.aurora-bg');
+    if(auroraEl) auroraEl.style.display = 'none';
+  }
+}
+
 function openThemePreviewModal(){
-  const savedBg = localStorage.getItem('nt_theme_bg') || 'aurora_mesh';
+  const savedBg = localStorage.getItem('nt_theme_bg') || 'clean_solid';
   previewThemeBackground(savedBg);
   openDialog('theme-preview-dialog');
 }
 
 function previewThemeBackground(themeId){
   window._currentThemePreview = themeId;
-  const cards = ['aurora_mesh', 'obsidian_glass', 'cyber_dark', 'original'];
+  const cards = ['clean_solid', 'cyber_dark', 'obsidian_glass', 'aurora_mesh'];
   cards.forEach(id => {
     const cardEl = document.getElementById(`th-card-${id}`);
     if(cardEl){
-      cardEl.style.borderColor = (id === themeId) ? 'var(--cyan)' : 'var(--border-subtle)';
+      cardEl.style.borderColor = (id === themeId) ? 'var(--accent)' : 'var(--border)';
       cardEl.style.transform = (id === themeId) ? 'scale(1.02)' : 'scale(1)';
     }
   });
 
   const body = document.body;
-  if(themeId === 'aurora_mesh'){
-    body.style.backgroundImage = "url('assets/aurora_dark_mesh.png')";
+  const auroraEl = document.querySelector('.aurora-bg');
+
+  if(themeId === 'clean_solid'){
+    body.style.backgroundImage = "none";
+    if(auroraEl) auroraEl.style.display = "none";
+  } else if(themeId === 'cyber_dark'){
+    body.style.backgroundImage = "radial-gradient(ellipse 70% 50% at 50% 0%, #0f172a 0%, #060a12 100%)";
     body.style.backgroundSize = "cover";
     body.style.backgroundAttachment = "fixed";
-    body.style.backgroundPosition = "center";
+    if(auroraEl) auroraEl.style.display = "none";
   } else if(themeId === 'obsidian_glass'){
     body.style.backgroundImage = "url('assets/obsidian_glass_bg.png')";
     body.style.backgroundSize = "cover";
     body.style.backgroundAttachment = "fixed";
     body.style.backgroundPosition = "center";
-  } else if(themeId === 'cyber_dark'){
-    body.style.backgroundImage = "radial-gradient(ellipse 70% 50% at 50% 0%, #0f172a 0%, #060a12 100%)";
+    if(auroraEl) auroraEl.style.display = "block";
+  } else if(themeId === 'aurora_mesh'){
+    body.style.backgroundImage = "url('assets/aurora_dark_mesh.png')";
     body.style.backgroundSize = "cover";
     body.style.backgroundAttachment = "fixed";
+    body.style.backgroundPosition = "center";
+    if(auroraEl) auroraEl.style.display = "block";
   } else {
-    body.style.backgroundImage = "radial-gradient(ellipse 60% 40% at 85% 0%, rgba(139,92,246,.07) 0%, transparent 60%), radial-gradient(ellipse 40% 30% at 10% 80%, rgba(34,211,238,.04) 0%, transparent 50%)";
+    body.style.backgroundImage = "none";
+    if(auroraEl) auroraEl.style.display = "none";
   }
 }
 
 function applyAndSaveThemeBg(){
-  const chosen = window._currentThemePreview || 'aurora_mesh';
+  const chosen = window._currentThemePreview || 'clean_solid';
   localStorage.setItem('nt_theme_bg', chosen);
   closeDialog('theme-preview-dialog');
-  toast('✨ Fondo y composición visual aplicados con éxito.', '🎨');
+  toast('✨ Estilo visual guardado.', '🎨');
 }
 
 function loadSavedThemeBg(){
+  const savedMode = localStorage.getItem('nt_theme_mode') || 'dark';
+  applyThemeMode(savedMode);
+
   const saved = localStorage.getItem('nt_theme_bg');
-  if(saved){
+  if(saved && saved !== 'aurora_mesh'){
     previewThemeBackground(saved);
   } else {
-    previewThemeBackground('aurora_mesh');
+    previewThemeBackground('clean_solid');
   }
 }
 
